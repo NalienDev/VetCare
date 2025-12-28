@@ -56,7 +56,7 @@ public class Configura {
 	
 	// --- Variáveis de INSTÂNCIA (Permitem múltiplas configurações) ---
 	
-	private String database 		= "ga";			// Nome por omissão da Base de Dados
+	private String database 		= "vetcare";			// Nome por omissão da Base de Dados
 	private String server 	    = "localhost"; 	// Servidor por omissão
 	private String usr 		    = "root";		// Utilizador por omissão (deve ser carregado do ficheiro)
 	private String pwd 		    = "root";		// Password por omissão (deve ser carregada do ficheiro)
@@ -676,7 +676,7 @@ public class Configura {
 
         // 2. CRIAÇÃO DE BASE DE DADOS
         System.out.println("\n--- 3. CRIAÇÃO (DDL) de DB de Teste: " + novaBDTeste + " ---");
-        cfg.criarBaseDeDados(novaBDTeste);
+        //cfg.criarBaseDeDados(novaBDTeste);
 
         // 3. CONFIRMAÇÃO E LISTAGEM INTERMÉDIA
         System.out.println("\n--- 3. Listagem Intermédia (Confirmação de Criação) ---");
@@ -766,6 +766,7 @@ public class Configura {
 		// --------------------------------------------------------------------------------
 		// 🚀 TESTE 2: SQLSERVER
 		// --------------------------------------------------------------------------------
+		/*
 		System.out.println("\n\n###################################################################");
 		System.out.println("🧪 INÍCIO DO TESTE: SQLSERVER");
 		System.out.println("###################################################################");
@@ -781,5 +782,6 @@ public class Configura {
         System.out.println("\n\n===================================================================");
 		System.out.println("🏁 FIM DO TESTE: SQLSERVER");
 		System.out.println("===================================================================");
+		*/
 	}	// --- 📢 Fim main (Exemplo de Uso) ---
 }
