@@ -1,0 +1,6 @@
+util\Console.class
+util\DataFormatter.class
+vetcare\VetCare.class
+vetcare\Configura.class
+vetcare\Configura$SGBD.class
+vetcare\Manipula.class
