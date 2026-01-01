@@ -78,12 +78,13 @@ public class Configura {
 	 * Inicializa o driver e a URL, e carrega as credenciais do ficheiro de propriedades.
 	 * @param sgbd O Sistema Gestor de Base de Dados (SGBD.MySQL ou SGBD.SQLServer).
 	 */
-	public Configura (SGBD sgbd) {
-		this.sgbd = sgbd;
-		build();
-		loadProperties();
-		loadDriver();
+	public Configura(SGBD sgbd) {
+	    this.sgbd = sgbd;
+	    loadProperties();  
+	    build();           
+	    loadDriver();      
 	}
+
 	
 	private synchronized void build() {
 			if(this.isSQLServer()) {
@@ -108,23 +109,27 @@ public class Configura {
 	 * Sugestão: Num ambiente de produção, garantir que este método lança uma exceção se o ficheiro falhar.
 	 */
 	private void loadProperties() {
-		String filePath = getRealPath()+CONFIG_FILE;
-			
-		// System.out.println("💡 Caminho da configuração de acesso:\n'"+filePath+"'");
-		Properties properties = new Properties();
-		try (FileInputStream fis = new FileInputStream(filePath)) {
-			properties.load(fis);
-			
-			// Atualiza as variáveis de INSTÂNCIA com as credenciais lidas do ficheiro.
-			this.server = properties.getProperty("db.server").trim();
-			this.usr = properties.getProperty("db.user").trim();
-			this.pwd = properties.getProperty("db.password").trim();
-			
-		} catch (IOException e) {
-			System.err.println("❌ Falha ao carregar o ficheiro '"+CONFIG_FILE+"'.");
-			// e.printStackTrace();
-		}
+	    Properties properties = new Properties();
+
+	    try {
+	        properties.load(getClass().getClassLoader().getResourceAsStream("db_config.properties"));
+
+	        this.server = properties.getProperty("db.server").trim();
+	        this.usr = properties.getProperty("db.user").trim();
+	        this.pwd = properties.getProperty("db.password").trim();
+
+	    } catch (Exception e) {
+	        System.err.println("❌ Não foi possível carregar db_config.properties (classpath).");
+	        e.printStackTrace();
+	    }
+	    
+	    System.out.println("✅ CONFIG LIDA:");
+	    System.out.println("server=" + server);
+	    System.out.println("user=" + usr);
+	    System.out.println("pwd=" + pwd);
+	    System.out.println("url=" + url);
 	}
+
 
 	/**
 	 * Carrega a classe do Driver JDBC para esta instância.
