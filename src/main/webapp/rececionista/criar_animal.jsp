@@ -346,6 +346,38 @@
           <div class="color-box" style="background:#FFA500"></div>
         </label>
         <label class="color-option">
+          <input type="checkbox" name="cores" value="Azul">
+          <div class="color-box" style="background:#4169E1"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Verde">
+          <div class="color-box" style="background:#228B22"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Vermelho">
+          <div class="color-box" style="background:#DC143C"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Amarelo">
+          <div class="color-box" style="background:#FFD700"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Rosa">
+          <div class="color-box" style="background:#FFB6C1"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Roxo">
+          <div class="color-box" style="background:#9370DB"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Bege">
+          <div class="color-box" style="background:#F5F5DC"></div>
+        </label>
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Creme">
+          <div class="color-box" style="background:#FFFACD"></div>
+        </label>
+        <label class="color-option">
           <input type="checkbox" name="cores" value="Tigrado">
           <div class="color-box" style="background:repeating-linear-gradient(45deg,#8B4513,#8B4513 10px,#D2691E 10px,#D2691E 20px)"></div>
         </label>
