@@ -377,11 +377,7 @@ try {
     </div>
 
     <!-- ✨ SISTEMA DE CORES VISUAL MELHORADO -->
-    <div class="color-section">
-      <h3>🎨 Cores do Animal</h3>
-      <p class="color-info">Selecione todas as cores que se aplicam ao animal</p>
-      
-      <div class="color-palette">
+    <div class="color-palette">
         <label class="color-option">
           <input type="checkbox" name="cores" value="Preto" id="cor-preto">
           <div class="color-box" style="background:#000000"></div>
@@ -416,6 +412,54 @@ try {
           <input type="checkbox" name="cores" value="Laranja" id="cor-laranja">
           <div class="color-box" style="background:#FFA500"></div>
           <div class="color-label">Laranja</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Azul" id="cor-azul">
+          <div class="color-box" style="background:#4169E1"></div>
+          <div class="color-label">Azul</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Verde" id="cor-verde">
+          <div class="color-box" style="background:#228B22"></div>
+          <div class="color-label">Verde</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Vermelho" id="cor-vermelho">
+          <div class="color-box" style="background:#DC143C"></div>
+          <div class="color-label">Vermelho</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Amarelo" id="cor-amarelo">
+          <div class="color-box" style="background:#FFD700"></div>
+          <div class="color-label">Amarelo</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Rosa" id="cor-rosa">
+          <div class="color-box" style="background:#FFB6C1"></div>
+          <div class="color-label">Rosa</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Roxo" id="cor-roxo">
+          <div class="color-box" style="background:#9370DB"></div>
+          <div class="color-label">Roxo</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Bege" id="cor-bege">
+          <div class="color-box" style="background:#F5F5DC; border-color:#D4CFC0"></div>
+          <div class="color-label">Bege</div>
+        </label>
+        
+        <label class="color-option">
+          <input type="checkbox" name="cores" value="Creme" id="cor-creme">
+          <div class="color-box" style="background:#FFFACD; border-color:#E6E1B8"></div>
+          <div class="color-label">Creme</div>
         </label>
         
         <label class="color-option">
