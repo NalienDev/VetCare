@@ -108,24 +108,6 @@
             font-size: 0.9em;
         }
         
-        .timeline-dia {
-            margin-bottom: 20px;
-        }
-        
-        .timeline-header {
-            background: #667eea;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px 5px 0 0;
-            font-weight: 600;
-        }
-        
-        .timeline-conteudo {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 0 0 5px 5px;
-        }
-        
         .sem-agendamentos {
             text-align: center;
             padding: 60px 20px;
@@ -152,8 +134,8 @@
             
             // Calcular datas da próxima semana
             LocalDate hoje = LocalDate.now();
-            LocalDate inicioProximaSemana = hoje.plusDays(1); // Começa amanhã
-            LocalDate fimProximaSemana = inicioProximaSemana.plusDays(7); // 7 dias à frente
+            LocalDate inicioProximaSemana = hoje.plusDays(1);
+            LocalDate fimProximaSemana = inicioProximaSemana.plusDays(7);
             
             java.sql.Date sqlInicio = java.sql.Date.valueOf(inicioProximaSemana);
             java.sql.Date sqlFim = java.sql.Date.valueOf(fimProximaSemana);
@@ -177,11 +159,11 @@
                     "SELECT " +
                     "    COUNT(DISTINCT a.idAgendamento) AS totalAgendamentos, " +
                     "    COUNT(DISTINCT sv.idServico) AS tiposServico, " +
-                    "    COUNT(DISTINCT DATE(a.dtHrAgenda)) AS diasComAgendamento " +
+                    "    COUNT(DISTINCT DATE(a.dataHrAgenda)) AS diasComAgendamento " +
                     "FROM agendamento a " +
                     "LEFT JOIN solicita s ON a.idAgendamento = s.idAgendamento " +
                     "LEFT JOIN servicoVet sv ON s.idServico = sv.idServico " +
-                    "WHERE a.dtHrAgenda BETWEEN ? AND ? " +
+                    "WHERE a.dataHrAgenda BETWEEN ? AND ? " +
                     "  AND a.statusAgendamento = 'marcado'";
                 
                 PreparedStatement psResumo = con.prepareStatement(sqlResumo);
@@ -244,12 +226,12 @@
                         "SELECT " +
                         "    a.tipoServ, " +
                         "    COUNT(a.idAgendamento) AS quantidade, " +
-                        "    MIN(a.dtHrAgenda) AS primeiroAgendamento, " +
-                        "    MAX(a.dtHrAgenda) AS ultimoAgendamento, " +
+                        "    MIN(a.dataHrAgenda) AS primeiroAgendamento, " +
+                        "    MAX(a.dataHrAgenda) AS ultimoAgendamento, " +
                         "    AVG(a.custos) AS custoMedio, " +
                         "    SUM(a.custos) AS custoTotal " +
                         "FROM agendamento a " +
-                        "WHERE a.dtHrAgenda BETWEEN ? AND ? " +
+                        "WHERE a.dataHrAgenda BETWEEN ? AND ? " +
                         "  AND a.statusAgendamento = 'marcado' " +
                         "GROUP BY a.tipoServ " +
                         "ORDER BY quantidade DESC, a.tipoServ ASC";
@@ -296,14 +278,14 @@
                                 <div class="detalhe-item">
                                     <div class="detalhe-label">🗓️ Primeiro Agendamento</div>
                                     <div class="detalhe-valor">
-                                        <%= util.DataFormatter.formatDate(primeiro.toString()) %>
+                                        <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(primeiro) %>
                                     </div>
                                 </div>
                                 
                                 <div class="detalhe-item">
                                     <div class="detalhe-label">🗓️ Último Agendamento</div>
                                     <div class="detalhe-valor">
-                                        <%= util.DataFormatter.formatDate(ultimo.toString()) %>
+                                        <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(ultimo) %>
                                     </div>
                                 </div>
                                 
@@ -326,11 +308,11 @@
                             // Detalhes por dia da semana
                             String sqlPorDia = 
                                 "SELECT " +
-                                "    DATE(a.dtHrAgenda) AS dia, " +
-                                "    DAYNAME(a.dtHrAgenda) AS diaSemana, " +
+                                "    DATE(a.dataHrAgenda) AS dia, " +
+                                "    DAYNAME(a.dataHrAgenda) AS diaSemana, " +
                                 "    COUNT(*) AS qtd " +
                                 "FROM agendamento a " +
-                                "WHERE a.dtHrAgenda BETWEEN ? AND ? " +
+                                "WHERE a.dataHrAgenda BETWEEN ? AND ? " +
                                 "  AND a.statusAgendamento = 'marcado' " +
                                 "  AND a.tipoServ = ? " +
                                 "GROUP BY dia, diaSemana " +

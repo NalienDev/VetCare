@@ -1,555 +1,667 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="vetcare.*, java.sql.*, java.util.*" %>
+<%@ page import="vetcare.*, java.sql.*" %>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospitais e Clínicas Veterinárias - VetCare</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Hospitais e clínicas veterinárias - VetCare</title>
+
     <style>
-        .clinicas-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 8rem 2rem 4rem;
-            color: white;
-            text-align: center;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root{
+            --bg-hero: #EAF6FB;
+            --txt-dark: #0B2A42;
+            --txt-muted: #57606F;
+            --border: #DFE4EA;
+            --green: #A9D6B6;
+            --bluebtn: #0B2A42;
+            --card-bg: #FFFFFF;
         }
 
-        .clinicas-header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        body{
+            margin:0;
+            font-family: 'Inter', sans-serif;
+            background:white;
+            color:var(--txt-dark);
+        }
+        
+        *{
+		  box-sizing: border-box;
+		}
+
+        /* ====== HEADER (com logo imagem) ====== */
+        .main-header{
+            background:white;
+            border-bottom:1px solid #e6e6e6;
+            padding:16px 48px;
+            position:sticky;
+            top:0;
+            z-index:200;
+        }
+        .header-content{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            max-width:1400px;
+        }
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+        .logo-img{
+            height:42px;
+            width:auto;
+        }
+        .logo-text{
+            font-weight:900;
+            font-size:20px;
+            color:var(--txt-dark);
+        }
+        .main-nav a{
+            margin:0 14px;
+            font-weight:700;
+            font-size:14px;
+            color:var(--txt-dark);
+            text-decoration:none;
+        }
+        .main-nav a:hover{
+            text-decoration:underline;
         }
 
-        .search-section {
-            background: white;
-            padding: 3rem 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            position: relative;
-            margin-top: -3rem;
-            border-radius: 16px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+        /* ===== HERO ===== */
+        .hero{
+            background: var(--bg-hero);
+            padding: 46px 0 80px;
         }
 
-        .search-box {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+        /* alinhado à esquerda */
+        .hero-inner{
+            max-width:1400px;
+            margin-left:80px;
+            margin-right:0;
+            padding:0;
         }
 
-        .search-input {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #DFE4EA;
-            border-radius: 12px;
-            font-size: 1rem;
+        .breadcrumb{
+            font-size:13px;
+            font-weight:600;
+            color:var(--txt-muted);
+            margin-bottom:10px;
         }
 
-        .search-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .hero h1{
+            margin:0;
+            font-size:48px;
+            font-weight:900;
+            letter-spacing:-1px;
         }
 
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .search-grid{
+		    display:flex;
+		    gap:18px;
+		    align-items:center;
+		    margin-top:32px;
+		}
+		
+		/* wrapper do input ocupa espaço livre */
+		.search-input-wrapper{
+		    flex:1;
+		    max-width:650px;
+		    position:relative;
+		    min-width:0;
+		}
+
+
+        /* input com lupa dentro */
+        .search-input-wrapper{
+            position:relative;
+        }
+        
+        .search-input-wrapper input{
+		    width:100%;
+		    height:56px;
+		    border:1px solid var(--border);
+		    border-radius: 14px 4px 14px 4px;
+		    padding:0 56px 0 20px;
+		    font-size:15px;
+		    font-weight:500;
+		    outline:none;
+		    min-width:0;
+		}
+		
+        .search-input-wrapper input::placeholder{
+            color:#999;
         }
 
-        .search-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
+        /* botão lupa dentro do input */
+        .search-inside-btn{
+            position:absolute;
+            right:14px;
+            top:50%;
+            transform:translateY(-50%);
+            border:none;
+            background:#F0F4F8;
+            width:36px;
+            height:36px;
+            border-radius: 10px 4px 10px 4px;
+            cursor:pointer;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        .search-inside-btn img{
+            width:16px;
+            height:16px;
         }
 
-        .btn-location {
-            background: #E8F5E9;
-            color: #27AE60;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+        .btn-green{
+		    flex:0 0 260px;
+		    height:56px;
+		    border:none;
+		    cursor:pointer;
+		    font-weight:800;
+		    font-size:15px;
+		    background: var(--green);
+		    color: var(--txt-dark);
+		    border-radius: 16px 4px 16px 4px;
+		    display:flex;
+		    justify-content:center;
+		    align-items:center;
+		    gap:10px;
+		}
+		
+		.btn-blue{
+		    flex:0 0 180px;
+		    height:56px;
+		    border:none;
+		    cursor:pointer;
+		    font-weight:800;
+		    font-size:15px;
+		    background: var(--bluebtn);
+		    color:white;
+		    border-radius: 16px 4px 16px 4px;
+		    display:flex;
+		    justify-content:center;
+		    align-items:center;
+		}
+		
+
+        /* icons */
+        .btn-icon{
+            width:18px;
+            height:18px;
         }
 
-        .btn-location:hover {
-            background: #C8E6C9;
-            transform: translateY(-2px);
+        /* tip */
+        .tip{
+            margin-top:14px;
+            font-size:12.5px;
+            color: var(--txt-muted);
+            font-weight:500;
+        }
+        .tip b{ font-weight:800; color:var(--txt-dark); }
+        .tip a{
+            color: var(--txt-dark);
+            font-weight:800;
+            text-decoration:underline;
         }
 
-        .btn-map {
-            background: #2F3542;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+        /* filtros */
+        .filters{
+            display:flex;
+            gap:18px;
+            margin-top:20px;
+            flex-wrap:wrap;
+            justify-content:flex-start;
+        }
+        .filters select{
+            height:50px;
+            padding:0 16px;
+            border:1px solid var(--border);
+            border-radius: 14px 4px 14px 4px;
+            font-weight:700;
+            font-size:13px;
+            background:white;
+            cursor:pointer;
         }
 
-        .btn-map:hover {
-            background: #1e252f;
-            transform: translateY(-2px);
+        /* list alinhada à esquerda */
+        .clinics-container{
+            max-width:1400px;
+            margin-left:80px;
+            margin-right:0;
+            margin-top:70px;
+            padding:0;
         }
 
-        .filters {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
+        .region-title{
+            font-size:34px;
+            font-weight:900;
+            margin:40px 0 20px;
+            color: var(--txt-dark);
         }
 
-        .filter-select {
-            padding: 0.75rem 1rem;
-            border: 2px solid #DFE4EA;
-            border-radius: 12px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.95rem;
+        /* card */
+        .clinic-card{
+            width:560px;
+            background: var(--card-bg);
+            border:1px solid #E7EEF4;
+            border-radius: 24px 6px 24px 6px;
+            padding: 26px 28px;
+            box-shadow: 0px 1px 0px rgba(0,0,0,0.04);
+            margin-bottom:30px;
         }
 
-        .clinicas-container {
-            max-width: 1400px;
-            margin: 3rem auto;
-            padding: 0 2rem;
+        .clinic-name{
+            font-size:22px;
+            font-weight:900;
+            margin:0 0 14px;
+        }
+        .clinic-name a{
+            color: var(--txt-dark);
+            text-decoration:none;
+        }
+        .clinic-name a:hover{
+            text-decoration:underline;
         }
 
-        .region-section {
-            margin-bottom: 4rem;
+        .info-row{
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            font-size:13px;
+            font-weight:500;
+            color:var(--txt-muted);
+            margin:10px 0;
+        }
+        .info-icon{
+            width:18px;
+            height:18px;
+            margin-top:2px;
         }
 
-        .region-title {
-            font-size: 2rem;
-            color: #2F3542;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 3px solid #667eea;
+        .hours-row{
+            display:flex;
+            align-items:center;
+            gap:14px;
         }
 
-        .clinica-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
+        .badge-hours{
+            font-weight:600;
+            font-size:13px;
+            color:var(--txt-muted);
         }
 
-        .clinica-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            border-color: #667eea;
+        .badge-emergency{
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-weight:900;
+            color:#E55353;
+            font-size:13px;
+        }
+        .badge-emergency img{
+            width:16px;
+            height:16px;
         }
 
-        .clinica-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1.5rem;
+        /* phone box */
+        .phone-box{
+            margin-top:18px;
+            border:1px solid var(--border);
+            border-radius: 14px 4px 14px 4px;
+            padding:16px 18px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            width: fit-content;
+            font-weight:900;
+            color:var(--txt-dark);
+        }
+        .phone-box img{
+            width:18px;
+            height:18px;
         }
 
-        .clinica-name {
-            font-size: 1.5rem;
-            color: #2F3542;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        /* botão show all */
+        .btn-showall{
+            display:none;
+            margin-bottom:30px;
+            border:none;
+            cursor:pointer;
+            font-weight:900;
+            background:#0B2A42;
+            color:white;
+            padding:14px 18px;
+            border-radius: 16px 4px 16px 4px;
         }
 
-        .clinica-name-link {
-            color: #2F3542;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .clinica-name-link:hover {
-            color: #667eea;
-        }
-
-        .clinica-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: start;
-            gap: 0.75rem;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            color: #667eea;
-            flex-shrink: 0;
-        }
-
-        .info-content {
-            flex: 1;
-        }
-
-        .info-label {
-            font-size: 0.85rem;
-            color: #57606F;
-            margin-bottom: 0.25rem;
-        }
-
-        .info-text {
-            color: #2F3542;
-            font-weight: 500;
-        }
-
-        .clinica-hours {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .hours-badge {
-            background: #E8F5E9;
-            color: #27AE60;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .emergency-badge {
-            background: #FFEBEE;
-            color: #EB5757;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .clinica-contact {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #DFE4EA;
-        }
-
-        .contact-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .contact-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .view-map-btn {
-            background: white;
-            color: #2F3542;
-            padding: 0.75rem 1.5rem;
-            border: 2px solid #DFE4EA;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .view-map-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #57606F;
-        }
-
-        .no-results h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .clinicas-header h1 {
-                font-size: 2rem;
+        /* RESPONSIVO */
+        @media(max-width:1100px){
+            .hero-inner, .clinics-container{
+                margin-left:20px;
+                margin-right:20px;
             }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .clinica-info {
+            .search-grid{
                 grid-template-columns: 1fr;
             }
-
-            .clinica-contact {
-                flex-direction: column;
+            .btn-blue, .btn-green{
+                width:100%;
+            }
+            .clinic-card{
+                width:100%;
             }
         }
+        
+        @media(max-width:1000px){
+
+		    .search-grid{
+		        flex-direction:column;
+		        align-items:stretch;
+		        gap:14px; /* espaçamento entre input e botões */
+		    }
+		
+		    .search-input-wrapper{
+		        max-width:100%;
+		        width:100%;
+		    }
+		
+		    /* botões normais (não esticam) */
+		    .btn-green,
+		    .btn-blue{
+		        width:100%;
+		        flex:0 0 auto;     /* não esticar */
+		        height:54px;       /* igual ao site */
+		        justify-content:center;
+		        font-size:15px;
+		    }
+		
+		    /* a dica só aparece depois dos botões */
+		    .tip{
+		        margin-top:18px;
+		    }
+		}
+
+		        
     </style>
 </head>
+
 <body>
-    <!-- Header com logo e navegação -->
-    <header class="main-header">
-        <div class="header-content">
-            <div class="logo">
-                <img src="images/logo.png" alt="VetCare Logo" class="logo-img">
-                <span class="logo-text">VetCare</span>
-            </div>
-            <nav class="main-nav">
-                <a href="index.jsp">Início</a>
-                <a href="clinicas.jsp">Clínicas</a>
-                <a href="#sobre">Sobre Nós</a>
-                <a href="#contacto">Contacto</a>
-            </nav>
+
+<!-- HEADER -->
+<header class="main-header">
+    <div class="header-content">
+
+        <div class="logo">
+            <img src="images/logo.png" class="logo-img" alt="VetCare Logo">
+            <span class="logo-text">VetCare</span>
         </div>
-    </header>
 
-    <!-- Hero Section -->
-    <div class="clinicas-header">
-        <h1>Hospitais e Clínicas Veterinárias</h1>
+        <nav class="main-nav">
+            <a href="index.jsp">Início</a>
+            <a href="clinicas.jsp">Clínicas</a>
+            <a href="#sobre">Sobre Nós</a>
+            <a href="#contacto">Contacto</a>
+        </nav>
+
     </div>
+</header>
 
-    <!-- Search Section -->
-    <div class="search-section">
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="breadcrumb">Página inicial / Hospitais e clínicas veterinárias</div>
+        <h1>Hospitais e clínicas veterinárias</h1>
+
+        <!-- SEARCH + BOTÕES AO LADO -->
         <form method="GET" action="clinicas.jsp">
-            <div class="search-box">
-                <input type="text" 
-                       name="pesquisa" 
-                       class="search-input" 
-                       placeholder="Pesquisar clínica..."
-                       value="<%= request.getParameter("pesquisa") != null ? request.getParameter("pesquisa") : "" %>">
-                <button type="submit" class="search-btn">🔍 Pesquisar</button>
+            <div class="search-grid">
+
+                <div class="search-input-wrapper" style="position:relative;">
+				    <input type="text" name="pesquisa" id="searchClinica"
+				       placeholder="Pesquisar clínica..."
+				       value="<%= request.getParameter("pesquisa") != null ? request.getParameter("pesquisa") : "" %>"
+				       autocomplete="off">
+				
+				    <button class="search-inside-btn" type="submit">
+				        <img src="images/search-icon.png" alt="Pesquisar">
+				    </button>
+				
+				    <div id="resultadosClinica" style="display:none; position:absolute; background:white; border:1px solid #DDE6EE;
+				         border-radius:14px 4px 14px 4px; max-height:260px; overflow-y:auto;
+				         width:100%; z-index:999999; margin-top:6px;
+				         box-shadow:0px 4px 15px rgba(0,0,0,0.15);"></div>
+				</div>
+
+
+                <button type="button" class="btn-green" onclick="getLocation();">
+                    <img class="btn-icon" src="images/location-icon.png" alt="">
+                    Clínicas mais próximas
+                </button>
+
+                <button type="button" class="btn-blue" onclick="alert('Mapa em desenvolvimento!')">
+                    Exibir mapa
+                </button>
+
             </div>
         </form>
 
-        <div class="search-actions">
-            <a href="#" class="btn-location" onclick="getLocation()">
-                📍 Clínicas mais próximas
-            </a>
-            <a href="#mapa" class="btn-map">
-                🗺️ Exibir mapa
-            </a>
+        <!-- TIP -->
+        <div class="tip">
+            <b>Dica!</b> Você pode pesquisar pelo nome da clínica, cidade ou usar sua localização para encontrar clínicas perto de você.
+            <a href="#" onclick="alert('Ative a localização no navegador.'); return false;">Como habilitar.</a>
         </div>
 
-        <p style="text-align: center; color: #57606F; margin-top: 1.5rem;">
-            <strong>Dica!</strong> Você pode pesquisar pelo nome da clínica, cidade ou usar a sua localização para encontrar clínicas perto de você. 
-            <a href="#" style="color: #667eea;">Como habilitar.</a>
-        </p>
-    </div>
-
-    <!-- Clínicas Container -->
-    <div class="clinicas-container">
-        <%
-        String pesquisa = request.getParameter("pesquisa");
-        
-        Configura cfg = new Configura();
-        Manipula manipula = new Manipula(cfg);
-        
-        try {
-            String sql = "SELECT c.localidade, c.arteria, c.numero, c.andar, c.codPostal, " +
-                        "c.morada, c.latitude, c.longitude, " +
-                        "GROUP_CONCAT(DISTINCT CONCAT(h.diaUtil, ': ', h.horaInicio, '-', h.horaFim) SEPARATOR '|') as horarios " +
-                        "FROM clinica c " +
-                        "LEFT JOIN horario h ON c.localidade = h.localidade ";
-            
-            if (pesquisa != null && !pesquisa.trim().isEmpty()) {
-                sql += "WHERE c.localidade LIKE ? OR c.arteria LIKE ? ";
-            }
-            
-            sql += "GROUP BY c.localidade " +
-                   "ORDER BY c.localidade";
-            
-            Connection con = manipula.getLigacao();
-            PreparedStatement ps = con.prepareStatement(sql);
-            
-            if (pesquisa != null && !pesquisa.trim().isEmpty()) {
-                String searchTerm = "%" + pesquisa + "%";
-                ps.setString(1, searchTerm);
-                ps.setString(2, searchTerm);
-            }
-            
-            ResultSet rs = ps.executeQuery();
-            
-            boolean hasResults = false;
-            String currentRegion = "";
-            
-            while (rs.next()) {
-                hasResults = true;
-                String localidade = rs.getString("localidade");
-                
-                // Nova seção de região
-                if (!localidade.equals(currentRegion)) {
-                    if (!currentRegion.isEmpty()) {
-                        out.println("</div>"); // Fecha região anterior
-                    }
-                    currentRegion = localidade;
-                    out.println("<div class='region-section'>");
-                    out.println("<h2 class='region-title'>" + localidade + "</h2>");
-                }
-                
-                String morada = rs.getString("morada");
-                String codPostal = rs.getString("codPostal");
-                float latitude = rs.getFloat("latitude");
-                float longitude = rs.getFloat("longitude");
-                String horarios = rs.getString("horarios");
-        %>
-                <div class="clinica-card">
-                    <div class="clinica-header">
-                        <div>
-                            <h3 class="clinica-name">
-                                <a href="#" class="clinica-name-link">
-                                    Clínica Veterinária <%= localidade %> →
-                                </a>
-                            </h3>
-                        </div>
-                    </div>
-
-                    <div class="clinica-info">
-                        <div class="info-item">
-                            <span class="info-icon">📍</span>
-                            <div class="info-content">
-                                <div class="info-label">Morada</div>
-                                <div class="info-text"><%= morada %>, <%= codPostal %></div>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-icon">🕐</span>
-                            <div class="info-content">
-                                <div class="info-label">Horário</div>
-                                <div class="clinica-hours">
-                                    <% if (horarios != null && !horarios.isEmpty()) {
-                                        String[] horariosArray = horarios.split("\\|");
-                                        if (horariosArray.length > 0) {
-                                            out.println("<span class='hours-badge'>⏰ " + horariosArray[0] + "</span>");
-                                        }
-                                    } else { %>
-                                        <span class="hours-badge">⏰ Consultar horário</span>
-                                    <% } %>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-icon">🌍</span>
-                            <div class="info-content">
-                                <div class="info-label">Coordenadas GPS</div>
-                                <div class="info-text"><%= String.format("%.4f, %.4f", latitude, longitude) %></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="clinica-contact">
-                        <a href="tel:210000000" class="contact-btn">
-                            📞 Contactar
-                        </a>
-                        <a href="https://www.google.com/maps?q=<%= latitude %>,<%= longitude %>" 
-                           target="_blank" 
-                           class="view-map-btn">
-                            🗺️ Ver no mapa
-                        </a>
-                    </div>
-                </div>
-        <%
-            }
-            
-            if (!currentRegion.isEmpty()) {
-                out.println("</div>"); // Fecha última região
-            }
-            
-            if (!hasResults) {
-        %>
-                <div class="no-results">
-                    <h3>😔 Nenhuma clínica encontrada</h3>
-                    <p>Tente ajustar os seus critérios de pesquisa ou navegue por todas as clínicas disponíveis.</p>
-                </div>
-        <%
-            }
-            
-            rs.close();
-            ps.close();
-            
-        } catch (Exception e) {
-            out.println("<div class='mensagem erro'>❌ Erro ao carregar clínicas: " + e.getMessage() + "</div>");
-            e.printStackTrace();
-        } finally {
-            manipula.desligar();
-        }
-        %>
-    </div>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <h4>VetCare</h4>
-                    <p>Sistema de Gestão de Clínicas Veterinárias</p>
-                    <p class="footer-small">ISEL - Sistemas de Bases de Dados - 2025/2026</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Contactos</h4>
-                    <p>Email: info@vetcare.pt</p>
-                    <p>Telefone: +351 210 000 000</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Desenvolvido por</h4>
-                    <p>Sofia Salgado (51694)</p>
-                    <p>Lucas Filipe (51793)</p>
-                    <p>Daniel Coelho (51812)</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 VetCare - Todos os direitos reservados</p>
-            </div>
+        <!-- FILTERS -->
+        <div class="filters">
+            <select><option>Ordenar por: Região</option></select>
+            <select><option>Todas as horas</option></select>
+            <select><option>Todos os tratamentos</option></select>
+            <select><option>Todas as regiões</option></select>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        alert("Funcionalidade de localização em desenvolvimento!\n" +
-                              "Sua posição: " + position.coords.latitude + ", " + position.coords.longitude);
-                    },
-                    function(error) {
-                        alert("Não foi possível obter a sua localização.\nPor favor, permita o acesso à localização nas configurações do navegador.");
-                    }
-                );
-            } else {
-                alert("Geolocalização não é suportada pelo seu navegador.");
-            }
+<!-- LIST -->
+<div class="clinics-container">
+
+<button id="btnShowAll" class="btn-showall" onclick="showAllClinics()">Mostrar todas as clínicas</button>
+
+<%
+    String pesquisa = request.getParameter("pesquisa");
+
+    Configura cfg = new Configura();
+    Manipula manipula = new Manipula(cfg);
+
+    try {
+        String sql =
+            "SELECT c.localidade, c.morada, c.codPostal, " +
+            "MIN(h.horaInicio) as abre, MAX(h.horaFim) as fecha " +
+            "FROM clinica c " +
+            "LEFT JOIN horario h ON c.localidade = h.localidade ";
+
+        if(pesquisa != null && !pesquisa.trim().isEmpty()){
+            sql += "WHERE c.localidade LIKE ? OR c.arteria LIKE ? ";
         }
-    </script>
+
+        sql += "GROUP BY c.localidade ORDER BY c.localidade";
+
+        Connection con = manipula.getLigacao();
+        PreparedStatement ps = con.prepareStatement(sql);
+
+        if(pesquisa != null && !pesquisa.trim().isEmpty()){
+            String term = "%" + pesquisa + "%";
+            ps.setString(1, term);
+            ps.setString(2, term);
+        }
+
+        ResultSet rs = ps.executeQuery();
+
+        boolean encontrou = false;
+        while(rs.next()){
+            encontrou = true;
+
+            String localidade = rs.getString("localidade");
+            String morada = rs.getString("morada");
+            String codPostal = rs.getString("codPostal");
+            String abre = rs.getString("abre");
+            String fecha = rs.getString("fecha");
+
+            // GPS sem alterar o SELECT principal
+            float lat = 0, lng = 0;
+            String sqlGPS = "SELECT latitude, longitude FROM clinica WHERE localidade=?";
+            PreparedStatement psGPS = con.prepareStatement(sqlGPS);
+            psGPS.setString(1, localidade);
+            ResultSet rsGPS = psGPS.executeQuery();
+            if(rsGPS.next()){
+                lat = rsGPS.getFloat("latitude");
+                lng = rsGPS.getFloat("longitude");
+            }
+            rsGPS.close();
+            psGPS.close();
+
+            // telefone + urgencias (hardcoded)
+            String telefone = "210 000 000";
+            boolean urgencias = false;
+            if(localidade.equals("Vila Franca de Xira")){
+                telefone = "214263919";
+                urgencias = true;
+            } else if(localidade.equals("Almada")){
+                telefone = "214103629";
+                urgencias = false;
+            } else if(localidade.equals("Quinta do Conde")){
+                telefone = "219598623";
+                urgencias = true;
+            }
+%>
+
+    <div class="region-title"><%= localidade %></div>
+
+    <div class="clinic-card"
+         data-lat="<%= lat %>"
+         data-lng="<%= lng %>"
+         data-localidade="<%= localidade %>">
+
+        <h3 class="clinic-name">
+            <a href="clinica.jsp?localidade=<%= localidade %>">
+                VetCare <%= localidade %> Hospital Veterinário →
+            </a>
+        </h3>
+
+        <div class="info-row">
+            <img class="info-icon" src="images/icon-pin.png" alt="">
+            <div><%= morada %>, <%= codPostal %>, <%= localidade %></div>
+        </div>
+
+        <div class="info-row hours-row">
+            <img class="info-icon" src="images/icon-clock.png" alt="">
+            <div class="badge-hours"><%= abre %> - <%= fecha %></div>
+
+            <% if(urgencias){ %>
+                <div class="badge-emergency">
+                    <img src="images/red-cross.png" alt="">
+                    00 - 24
+                </div>
+            <% } %>
+        </div>
+
+        <div class="phone-box">
+            <img src="images/icon-phone.png" alt="">
+            <span><%= telefone %></span>
+        </div>
+    </div>
+
+<%
+        }
+
+        if(!encontrou){
+%>
+    <p style="font-weight:900; font-size:18px;">😔 Nenhuma clínica encontrada</p>
+<%
+        }
+
+        rs.close();
+        ps.close();
+
+    } catch(Exception e){
+        out.println("<p style='color:red;'>Erro: "+ e.getMessage() +"</p>");
+    } finally {
+        manipula.desligar();
+    }
+%>
+
+</div>
+
+<script>
+function getLocation(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(pos){
+                const userLat = pos.coords.latitude;
+                const userLng = pos.coords.longitude;
+                mostrarClinicaMaisProxima(userLat, userLng);
+            },
+            function(){
+                alert("Não foi possível obter a localização.\nPermite o acesso no navegador.");
+            }
+        );
+    } else {
+        alert("Geolocalização não é suportada.");
+    }
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI/180;
+    const dLon = (lon2 - lon1) * Math.PI/180;
+    const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+function mostrarClinicaMaisProxima(userLat, userLng){
+    const cards = document.querySelectorAll(".clinic-card");
+    let menorDist = Infinity;
+    let maisProxima = null;
+
+    cards.forEach(card => {
+        const cLat = parseFloat(card.dataset.lat);
+        const cLng = parseFloat(card.dataset.lng);
+        const dist = haversine(userLat, userLng, cLat, cLng);
+        if(dist < menorDist){
+            menorDist = dist;
+            maisProxima = card;
+        }
+    });
+
+    cards.forEach(card => card.style.display = "none");
+    document.querySelectorAll(".region-title").forEach(t => t.style.display = "none");
+
+    document.getElementById("btnShowAll").style.display = "inline-block";
+
+    if(maisProxima){
+        maisProxima.style.display = "block";
+        maisProxima.style.border = "2px solid #A9D6B6";
+        maisProxima.style.boxShadow = "0px 10px 30px rgba(169,214,182,0.35)";
+        maisProxima.scrollIntoView({behavior:"smooth", block:"center"});
+        alert("Clínica mais próxima: " + maisProxima.dataset.localidade +
+              "\nDistância: " + menorDist.toFixed(2) + " km");
+    }
+}
+
+function showAllClinics(){
+    document.querySelectorAll(".clinic-card").forEach(c => c.style.display = "block");
+    document.querySelectorAll(".region-title").forEach(t => t.style.display = "block");
+    document.getElementById("btnShowAll").style.display = "none";
+}
+</script>
+
 </body>
 </html>

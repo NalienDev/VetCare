@@ -1,103 +1,53 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="vetcare.*, java.sql.*, java.util.*" %>
+<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="vetcare.*, java.sql.*, java.util.*, org.json.*" %>
 <%
+response.setContentType("application/json");
 String nif = request.getParameter("nif");
-if (nif == null || nif.trim().isEmpty()) {
-    out.print("<div class='mensagem erro'>NIF inválido</div>");
-    return;
+
+JSONArray result = new JSONArray();
+
+if (nif != null && !nif.isEmpty()) {
+    Configura cfg = new Configura();
+    Manipula manipula = new Manipula(cfg);
+    
+    try {
+        String sql = 
+            "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, " +
+            "       r.nomeRaca, e.nomeComum AS especie, " +
+            "       TIMESTAMPDIFF(YEAR, f.dataNasc, CURDATE()) AS idade " +
+            "FROM fichaClinicaAnimal f " +
+            "INNER JOIN tutor t ON f.idFichaClin = t.idFichaClin " +
+            "LEFT JOIN fichaRaca fr ON f.idFichaClin = fr.idFichaClin " +
+            "LEFT JOIN raca r ON fr.nomeRaca = r.nomeRaca " +
+            "LEFT JOIN especie e ON r.nomeComum = e.nomeComum " +
+            "WHERE t.NIF = ? " +
+            "ORDER BY f.nome";
+        
+        Connection con = manipula.getLigacao();
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, nif);
+        ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            JSONObject animal = new JSONObject();
+            animal.put("idFichaClin", rs.getInt("idFichaClin"));
+            animal.put("nome", rs.getString("nome"));
+            animal.put("sexo", rs.getString("sexo"));
+            animal.put("raca", rs.getString("nomeRaca"));
+            animal.put("especie", rs.getString("especie"));
+            animal.put("idade", rs.getInt("idade"));
+            result.put(animal);
+        }
+        
+        rs.close();
+        ps.close();
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        manipula.desligar();
+    }
 }
 
-Configura cfg = new Configura();
-Manipula manipula = new Manipula(cfg);
-
-try {
-    String sql = 
-        "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, " +
-        "       r.nomeRaca, e.nomeComum AS especie " +
-        "FROM fichaClinicaAnimal f " +
-        "INNER JOIN tutor t ON f.idFichaClin = t.idFichaClin " +
-        "INNER JOIN fichaRaca fr ON f.idFichaClin = fr.idFichaClin " +
-        "INNER JOIN raca r ON fr.nomeRaca = r.nomeRaca " +
-        "INNER JOIN pertence p ON r.nomeRaca = p.nomeRaca " +
-        "INNER JOIN especie e ON p.nomeComum = e.nomeComum " +
-        "WHERE t.NIF = ?";
-    
-    Connection con = manipula.getLigacao();
-    PreparedStatement ps = con.prepareStatement(sql);
-    ps.setString(1, nif);
-    ResultSet rs = ps.executeQuery();
-    
-    boolean temAnimais = false;
-    
-    while (rs.next()) {
-        temAnimais = true;
-        int idFicha = rs.getInt("idFichaClin");
-        String nome = rs.getString("nome");
-        String sexo = rs.getString("sexo");
-        java.sql.Date dataNasc = rs.getDate("dataNasc");
-        String raca = rs.getString("nomeRaca");
-        String especie = rs.getString("especie");
-        
-        int idade = java.time.Period.between(
-            dataNasc.toLocalDate(), 
-            java.time.LocalDate.now()
-        ).getYears();
-        
-        String genero = util.DataFormatter.obterGenero(sexo);
-        %>
-        
-        <div class="ficha-animal">
-            <div class="ficha-header">
-                <div>
-                    <h3><%= nome %> (<%= genero %>)</h3>
-                    <p><strong>ID:</strong> <%= idFicha %></p>
-                </div>
-            </div>
-            
-            <div class="ficha-dados">
-                <div class="dado-item">
-                    <div class="dado-label">Espécie</div>
-                    <%= especie %>
-                </div>
-                <div class="dado-item">
-                    <div class="dado-label">Raça</div>
-                    <%= raca %>
-                </div>
-                <div class="dado-item">
-                    <div class="dado-label">Idade</div>
-                    <%= idade %> <%= idade == 1 ? "ano" : "anos" %>
-                </div>
-                <div class="dado-item">
-                    <div class="dado-label">Data Nascimento</div>
-                    <%= util.DataFormatter.LocalDateToString(dataNasc.toLocalDate()) %>
-                </div>
-            </div>
-            
-            <div style="margin-top: 15px;">
-                <a href="historico_clinico.jsp?id=<%= idFicha %>" class="btn btn-primary">
-                    📋 Ver Histórico Completo
-                </a>
-            </div>
-        </div>
-        
-        <%
-    }
-    
-    if (!temAnimais) {
-        %>
-        <div class="mensagem aviso">
-            ⚠️ Este tutor ainda não tem animais registados.
-        </div>
-        <%
-    }
-    
-    rs.close();
-    ps.close();
-    
-} catch (Exception e) {
-    out.print("<div class='mensagem erro'>❌ Erro: " + e.getMessage() + "</div>");
-    e.printStackTrace();
-} finally {
-    manipula.desligar();
-}
+out.print(result.toString());
 %>

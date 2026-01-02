@@ -2,27 +2,26 @@
 <%@ page import="vetcare.*, java.sql.*, java.util.*, org.json.*" %>
 <%
 response.setContentType("application/json");
-String query = request.getParameter("query");
+String especie = request.getParameter("especie");
 
 JSONArray result = new JSONArray();
 
-if (query != null && query.length() >= 2) {
+if (especie != null && !especie.isEmpty()) {
     Configura cfg = new Configura();
     Manipula manipula = new Manipula(cfg);
     
     try {
-        String sql = "SELECT NIF, nomeCompleto FROM cliente WHERE nomeCompleto LIKE ? ORDER BY nomeCompleto LIMIT 10";
+        String sql = "SELECT nomeRaca FROM raca WHERE nomeComum = ? ORDER BY nomeRaca";
         
         Connection con = manipula.getLigacao();
         PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, "%" + query + "%");
+        ps.setString(1, especie);
         ResultSet rs = ps.executeQuery();
         
         while (rs.next()) {
-            JSONObject tutor = new JSONObject();
-            tutor.put("nif", rs.getString("NIF"));
-            tutor.put("nome", rs.getString("nomeCompleto"));
-            result.put(tutor);
+            JSONObject raca = new JSONObject();
+            raca.put("nomeRaca", rs.getString("nomeRaca"));
+            result.put(raca);
         }
         
         rs.close();

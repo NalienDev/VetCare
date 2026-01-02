@@ -1,183 +1,157 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="vetcare.*, java.sql.*, java.util.*, org.json.*" %>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Pesquisar Animal</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .autocomplete-container {
-            position: relative;
-            width: 100%;
-        }
-        
-        #resultados {
-            position: absolute;
-            background: white;
-            border: 2px solid #667eea;
-            border-top: none;
-            max-height: 300px;
-            overflow-y: auto;
-            width: 100%;
-            display: none;
-            z-index: 1000;
-            border-radius: 0 0 5px 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .resultado-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background 0.2s;
-        }
-        
-        .resultado-item:hover {
-            background: #f0f0ff;
-        }
-        
-        .resultado-item strong {
-            color: #667eea;
-        }
-        
-        .ficha-animal {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
-        .ficha-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 20px;
-        }
-        
-        .ficha-foto img {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .ficha-dados {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .dado-item {
-            padding: 10px;
-            background: white;
-            border-radius: 5px;
-            border-left: 3px solid #667eea;
-        }
-        
-        .dado-label {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetCare - Pesquisar Animal</title>
+  <link rel="stylesheet" href="../css/vetcare-ui.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🔍 Pesquisar Animal por Tutor</h1>
-            <a href="menu.jsp" class="btn-voltar">← Voltar</a>
-        </header>
-        
-        <div class="content">
-            <div class="info-card">
-                <h3>📌 Como usar:</h3>
-                <p>Digite o nome do tutor no campo abaixo. Os resultados aparecem automaticamente conforme você digita.</p>
-            </div>
-            
-            <div class="formulario">
-                <div class="form-group">
-                    <label>Nome do Tutor</label>
-                    <div class="autocomplete-container">
-                        <input type="text" id="nomeTutor" placeholder="Digite o nome do tutor..." 
-                               autocomplete="off" onkeyup="buscarTutores()">
-                        <div id="resultados"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="fichasAnimais"></div>
-        </div>
+
+<header class="main-header">
+  <div class="header-content">
+    <div class="logo">
+      <img src="../images/logo.png" class="logo-img" alt="VetCare Logo">
+      <span class="logo-text">VetCare</span>
     </div>
+
+    <nav class="main-nav">
+      <a href="../index.jsp">Início</a>
+      <a href="menu.jsp">Veterinário</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Pesquisar Animal</h1>
+    <p>Encontre fichas de animais pelo nome do tutor.</p>
+  </div>
+</section>
+
+<div class="page-content">
+  <a href="menu.jsp" class="btn-voltar">← Voltar ao Menu</a>
+
+  <div class="formulario">
+    <div class="form-group" style="position:relative;">
+      <label>Nome do Tutor</label>
+      <input type="text" id="searchTutor" placeholder="Digite o nome do tutor..." autocomplete="off">
+      <div id="resultados" style="display:none; position:absolute; background:white; border:1px solid #DFE4EA; border-radius:14px 4px 14px 4px; max-height:300px; overflow-y:auto; width:590px; z-index:100; margin-top:5px; box-shadow:0px 4px 15px rgba(0,0,0,0.1);"></div>
+    </div>
+  </div>
+
+  <div id="animaisContainer" style="margin-top:30px;"></div>
+</div>
+
+<script>
+const searchInput = document.getElementById('searchTutor');
+const resultadosDiv = document.getElementById('resultados');
+const animaisContainer = document.getElementById('animaisContainer');
+
+let timeoutId = null;
+
+searchInput.addEventListener('input', function() {
+    clearTimeout(timeoutId);
+    const query = this.value.trim();
     
-    <script>
-        let timeoutId;
-        
-        function buscarTutores() {
-            clearTimeout(timeoutId);
-            
-            const input = document.getElementById('nomeTutor');
-            const termo = input.value.trim();
-            const resultadosDiv = document.getElementById('resultados');
-            
-            if (termo.length < 2) {
-                resultadosDiv.style.display = 'none';
-                return;
-            }
-            
-            timeoutId = setTimeout(() => {
-                fetch('buscar_tutores_ajax.jsp?termo=' + encodeURIComponent(termo))
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            resultadosDiv.innerHTML = '<div class="resultado-item">Nenhum tutor encontrado</div>';
-                            resultadosDiv.style.display = 'block';
-                            return;
-                        }
-                        
-                        let html = '';
-                        data.forEach(tutor => {
-                            html += `<div class="resultado-item" onclick="selecionarTutor('${tutor.nif}', '${tutor.nome}')">
-                                <strong>${tutor.nome}</strong><br>
-                                <small>NIF: ${tutor.nif} | Animais: ${tutor.numAnimais}</small>
-                            </div>`;
-                        });
-                        
-                        resultadosDiv.innerHTML = html;
-                        resultadosDiv.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        resultadosDiv.innerHTML = '<div class="resultado-item">Erro ao buscar tutores</div>';
+    if (query.length < 2) {
+        resultadosDiv.style.display = 'none';
+        return;
+    }
+
+    timeoutId = setTimeout(function() {
+        fetch('procurar_tutores_ajax.jsp?query=' + encodeURIComponent(query))
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.length > 0) {
+                    let html = '';
+                    data.forEach(function(tutor) {
+                        html += '<div class="resultado-item" onclick="selecionarTutor(\'' + tutor.nif + '\', \'' + escapeHtml(tutor.nome).replace(/'/g, "\\'") + '\')" ';
+                        html += 'style="padding:14px; cursor:pointer; border-bottom:1px solid #F1F5F8; transition:0.2s;">';
+                        html += '<strong style="color:#0B2A42;">' + escapeHtml(tutor.nome) + '</strong><br>';
+                        html += '<small style="color:#57606F;">NIF: ' + tutor.nif + '</small>';
+                        html += '</div>';
                     });
-            }, 300);
-        }
-        
-        function selecionarTutor(nif, nome) {
-            document.getElementById('nomeTutor').value = nome;
-            document.getElementById('resultados').style.display = 'none';
-            carregarAnimais(nif);
-        }
-        
-        function carregarAnimais(nif) {
-            fetch('carregar_animais_ajax.jsp?nif=' + encodeURIComponent(nif))
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('fichasAnimais').innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    document.getElementById('fichasAnimais').innerHTML = 
-                        '<div class="mensagem erro">Erro ao carregar animais</div>';
+                    resultadosDiv.innerHTML = html;
+                    resultadosDiv.style.display = 'block';
+                } else {
+                    resultadosDiv.innerHTML = '<div style="padding:14px; color:#57606F;">📭 Nenhum tutor encontrado</div>';
+                    resultadosDiv.style.display = 'block';
+                }
+            })
+            .catch(function(err) {
+                console.error('Erro:', err);
+                resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">❌ Erro ao pesquisar</div>';
+                resultadosDiv.style.display = 'block';
+            });
+    }, 300);
+});
+
+function selecionarTutor(nif, nome) {
+    searchInput.value = nome;
+    resultadosDiv.style.display = 'none';
+    carregarAnimais(nif);
+}
+
+function carregarAnimais(nif) {
+    animaisContainer.innerHTML = '<div style="text-align:center; padding:40px;"><p>⏳ Carregando animais...</p></div>';
+    
+    fetch('carregar_animais_ajax.jsp?nif=' + nif)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.length > 0) {
+                let html = '<div class="table-card"><h3 style="margin:0 0 20px 0; font-size:20px;">🐕 Animais do Tutor</h3><table class="tabela"><thead><tr><th>Nome</th><th>Espécie</th><th>Raça</th><th>Sexo</th><th>Idade</th><th>Ações</th></tr></thead><tbody>';
+                
+                data.forEach(function(animal) {
+                    html += '<tr>';
+                    html += '<td><strong>' + escapeHtml(animal.nome) + '</strong></td>';
+                    html += '<td>' + (animal.especie || '-') + '</td>';
+                    html += '<td>' + (animal.raca || '-') + '</td>';
+                    html += '<td>' + (animal.sexo === 'M' ? '🐕 Macho' : '🐕 Fêmea') + '</td>';
+                    html += '<td>' + animal.idade + (animal.idade === 1 ? ' ano' : ' anos') + '</td>';
+                    html += '<td><a href="ficha_clinica.jsp?idFichaClin=' + animal.idFichaClin + '" class="btn btn-primary">📋 Ver Ficha Clínica</a></td>';
+                    html += '</tr>';
                 });
-        }
-        
-        // Fechar resultados ao clicar fora
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.autocomplete-container')) {
-                document.getElementById('resultados').style.display = 'none';
+                
+                html += '</tbody></table></div>';
+                animaisContainer.innerHTML = html;
+            } else {
+                animaisContainer.innerHTML = '<div class="mensagem">📭 Este tutor não tem animais registados</div>';
             }
+        })
+        .catch(function(err) {
+            console.error('Erro:', err);
+            animaisContainer.innerHTML = '<div class="mensagem erro">❌ Erro ao carregar animais</div>';
         });
-    </script>
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !resultadosDiv.contains(e.target)) {
+        resultadosDiv.style.display = 'none';
+    }
+});
+
+document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+        const item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        item.style.backgroundColor = '#EAF6FB';
+    }
+});
+
+document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+        const item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        item.style.backgroundColor = 'white';
+    }
+});
+</script>
+
 </body>
 </html>

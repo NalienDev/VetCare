@@ -36,12 +36,31 @@
                     <a href="clinicas.jsp" class="btn-todas-clinicas">Todas as clínicas</a>
                 </div>
                 
-                <div class="search-input-wrapper">
-                    <input type="text" placeholder="Pesquisar clínica..." class="search-clinic-input">
-                    <button class="btn-search-clinic">
-                        <img src="images/search-icon.png" alt="Pesquisar">
-                    </button>
-                </div>
+                <div class="search-input-wrapper" style="position:relative;">
+				    <input type="text"
+				           placeholder="Pesquisar clínica..."
+				           class="search-clinic-input"
+				           id="searchClinica"
+				           autocomplete="off">
+				
+				    <button type="button" class="btn-search-clinic">
+				        <img src="images/search-icon.png" alt="Pesquisar">
+				    </button>
+				
+				    <div id="resultadosClinica"
+				         style="display:none; position:absolute; background:white;
+				                border:1px solid #DDE6EE;
+				                border-radius:14px 4px 14px 4px;
+				                max-height:260px;
+				                overflow-y:auto;
+				                width:100%;
+				                z-index:999999;
+				                margin-top:5px;
+				                box-shadow:0px 4px 15px rgba(0,0,0,0.15);">
+				    </div>
+				</div>
+
+
                 
                 <div class="search-info">
                     <p><strong>Dica!</strong> Você pode pesquisar pelo nome da clínica, cidade ou usar sua localização para encontrar clínicas perto de você.</p>
@@ -166,5 +185,138 @@
             </div>
         </div>
     </footer>
+    <script>
+	document.querySelector(".btn-clinicas-proximas").addEventListener("click", function(){
+	
+	    if(!navigator.geolocation){
+	        alert("Geolocalização não suportada.");
+	        return;
+	    }
+	
+	    navigator.geolocation.getCurrentPosition(function(pos){
+	
+	        const userLat = pos.coords.latitude;
+	        const userLng = pos.coords.longitude;
+	
+	        fetch("procurar_clinicas_ajax.jsp?query=") // query vazio = devolve as primeiras
+	            .then(res => res.json())
+	            .then(data => {
+	
+	                if(data.length === 0){
+	                    alert("Nenhuma clínica na base de dados.");
+	                    return;
+	                }
+	
+	                let menor = Infinity;
+	                let clinica = null;
+	
+	                data.forEach(c => {
+	                    const dist = haversine(userLat, userLng, c.lat, c.lng);
+	                    if(dist < menor){
+	                        menor = dist;
+	                        clinica = c;
+	                    }
+	                });
+	
+	                if(clinica){
+	                    window.location.href = "clinica.jsp?localidade=" + encodeURIComponent(clinica.localidade);
+	                }
+	            });
+	
+	    }, function(){
+	        alert("Permite a localização no navegador.");
+	    });
+	});
+	
+	function haversine(lat1, lon1, lat2, lon2) {
+	    const R = 6371;
+	    const dLat = (lat2 - lat1) * Math.PI/180;
+	    const dLon = (lon2 - lon1) * Math.PI/180;
+	    const a =
+	        Math.sin(dLat/2) * Math.sin(dLat/2) +
+	        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+	        Math.sin(dLon/2) * Math.sin(dLon/2);
+	    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	    return R * c;
+	}
+	</script>
+    
+   <script>
+	const inputClinica = document.getElementById("searchClinica");
+	const resultadosClinica = document.getElementById("resultadosClinica");
+	
+	let timeoutClinica = null;
+	
+	inputClinica.addEventListener("input", function(){
+	    clearTimeout(timeoutClinica);
+	    const query = this.value.trim();
+	
+	    if(query.length < 1){
+	        resultadosClinica.style.display = "none";
+	        return;
+	    }
+	
+	    timeoutClinica = setTimeout(function(){
+	
+	        fetch("procurar_clinicas_ajax.jsp?query=" + encodeURIComponent(query))
+	            .then(res => res.json())
+	            .then(data => {
+	
+	                if(data.length > 0){
+	
+	                    let html = "";
+	
+	                    data.forEach(c => {
+	                        html += '<div onclick="abrirClinica(\'' + escapeJS(c.localidade) + '\')" ' +
+	                            'style="padding:14px; cursor:pointer; border-bottom:1px solid #F1F5F8;">' +
+	                            '<strong style="color:#0B2A42;">VetCare ' + escapeHtml(c.localidade) + '</strong><br>' +
+	                            '<small style="color:#57606F;">' + escapeHtml(c.morada) + ', ' + escapeHtml(c.codPostal) + '</small>' +
+	                            '</div>';
+	                    });
+	
+	                    resultadosClinica.innerHTML = html;
+	                    resultadosClinica.style.display = "block";
+	
+	                } else {
+	                    resultadosClinica.innerHTML =
+	                        '<div style="padding:14px; color:#57606F;">📭 Nenhuma clínica encontrada</div>';
+	                    resultadosClinica.style.display = "block";
+	                }
+	            })
+	            .catch(err => {
+	                console.error(err);
+	                resultadosClinica.innerHTML =
+	                    '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+	                resultadosClinica.style.display = "block";
+	            });
+	
+	    }, 250);
+	});
+	
+	function abrirClinica(localidade){
+	    window.location.href = "clinica.jsp?localidade=" + encodeURIComponent(localidade);
+	}
+	
+	function escapeHtml(text){
+	    const div = document.createElement("div");
+	    div.textContent = text;
+	    return div.innerHTML;
+	}
+	
+	function escapeJS(text){
+	    return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+	}
+	
+	document.addEventListener("click", function(e){
+	    if(!inputClinica.contains(e.target) && !resultadosClinica.contains(e.target)){
+	        resultadosClinica.style.display = "none";
+	    }
+	});
+	</script>
+
+
+
+
+   
 </body>
 </html>

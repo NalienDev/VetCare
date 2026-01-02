@@ -10,156 +10,97 @@
 <body>
     <div class="container">
         <header>
-            <h1>📅 Gestão de Horários</h1>
+            <h1>🕐 Gestão de Horários</h1>
             <a href="menu.jsp" class="btn-voltar">← Voltar</a>
         </header>
         
-        <%
-        String mensagem = "";
-        String tipoMensagem = "";
-        
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
-            String nLicenca = request.getParameter("nLicenca");
-            String localidade = request.getParameter("localidade");
-            String diaSemana = request.getParameter("diaSemana");
-            String horaInicio = request.getParameter("horaInicio");
-            String horaFim = request.getParameter("horaFim");
-            
-            Configura cfg = new Configura();
-            Manipula manipula = new Manipula(cfg);
-            
-            try {
-                // Validar: não atribuir em fins de semana
-                if ("Sábado".equals(diaSemana) || "Domingo".equals(diaSemana)) {
-                    mensagem = "❌ Não é permitido agendar em fins de semana!";
-                    tipoMensagem = "erro";
-                } else {
-                    String sql = "INSERT INTO escalado (nLicenca, localidade, diaSemana) VALUES (?,?,?)";
-                    if (manipula.xDirectiva(sql, Arrays.asList(nLicenca, localidade, diaSemana))) {
-                        mensagem = "✅ Horário atribuído com sucesso!";
-                        tipoMensagem = "sucesso";
-                    }
-                }
-            } catch (Exception e) {
-                mensagem = "❌ Erro: " + e.getMessage();
-                tipoMensagem = "erro";
-            } finally {
-                manipula.desligar();
-            }
-        }
-        %>
-        
         <div class="content">
-            <% if (!mensagem.isEmpty()) { %>
-                <div class="mensagem <%= tipoMensagem %>"><%= mensagem %></div>
-            <% } %>
-            
-            <h3>➕ Atribuir Horário</h3>
-            <form method="POST" class="formulario">
-                <div class="form-group">
-                    <label>Nº Licença Veterinário *</label>
-                    <input type="text" name="nLicenca" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Localidade da Clínica *</label>
-                    <select name="localidade" required>
-                        <option value="">Selecione...</option>
-                        <%
-                        Configura cfg = new Configura();
-                        Manipula manipula = new Manipula(cfg);
-                        try {
-                            ResultSet rs = manipula.getResultado("SELECT localidade FROM clinica ORDER BY localidade");
-                            while (rs != null && rs.next()) {
-                                %>
-                                <option value="<%= rs.getString("localidade") %>">
-                                    <%= rs.getString("localidade") %>
-                                </option>
-                                <%
-                            }
-                        } finally {
-                            manipula.desligar();
-                        }
-                        %>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Dia da Semana *</label>
-                    <select name="diaSemana" required>
-                        <option value="">Selecione...</option>
-                        <option value="Segunda-feira">Segunda-feira</option>
-                        <option value="Terça-feira">Terça-feira</option>
-                        <option value="Quarta-feira">Quarta-feira</option>
-                        <option value="Quinta-feira">Quinta-feira</option>
-                        <option value="Sexta-feira">Sexta-feira</option>
-                        <option value="Sábado" disabled>Sábado (não permitido)</option>
-                        <option value="Domingo" disabled>Domingo (não permitido)</option>
-                    </select>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Hora Início</label>
-                        <input type="time" name="horaInicio" value="09:00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Hora Fim</label>
-                        <input type="time" name="horaFim" value="18:00">
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">💾 Atribuir</button>
-            </form>
-            
-            <h3 style="margin-top: 40px;">📋 Horários Atribuídos</h3>
+            <h3>📋 Horários por Clínica</h3>
             
             <table class="tabela">
                 <thead>
                     <tr>
-                        <th>Veterinário</th>
-                        <th>Clínica</th>
+                        <th>Localidade</th>
                         <th>Dia da Semana</th>
+                        <th>Hora Início</th>
+                        <th>Hora Fim</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <%
-                    cfg = new Configura();
-                    manipula = new Manipula(cfg);
+                    Configura cfg = new Configura();
+                    Manipula manipula = new Manipula(cfg);
                     
                     try {
-                        String sql = 
-                            "SELECT e.nLicenca, e.localidade, e.diaSemana " +
-                            "FROM escalado e " +
-                            "ORDER BY e.diaSemana, e.nLicenca";
+                        String sql = "SELECT localidade, diaUtil, horaInicio, horaFim FROM horario ORDER BY localidade, diaUtil";
                         
-                        ResultSet rs = manipula.getResultado(sql);
-                        boolean tem = false;
+                        Connection con = manipula.getLigacao();
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ResultSet rs = ps.executeQuery();
                         
-                        while (rs != null && rs.next()) {
-                            tem = true;
+                        boolean temDados = false;
+                        
+                        while (rs.next()) {
+                            temDados = true;
+                            String localidade = rs.getString("localidade");
+                            String diaUtil = rs.getString("diaUtil");
                             %>
                             <tr>
-                                <td><%= rs.getString("nLicenca") %></td>
-                                <td><%= rs.getString("localidade") %></td>
-                                <td><%= rs.getString("diaSemana") %></td>
+                                <td><%= localidade %></td>
+                                <td><%= diaUtil %></td>
+                                <td><%= rs.getTime("horaInicio") %></td>
+                                <td><%= rs.getTime("horaFim") %></td>
+                                <td>
+                                    <a href="editar_horario.jsp?localidade=<%= localidade %>&diaUtil=<%= diaUtil %>" 
+                                       class="btn btn-primary btn-sm">
+                                        ✏️ Editar
+                                    </a>
+                                </td>
                             </tr>
                             <%
                         }
                         
-                        if (!tem) {
+                        if (!temDados) {
                             %>
-                            <tr><td colspan="3" style="text-align: center;">Nenhum horário atribuído</td></tr>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">
+                                    📭 Nenhum horário cadastrado
+                                </td>
+                            </tr>
                             <%
                         }
+                        
+                        rs.close();
+                        ps.close();
+                        
+                    } catch (Exception e) {
+                        %>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: red;">
+                                ❌ Erro ao carregar dados: <%= e.getMessage() %>
+                            </td>
+                        </tr>
+                        <%
+                        e.printStackTrace();
                     } finally {
                         manipula.desligar();
                     }
                     %>
                 </tbody>
             </table>
+            
+            <div style="margin-top: 2rem;">
+                <a href="criar_horario.jsp" class="btn btn-primary">➕ Novo Horário</a>
+            </div>
         </div>
     </div>
+    
+    <style>
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
 </body>
 </html>

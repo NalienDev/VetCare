@@ -3,181 +3,221 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Árvore Genealógica</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .arvore {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .nivel {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 30px;
-        }
-        
-        .animal-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            text-align: center;
-            min-width: 150px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        .animal-box.pai {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        .animal-box.mae {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-        
-        .animal-nome {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-        }
-        
-        .animal-info {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-        
-        .conexao {
-            width: 2px;
-            height: 30px;
-            background: #667eea;
-            margin: 0 auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetCare - Árvore Genealógica</title>
+  <link rel="stylesheet" href="../css/vetcare-ui.css">
+  <style>
+    .arvore-container {
+      margin-top: 30px;
+      padding: 30px;
+      background: white;
+      border: 1px solid #E7EEF4;
+      border-radius: 24px 6px 24px 6px;
+      box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
+    }
+    .arvore-nivel {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .animal-card {
+      background: #F0F4F8;
+      border: 2px solid #0B2A42;
+      border-radius: 16px 4px 16px 4px;
+      padding: 15px;
+      min-width: 200px;
+      text-align: center;
+    }
+    .animal-card.atual {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: #667eea;
+    }
+    .animal-nome {
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .animal-info {
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+    .nivel-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #57606F;
+      text-transform: uppercase;
+      margin-top: 30px;
+      text-align: center;
+    }
+    .seta {
+      text-align: center;
+      font-size: 24px;
+      color: #A9D6B6;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🌳 Árvore Genealógica</h1>
-            <a href="menu.jsp" class="btn-voltar">← Voltar</a>
-        </header>
-        
-        <div class="content">
-            <div class="formulario">
-                <form method="GET">
-                    <div class="form-group">
-                        <label>ID do Animal</label>
-                        <input type="number" name="id" required 
-                               value="<%= request.getParameter("id") != null ? request.getParameter("id") : "" %>">
-                    </div>
-                    <button type="submit" class="btn btn-primary">🔍 Ver Genealogia</button>
-                </form>
-            </div>
-            
-            <%
-            String idParam = request.getParameter("id");
-            if (idParam != null && !idParam.isEmpty()) {
-                int idFicha = Integer.parseInt(idParam);
-                Configura cfg = new Configura();
-                Manipula manipula = new Manipula(cfg);
-                
-                try {
-                    // Buscar dados do animal
-                    String sql = "SELECT nome, filiacao FROM fichaClinicaAnimal WHERE idFichaClin = ?";
-                    Connection con = manipula.getLigacao();
-                    PreparedStatement ps = con.prepareStatement(sql);
-                    ps.setInt(1, idFicha);
-                    ResultSet rs = ps.executeQuery();
-                    
-                    if (rs.next()) {
-                        String nome = rs.getString("nome");
-                        String filiacao = rs.getString("filiacao");
-                        %>
-                        
-                        <div class="arvore">
-                            <!-- Avós (se houver informação) -->
-                            <% if (filiacao != null && !filiacao.isEmpty() && filiacao.contains("descendente")) { %>
-                                <div class="nivel">
-                                    <div class="animal-box">
-                                        <div class="animal-nome">Avô Paterno</div>
-                                        <div class="animal-info">Informação não disponível</div>
-                                    </div>
-                                    <div class="animal-box">
-                                        <div class="animal-nome">Avó Paterna</div>
-                                        <div class="animal-info">Informação não disponível</div>
-                                    </div>
-                                    <div class="animal-box">
-                                        <div class="animal-nome">Avô Materno</div>
-                                        <div class="animal-info">Informação não disponível</div>
-                                    </div>
-                                    <div class="animal-box">
-                                        <div class="animal-nome">Avó Materna</div>
-                                        <div class="animal-info">Informação não disponível</div>
-                                    </div>
-                                </div>
-                                <div class="conexao"></div>
-                            <% } %>
-                            
-                            <!-- Pais -->
-                            <div class="nivel">
-                                <div class="animal-box pai">
-                                    <div class="animal-nome">👨 Pai</div>
-                                    <div class="animal-info">
-                                        <%= filiacao != null && filiacao.contains("pai") ? filiacao : "Desconhecido" %>
-                                    </div>
-                                </div>
-                                <div class="animal-box mae">
-                                    <div class="animal-nome">👩 Mãe</div>
-                                    <div class="animal-info">
-                                        <%= filiacao != null && filiacao.contains("mãe") ? filiacao : "Desconhecida" %>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="conexao"></div>
-                            
-                            <!-- Animal atual -->
-                            <div class="nivel">
-                                <div class="animal-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                                    <div class="animal-nome">🐾 <%= nome %></div>
-                                    <div class="animal-info">ID: <%= idFicha %></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="info-card" style="margin-top: 30px;">
-                            <h3>ℹ️ Informação sobre Filiação</h3>
-                            <p><strong>Filiação registada:</strong> <%= filiacao != null ? filiacao : "Não especificada" %></p>
-                            <p style="color: #666; margin-top: 10px;">
-                                <em>Nota: Para uma árvore genealógica completa, é necessário registar 
-                                a filiação detalhada de cada animal no sistema.</em>
-                            </p>
-                        </div>
-                        
-                        <%
-                    } else {
-                        %>
-                        <div class="mensagem erro">Animal não encontrado</div>
-                        <%
-                    }
-                    
-                    rs.close();
-                    ps.close();
-                    
-                } catch (Exception e) {
-                    %>
-                    <div class="mensagem erro">❌ Erro: <%= e.getMessage() %></div>
-                    <%
-                    e.printStackTrace();
-                } finally {
-                    manipula.desligar();
-                }
-            }
-            %>
-        </div>
+
+<header class="main-header">
+  <div class="header-content">
+    <div class="logo">
+      <img src="../images/logo.png" class="logo-img" alt="VetCare Logo">
+      <span class="logo-text">VetCare</span>
     </div>
+    <nav class="main-nav">
+      <a href="../index.jsp">Início</a>
+      <a href="menu.jsp">Veterinário</a>
+    </nav>
+  </div>
+</header>
+
+<%
+String idParam = request.getParameter("idFichaClin");
+if (idParam == null) {
+    response.sendRedirect("pesquisar_animal.jsp");
+    return;
+}
+
+int idFicha = Integer.parseInt(idParam);
+Configura cfg = new Configura();
+Manipula manipula = new Manipula(cfg);
+
+try {
+    Connection con = manipula.getLigacao();
+    
+    String sql = "SELECT nome, filiacao FROM fichaClinicaAnimal WHERE idFichaClin = ?";
+    PreparedStatement ps = con.prepareStatement(sql);
+    ps.setInt(1, idFicha);
+    ResultSet rs = ps.executeQuery();
+    
+    if (rs.next()) {
+        String nome = rs.getString("nome");
+        String filiacao = rs.getString("filiacao");
+%>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Árvore Genealógica: <%= nome %></h1>
+    <p>Ascendência e descendência do animal</p>
+  </div>
+</section>
+
+<div class="page-content">
+  <a href="ficha_clinica.jsp?idFichaClin=<%= idFicha %>" class="btn-voltar">← Voltar à Ficha</a>
+  
+  <div class="arvore-container">
+    <div class="nivel-label">🌳 Ascendentes (Pais)</div>
+    <div class="arvore-nivel">
+      <div class="animal-card">
+        <div class="animal-nome">👨 Pai</div>
+        <div class="animal-info">
+          <%= filiacao != null && !filiacao.isEmpty() ? filiacao.split(",")[0].trim() : "Desconhecido" %>
+        </div>
+      </div>
+      <div class="animal-card">
+        <div class="animal-nome">👩 Mãe</div>
+        <div class="animal-info">
+          <%= filiacao != null && filiacao.contains(",") && filiacao.split(",").length > 1 ? filiacao.split(",")[1].trim() : "Desconhecida" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="seta">↓</div>
+    
+    <div class="nivel-label">🐾 Animal Atual</div>
+    <div class="arvore-nivel">
+      <div class="animal-card atual">
+        <div class="animal-nome"><%= nome %></div>
+        <div class="animal-info">ID: <%= idFicha %></div>
+      </div>
+    </div>
+    
+    <div class="seta">↓</div>
+    
+    <div class="nivel-label">👶 Descendentes</div>
+    <%
+        rs.close();
+        ps.close();
+        
+        String sqlDescendentes = 
+            "SELECT idFichaClin, nome " +
+            "FROM fichaClinicaAnimal " +
+            "WHERE filiacao LIKE ? " +
+            "ORDER BY nome";
+        
+        PreparedStatement psDesc = con.prepareStatement(sqlDescendentes);
+        psDesc.setString(1, "%" + nome + "%");
+        ResultSet rsDesc = psDesc.executeQuery();
+        
+        boolean temDescendentes = false;
+    %>
+    <div class="arvore-nivel">
+    <%
+        while (rsDesc.next()) {
+            temDescendentes = true;
+            int idDesc = rsDesc.getInt("idFichaClin");
+            String nomeDesc = rsDesc.getString("nome");
+    %>
+        <div class="animal-card">
+          <div class="animal-nome"><%= nomeDesc %></div>
+          <div class="animal-info">ID: <%= idDesc %></div>
+          <a href="arvore_genealogica.jsp?idFichaClin=<%= idDesc %>" 
+             style="display:inline-block; margin-top:8px; font-size:12px; color:#0B2A42; font-weight:700;">
+            Ver Árvore →
+          </a>
+        </div>
+    <%
+        }
+        
+        if (!temDescendentes) {
+    %>
+        <div style="text-align:center; padding:20px; color:#57606F; font-weight:600;">
+          📭 Este animal não tem descendentes registados
+        </div>
+    <%
+        }
+        
+        rsDesc.close();
+        psDesc.close();
+    %>
+    </div>
+    
+    <div style="margin-top:30px; padding:20px; background:#EAF6FB; border-radius:10px;">
+      <strong style="color:#0B2A42;">ℹ️ Nota:</strong>
+      <span style="color:#57606F; font-weight:500;">
+        A árvore genealógica é construída com base no campo "filiacao" registado na ficha do animal.
+      </span>
+    </div>
+  </div>
+</div>
+
+<%
+    } else {
+%>
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Erro</h1>
+    <p>Animal não encontrado</p>
+  </div>
+</section>
+<%
+    }
+    
+} catch (Exception e) {
+    e.printStackTrace();
+%>
+<div class="mensagem erro">❌ Erro: <%= e.getMessage() %></div>
+<%
+} finally {
+    manipula.desligar();
+}
+%>
+
 </body>
 </html>

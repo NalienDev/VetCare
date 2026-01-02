@@ -173,6 +173,36 @@ body {
     max-width: 750px;
 }
 
+.search-input-wrapper {
+  position: relative;
+}
+
+.autocomplete-items {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #DFE4EA;
+  border-radius: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 99999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.autocomplete-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #0B2A42;
+}
+
+.autocomplete-item:hover {
+  background: #EAF6FB;
+}
+
+
 /* Header */
 .search-header {
     display: flex;
