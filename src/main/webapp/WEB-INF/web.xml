@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
          http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          id="WebApp_ID" version="4.0">
-    
+
     <display-name>VetCare</display-name>
-    
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-    
+
     <!-- Configuração de sessão -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    
+
     <!-- Configuração de encoding UTF-8 -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -29,26 +29,16 @@
             <param-value>false</param-value>
         </init-param>
     </filter>
-    
+
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-    <servlet>
-	  <servlet-name>FotoAnimalServlet</servlet-name>
-	  <servlet-class>servlets.FotoAnimalServlet</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-	  <servlet-name>FotoAnimalServlet</servlet-name>
-	  <url-pattern>/fotoAnimal</url-pattern>
-	</servlet-mapping>
-	
+
 	<servlet>
 	    <servlet-name>jsp</servlet-name>
 	    <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
-	
+
 	    <multipart-config>
 	        <max-file-size>5242880</max-file-size>
 	        <max-request-size>10485760</max-request-size>
@@ -56,8 +46,4 @@
 	    </multipart-config>
 	</servlet>
 
-
-	
-    
-    
 </web-app>

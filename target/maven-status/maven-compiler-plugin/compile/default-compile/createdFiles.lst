@@ -1,7 +1,10 @@
 util\Console.class
+util\EspeciesRacas.class
+servlets\ProcurarTutoresServlet.class
 vetcare\Configura$SGBD.class
 vetcare\Manipula.class
-vetcare\WebRootPath.class
+servlets\FotoAnimalServlet.class
 util\DataFormatter.class
 vetcare\VetCare.class
 vetcare\Configura.class
+servlets\CarregarAnimaisServlet.class
