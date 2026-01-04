@@ -1,14 +1,22 @@
 package servlets;
 
-import vetcare.*;
 import java.io.*;
 import java.sql.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+
+import vetcare.Configura;
+import vetcare.Manipula;
+
+@WebServlet("/fotoAnimal")
 
 public class FotoAnimalServlet extends HttpServlet {
 
-    @Override
+	private static final long serialVersionUID = 1L;
+
+	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
