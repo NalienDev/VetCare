@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Previsão de Agendamentos - Próxima Semana</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Previsão de Agendamentos - Próxima Semana</title>
+	<link rel="stylesheet" href="../css/vetcare-ui.css">
     <style>
         .servico-card {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -121,11 +121,27 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 Previsão de Agendamentos - Próxima Semana</h1>
-            <a href="menu.jsp" class="btn-voltar">← Voltar</a>
-        </header>
+	<header class="main-header">
+	  <div class="header-content">
+	    <div class="logo">
+	      <img src="../images/logo.png" class="logo-img" alt="VetCare Logo">
+	      <span class="logo-text">VetCare</span>
+	    </div>
+	    <nav class="main-nav">
+	      <a href="../index.jsp">Início</a>
+	      <a href="menu.jsp">Gerente</a>
+	    </nav>
+	  </div>
+	</header>
+	
+	<section class="page-hero">
+	  <div class="page-hero-inner">
+	    <h1>📊 Previsão de Agendamentos - Próxima Semana</h1>
+	    <p>Previsão de Agendamentos para a próxima semana</p>
+	  </div>
+	</section>
+    <div class="page-content">
+    	<a href="menu.jsp" class="btn-voltar">← Voltar</a>
         
         <div class="content">
             <%
@@ -213,11 +229,6 @@
                     <div class="sem-agendamentos">
                         <h2>📭 Nenhum Agendamento Previsto</h2>
                         <p>Não existem agendamentos marcados para a próxima semana.</p>
-                        <p style="margin-top: 15px;">
-                            <a href="../rececionista/agendar_servico.jsp" class="btn btn-primary">
-                                📅 Criar Novo Agendamento
-                            </a>
-                        </p>
                     </div>
                 <%
                 } else {
@@ -380,9 +391,6 @@
             
             <!-- Botões de Ação -->
             <div class="form-actions" style="margin-top: 30px; justify-content: center;">
-                <a href="../rececionista/agendar_servico.jsp" class="btn btn-primary">
-                    📅 Criar Novo Agendamento
-                </a>
                 <button onclick="window.print()" class="btn btn-secondary">
                     🖨️ Imprimir Relatório
                 </button>
