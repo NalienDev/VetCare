@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="vetcare.*, java.sql.*, java.util.*, java.io.*, javax.servlet.http.Part, java.nio.file.*" %>
+<%@ page import="vetcare.*, java.sql.*, java.util.*, java.io.*, java.nio.file.*" %>
 <!DOCTYPE html>
 <html lang="pt">
 <head>
