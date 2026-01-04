@@ -104,15 +104,15 @@ try {
 <section class="page-hero">
   <div class="page-hero-inner">
     <h1>Árvore Genealógica: <%= nome %></h1>
-    <p>Ascendência e descendência do animal</p>
+    <p>Ascendência do animal</p>
   </div>
 </section>
 
 <div class="page-content">
-  <a href="ficha_clinica.jsp?idFichaClin=<%= idFicha %>" class="btn-voltar">← Voltar à Ficha</a>
+  <a href="pesquisar_arvore.jsp" class="btn-voltar">← Voltar</a>
   
   <div class="arvore-container">
-    <div class="nivel-label">🌳 Ascendentes (Pais)</div>
+    <div class="nivel-label">🌳 Pais</div>
     <div class="arvore-nivel">
       <div class="animal-card">
         <div class="animal-nome">👨 Pai</div>
@@ -137,67 +137,12 @@ try {
         <div class="animal-info">ID: <%= idFicha %></div>
       </div>
     </div>
-    
-    <div class="seta">↓</div>
-    
-    <div class="nivel-label">👶 Descendentes</div>
-    <%
-        rs.close();
-        ps.close();
-        
-        String sqlDescendentes = 
-            "SELECT idFichaClin, nome " +
-            "FROM fichaClinicaAnimal " +
-            "WHERE filiacao LIKE ? " +
-            "ORDER BY nome";
-        
-        PreparedStatement psDesc = con.prepareStatement(sqlDescendentes);
-        psDesc.setString(1, "%" + nome + "%");
-        ResultSet rsDesc = psDesc.executeQuery();
-        
-        boolean temDescendentes = false;
-    %>
-    <div class="arvore-nivel">
-    <%
-        while (rsDesc.next()) {
-            temDescendentes = true;
-            int idDesc = rsDesc.getInt("idFichaClin");
-            String nomeDesc = rsDesc.getString("nome");
-    %>
-        <div class="animal-card">
-          <div class="animal-nome"><%= nomeDesc %></div>
-          <div class="animal-info">ID: <%= idDesc %></div>
-          <a href="arvore_genealogica.jsp?idFichaClin=<%= idDesc %>" 
-             style="display:inline-block; margin-top:8px; font-size:12px; color:#0B2A42; font-weight:700;">
-            Ver Árvore →
-          </a>
-        </div>
-    <%
-        }
-        
-        if (!temDescendentes) {
-    %>
-        <div style="text-align:center; padding:20px; color:#57606F; font-weight:600;">
-          📭 Este animal não tem descendentes registados
-        </div>
-    <%
-        }
-        
-        rsDesc.close();
-        psDesc.close();
-    %>
-    </div>
-    
-    <div style="margin-top:30px; padding:20px; background:#EAF6FB; border-radius:10px;">
-      <strong style="color:#0B2A42;">ℹ️ Nota:</strong>
-      <span style="color:#57606F; font-weight:500;">
-        A árvore genealógica é construída com base no campo "filiacao" registado na ficha do animal.
-      </span>
-    </div>
   </div>
 </div>
 
 <%
+        rs.close();
+        ps.close();
     } else {
 %>
 <section class="page-hero">

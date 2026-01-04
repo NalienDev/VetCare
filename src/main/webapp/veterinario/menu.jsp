@@ -49,6 +49,11 @@
       <h2>Agendar/Cancelar Serviços</h2>
       <p>Gestão de agendamentos de serviços veterinários.</p>
     </a>
+    
+    <a href="pesquisar_arvore.jsp" class="menu-card">
+      <h2>Árvore Genealógica</h2>
+      <p>Ver ascendência e descendência de animais.</p>
+    </a>
 
   </div>
 </div>

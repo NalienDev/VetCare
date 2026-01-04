@@ -85,13 +85,19 @@
       String nome = request.getParameter("nome");
       String sexo = request.getParameter("sexo");
       String dataNasc = request.getParameter("dataNasc");
-      String filiacao = request.getParameter("filiacao");
+      String nomePai = request.getParameter("nomePai");
+      String nomeMae = request.getParameter("nomeMae");
       String estadoReprod = request.getParameter("estadoReprod");
       String alergias = request.getParameter("alergias");
       String nomeRaca = request.getParameter("nomeRaca");
       String nomeEspecie = request.getParameter("nomeEspecie");
       String[] coresSelecionadas = request.getParameterValues("cores");
       String outrasDistint = request.getParameter("outrasDistint");
+
+      // Construir string de filiação no formato "pai, mae"
+      String pai = (nomePai != null && !nomePai.trim().isEmpty()) ? nomePai.trim() : "Desconhecido";
+      String mae = (nomeMae != null && !nomeMae.trim().isEmpty()) ? nomeMae.trim() : "Desconhecido";
+      String filiacao = pai + ", " + mae;
 
       Configura cfg = new Configura();
       Manipula manipula = new Manipula(cfg);
@@ -177,7 +183,7 @@
         }
         
         psFicha.setDate(4, dn);
-        psFicha.setString(5, (filiacao != null && !filiacao.trim().isEmpty()) ? filiacao : "Desconhecido");
+        psFicha.setString(5, filiacao);
         psFicha.setString(6, estadoReprod);
         psFicha.setString(7, (alergias != null && !alergias.trim().isEmpty()) ? alergias : null);
         
@@ -393,9 +399,16 @@
       <textarea name="outrasDistint" rows="2" placeholder="Ex: dedo extra, mancha específica, cicatriz..."></textarea>
     </div>
 
-    <div class="form-group">
-      <label>Filiação</label>
-      <input type="text" name="filiacao" maxlength="255" placeholder="Criador, pais conhecidos...">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nome do Pai</label>
+        <input type="text" name="nomePai" maxlength="100" placeholder="Deixe vazio se desconhecido">
+      </div>
+
+      <div class="form-group">
+        <label>Nome da Mãe</label>
+        <input type="text" name="nomeMae" maxlength="100" placeholder="Deixe vazio se desconhecida">
+      </div>
     </div>
 
     <div class="form-group">
