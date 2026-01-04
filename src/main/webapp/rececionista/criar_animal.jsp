@@ -210,7 +210,7 @@
           Part filePart = request.getPart("fotoPerfil");
           String cores = (coresSelecionadas != null) ? String.join(", ", coresSelecionadas) : "N/A";
 
-          // ✅ CORREÇÃO: guardar foto NA BASE DE DADOS (BLOB) e não no filesystem
+          // Guardar foto NA BASE DE DADOS (BLOB) e não no filesystem
           byte[] fotoBytes = new byte[0];
           if (filePart != null && filePart.getSize() > 0) {
             try (InputStream input = filePart.getInputStream()) {
@@ -223,12 +223,8 @@
           PreparedStatement psFoto = con.prepareStatement(sqlFoto);
           psFoto.setInt(1, idFicha);
           psFoto.setString(2, cores);
-          psFoto.setBytes(3, fotoBytes); // ✅ agora guarda a foto real em BLOB
-
-          // ✅ CORREÇÃO: peso aqui é peso atual, NÃO é tamanho do ficheiro
-          // Como o veterinário altera o peso na ficha, aqui fica NULL
+          psFoto.setBytes(3, fotoBytes);
           psFoto.setNull(4, java.sql.Types.DECIMAL);
-
           psFoto.setString(5, (outrasDistint != null && !outrasDistint.trim().isEmpty()) ? outrasDistint : "N/A");
           psFoto.executeUpdate();
           psFoto.close();
@@ -308,7 +304,7 @@
 
     <div class="form-group" id="racaGroup" style="display:none;">
       <label>Raça *</label>
-      <input type="text" name="nomeRaca" id="racaInput" list="racasList" maxlength="100">
+      <input type="text" name="nomeRaca" id="racaInput" list="racasList" maxlength="100" placeholder="Escreva ou selecione a raça...">
       <datalist id="racasList"></datalist>
     </div>
 
@@ -424,7 +420,8 @@
 </div>
 
 <script>
-const racasPorEspecie = {
+// Raças por espécie (fallback local)
+var racasPorEspecie = {
   "Cão": ["Labrador Retriever","Golden Retriever","Pastor Alemão","Bulldog Francês","Bulldog Inglês","Beagle","Poodle","Rottweiler","Yorkshire Terrier","Boxer","Dachshund (Salsicha)","Husky Siberiano","Doberman","Shih Tzu","Pug","Chihuahua","Border Collie","Cocker Spaniel","Springer Spaniel","Dálmata","Schnauzer","Bernese Mountain Dog","Akita","Chow Chow","Mastim","São Bernardo","Bull Terrier","Staffordshire","Jack Russell Terrier","Bichon Frisé","Maltês","West Highland Terrier","Lhasa Apso","Basenji","Pointer","Setter Irlandês","Setter Inglês","Weimaraner","Vizsla","Basset Hound","Bloodhound","Galgo","Whippet","Greyhound","Border Terrier","Cairn Terrier","Scottish Terrier","Shar Pei","Cão de Água Português","Rafeiro Alentejano","Perdigueiro Português","Podengo Português","Castro Laboreiro","Serra da Estrela","Mestiço","SRD (Sem Raça Definida)"],
   "Gato": ["Persa","Siamês","Maine Coon","Ragdoll","Bengal","British Shorthair","Abissínio","Sphynx","Scottish Fold","Birmanês","Norueguês da Floresta","Angorá","Russian Blue","Exótico","Oriental","Manx","Devon Rex","Cornish Rex","Burmês","Tonkinês","Chartreux","Balinês","Somali","Bombaim","Havana Brown","Singapura","Korat","LaPerm","Selkirk Rex","American Shorthair","American Curl","Munchkin","Savannah","Toyger","Europeu Comum","Mestiço","SRD (Sem Raça Definida)"],
   "Coelho": ["Coelho Anão","Mini Lop","Holland Lop","Lionhead","Rex","Angorá","Gigante Flamengo","Nova Zelândia","Californiano","Netherland Dwarf","Jersey Wooly","Fuzzy Lop","English Lop","French Lop","Himalaia","Hotot","Mini Rex","Polish","Mestiço"],
@@ -438,22 +435,27 @@ const racasPorEspecie = {
 };
 
 function carregarRacas() {
-  const especie = document.getElementById('especieSelect').value;
-  const racaGroup = document.getElementById('racaGroup');
-  const racaInput = document.getElementById('racaInput');
-  const datalist = document.getElementById('racasList');
+  var especie = document.getElementById('especieSelect').value;
+  var racaGroup = document.getElementById('racaGroup');
+  var racaInput = document.getElementById('racaInput');
+  var datalist = document.getElementById('racasList');
   
+  // Limpar datalist
   datalist.innerHTML = '';
+  racaInput.value = '';
   
   if (especie && racasPorEspecie[especie]) {
     racaGroup.style.display = 'block';
     racaInput.required = true;
     
-    racasPorEspecie[especie].forEach(raca => {
-      const option = document.createElement('option');
-      option.value = raca;
+    // Preencher com todas as raças da espécie selecionada
+    var racas = racasPorEspecie[especie];
+    for (var i = 0; i < racas.length; i++) {
+      var option = document.createElement('option');
+      option.value = racas[i];
       datalist.appendChild(option);
-    });
+    }
+    
   } else {
     racaGroup.style.display = 'none';
     racaInput.required = false;
@@ -461,9 +463,9 @@ function carregarRacas() {
 }
 
 function previewFoto(input) {
-  const preview = document.getElementById('fotoPreview');
+  var preview = document.getElementById('fotoPreview');
   if (input.files && input.files[0]) {
-    const reader = new FileReader();
+    var reader = new FileReader();
     reader.onload = function(e) {
       preview.src = e.target.result;
       preview.style.display = 'block';

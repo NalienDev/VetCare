@@ -271,122 +271,70 @@
 
         .info-row{
             display:flex;
-            align-items:flex-start;
-            gap:12px;
-            font-size:13px;
-            font-weight:500;
-            color:var(--txt-muted);
-            margin:10px 0;
+            align-items:center;
+            gap:10px;
+            margin-bottom:10px;
+            font-size:14px;
+            color: var(--txt-muted);
         }
         .info-icon{
-            width:18px;
-            height:18px;
-            margin-top:2px;
+            width:16px;
+            height:16px;
         }
 
         .hours-row{
             display:flex;
             align-items:center;
-            gap:14px;
+            gap:10px;
         }
-
         .badge-hours{
-            font-weight:600;
+            background:#F0F4F8;
+            padding:5px 12px;
+            border-radius:8px;
             font-size:13px;
-            color:var(--txt-muted);
+            font-weight:700;
         }
-
         .badge-emergency{
+            background:#FFEAEA;
+            color:#EB5757;
+            padding:5px 12px;
+            border-radius:8px;
+            font-size:13px;
+            font-weight:700;
             display:flex;
             align-items:center;
             gap:6px;
-            font-weight:900;
-            color:#E55353;
-            font-size:13px;
         }
         .badge-emergency img{
-            width:16px;
-            height:16px;
+            width:14px;
+            height:14px;
         }
 
-        /* phone box */
         .phone-box{
-            margin-top:18px;
-            border:1px solid var(--border);
-            border-radius: 14px 4px 14px 4px;
-            padding:16px 18px;
+            margin-top:14px;
             display:flex;
             align-items:center;
-            gap:12px;
-            width: fit-content;
-            font-weight:900;
-            color:var(--txt-dark);
+            gap:10px;
+            font-size:15px;
+            font-weight:700;
         }
         .phone-box img{
             width:18px;
             height:18px;
         }
 
-        /* botão show all */
         .btn-showall{
             display:none;
-            margin-bottom:30px;
+            margin:30px 0;
+            background:var(--green);
+            color:var(--txt-dark);
             border:none;
+            padding:14px 28px;
+            font-weight:800;
+            font-size:14px;
+            border-radius:14px 4px 14px 4px;
             cursor:pointer;
-            font-weight:900;
-            background:#0B2A42;
-            color:white;
-            padding:14px 18px;
-            border-radius: 16px 4px 16px 4px;
         }
-
-        /* RESPONSIVO */
-        @media(max-width:1100px){
-            .hero-inner, .clinics-container{
-                margin-left:20px;
-                margin-right:20px;
-            }
-            .search-grid{
-                grid-template-columns: 1fr;
-            }
-            .btn-blue, .btn-green{
-                width:100%;
-            }
-            .clinic-card{
-                width:100%;
-            }
-        }
-        
-        @media(max-width:1000px){
-
-		    .search-grid{
-		        flex-direction:column;
-		        align-items:stretch;
-		        gap:14px; /* espaçamento entre input e botões */
-		    }
-		
-		    .search-input-wrapper{
-		        max-width:100%;
-		        width:100%;
-		    }
-		
-		    /* botões normais (não esticam) */
-		    .btn-green,
-		    .btn-blue{
-		        width:100%;
-		        flex:0 0 auto;     /* não esticar */
-		        height:54px;       /* igual ao site */
-		        justify-content:center;
-		        font-size:15px;
-		    }
-		
-		    /* a dica só aparece depois dos botões */
-		    .tip{
-		        margin-top:18px;
-		    }
-		}
-
-		        
     </style>
 </head>
 
@@ -601,8 +549,8 @@ function getLocation(){
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function(pos){
-                const userLat = pos.coords.latitude;
-                const userLng = pos.coords.longitude;
+                var userLat = pos.coords.latitude;
+                var userLng = pos.coords.longitude;
                 mostrarClinicaMaisProxima(userLat, userLng);
             },
             function(){
@@ -615,34 +563,41 @@ function getLocation(){
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI/180;
-    const dLon = (lon2 - lon1) * Math.PI/180;
-    const a =
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI/180;
+    var dLon = (lon2 - lon1) * Math.PI/180;
+    var a =
         Math.sin(dLat/2) * Math.sin(dLat/2) +
         Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
         Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
 }
 
 function mostrarClinicaMaisProxima(userLat, userLng){
-    const cards = document.querySelectorAll(".clinic-card");
-    let menorDist = Infinity;
-    let maisProxima = null;
+    var cards = document.querySelectorAll(".clinic-card");
+    var menorDist = Infinity;
+    var maisProxima = null;
 
-    cards.forEach(card => {
-        const cLat = parseFloat(card.dataset.lat);
-        const cLng = parseFloat(card.dataset.lng);
-        const dist = haversine(userLat, userLng, cLat, cLng);
+    for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var cLat = parseFloat(card.dataset.lat);
+        var cLng = parseFloat(card.dataset.lng);
+        var dist = haversine(userLat, userLng, cLat, cLng);
         if(dist < menorDist){
             menorDist = dist;
             maisProxima = card;
         }
-    });
+    }
 
-    cards.forEach(card => card.style.display = "none");
-    document.querySelectorAll(".region-title").forEach(t => t.style.display = "none");
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].style.display = "none";
+    }
+    
+    var titles = document.querySelectorAll(".region-title");
+    for (var i = 0; i < titles.length; i++) {
+        titles[i].style.display = "none";
+    }
 
     document.getElementById("btnShowAll").style.display = "inline-block";
 
@@ -657,10 +612,117 @@ function mostrarClinicaMaisProxima(userLat, userLng){
 }
 
 function showAllClinics(){
-    document.querySelectorAll(".clinic-card").forEach(c => c.style.display = "block");
-    document.querySelectorAll(".region-title").forEach(t => t.style.display = "block");
+    var cards = document.querySelectorAll(".clinic-card");
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].style.display = "block";
+    }
+    
+    var titles = document.querySelectorAll(".region-title");
+    for (var i = 0; i < titles.length; i++) {
+        titles[i].style.display = "block";
+    }
+    
     document.getElementById("btnShowAll").style.display = "none";
 }
+</script>
+
+<script>
+var inputClinica = document.getElementById("searchClinica");
+var resultadosClinica = document.getElementById("resultadosClinica");
+
+var timeoutClinica = null;
+
+// Function to search clinics using XMLHttpRequest
+function pesquisarClinicas() {
+    var query = inputClinica.value.trim();
+
+    if(query.length < 1){
+        resultadosClinica.style.display = "none";
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+
+                if(data.length > 0){
+                    var html = "";
+
+                    for (var i = 0; i < data.length; i++) {
+                        var c = data[i];
+                        html += '<div class="resultado-item" onclick="abrirClinica(\'' + escapeJS(c.localidade) + '\')" ' +
+                            'style="padding:14px; cursor:pointer; border-bottom:1px solid #F1F5F8;">' +
+                            '<strong style="color:#0B2A42;">VetCare ' + escapeHtml(c.localidade) + '</strong><br>' +
+                            '<small style="color:#57606F;">' + escapeHtml(c.morada) + ', ' + escapeHtml(c.codPostal) + '</small>' +
+                            '</div>';
+                    }
+
+                    resultadosClinica.innerHTML = html;
+                    resultadosClinica.style.display = "block";
+
+                } else {
+                    resultadosClinica.innerHTML =
+                        '<div style="padding:14px; color:#57606F;">📭 Nenhuma clínica encontrada</div>';
+                    resultadosClinica.style.display = "block";
+                }
+            } catch (e) {
+                console.error('Erro ao processar resposta:', e);
+                resultadosClinica.innerHTML =
+                    '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+                resultadosClinica.style.display = "block";
+            }
+        } else if (xhr.readyState === 4) {
+            console.error('Erro no servidor. Status:', xhr.status);
+            resultadosClinica.innerHTML =
+                '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+            resultadosClinica.style.display = "block";
+        }
+    };
+    var contextPath = "<%= request.getContextPath() %>";
+    xhr.open("GET", contextPath + "/procurarClinicas?query=" + encodeURIComponent(query), true);
+    xhr.send();
+}
+
+inputClinica.addEventListener("input", function(){
+    clearTimeout(timeoutClinica);
+    timeoutClinica = setTimeout(pesquisarClinicas, 250);
+});
+
+function abrirClinica(localidade){
+    window.location.href = "clinica.jsp?localidade=" + encodeURIComponent(localidade);
+}
+
+function escapeHtml(text){
+    var div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function escapeJS(text){
+    return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+document.addEventListener("click", function(e){
+    if(!inputClinica.contains(e.target) && !resultadosClinica.contains(e.target)){
+        resultadosClinica.style.display = "none";
+    }
+});
+
+document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        item.style.backgroundColor = '#EAF6FB';
+    }
+});
+
+document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        item.style.backgroundColor = 'white';
+    }
+});
 </script>
 
 </body>

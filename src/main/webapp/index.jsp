@@ -185,7 +185,9 @@
             </div>
         </div>
     </footer>
+    
     <script>
+	// Clínicas mais próximas
 	document.querySelector(".btn-clinicas-proximas").addEventListener("click", function(){
 	
 	    if(!navigator.geolocation){
@@ -195,33 +197,43 @@
 	
 	    navigator.geolocation.getCurrentPosition(function(pos){
 	
-	        const userLat = pos.coords.latitude;
-	        const userLng = pos.coords.longitude;
+	        var userLat = pos.coords.latitude;
+	        var userLng = pos.coords.longitude;
 	
-	        fetch("procurar_clinicas_ajax.jsp?query=") // query vazio = devolve as primeiras
-	            .then(res => res.json())
-	            .then(data => {
+	        var xhr = new XMLHttpRequest();
+	        xhr.onreadystatechange = function() {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                try {
+	                    var data = JSON.parse(xhr.responseText);
 	
-	                if(data.length === 0){
-	                    alert("Nenhuma clínica na base de dados.");
-	                    return;
-	                }
-	
-	                let menor = Infinity;
-	                let clinica = null;
-	
-	                data.forEach(c => {
-	                    const dist = haversine(userLat, userLng, c.lat, c.lng);
-	                    if(dist < menor){
-	                        menor = dist;
-	                        clinica = c;
+	                    if(data.length === 0){
+	                        alert("Nenhuma clínica na base de dados.");
+	                        return;
 	                    }
-	                });
 	
-	                if(clinica){
-	                    window.location.href = "clinica.jsp?localidade=" + encodeURIComponent(clinica.localidade);
+	                    var menor = Infinity;
+	                    var clinica = null;
+	
+	                    for (var i = 0; i < data.length; i++) {
+	                        var c = data[i];
+	                        var dist = haversine(userLat, userLng, c.lat, c.lng);
+	                        if(dist < menor){
+	                            menor = dist;
+	                            clinica = c;
+	                        }
+	                    }
+	
+	                    if(clinica){
+	                        window.location.href = "clinica.jsp?localidade=" + encodeURIComponent(clinica.localidade);
+	                    }
+	                } catch (e) {
+	                    console.error('Erro ao processar resposta:', e);
 	                }
-	            });
+	            }
+	        };
+	        var contextPath = "<%= request.getContextPath() %>";
+	        xhr.open("GET", contextPath + "/procurarClinicas?query=", true);
+	        xhr.send();
 	
 	    }, function(){
 	        alert("Permite a localização no navegador.");
@@ -229,50 +241,50 @@
 	});
 	
 	function haversine(lat1, lon1, lat2, lon2) {
-	    const R = 6371;
-	    const dLat = (lat2 - lat1) * Math.PI/180;
-	    const dLon = (lon2 - lon1) * Math.PI/180;
-	    const a =
+	    var R = 6371;
+	    var dLat = (lat2 - lat1) * Math.PI/180;
+	    var dLon = (lon2 - lon1) * Math.PI/180;
+	    var a =
 	        Math.sin(dLat/2) * Math.sin(dLat/2) +
 	        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
 	        Math.sin(dLon/2) * Math.sin(dLon/2);
-	    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    return R * c;
 	}
 	</script>
     
    <script>
-	const inputClinica = document.getElementById("searchClinica");
-	const resultadosClinica = document.getElementById("resultadosClinica");
+	var inputClinica = document.getElementById("searchClinica");
+	var resultadosClinica = document.getElementById("resultadosClinica");
 	
-	let timeoutClinica = null;
+	var timeoutClinica = null;
 	
-	inputClinica.addEventListener("input", function(){
-	    clearTimeout(timeoutClinica);
-	    const query = this.value.trim();
+	// Function to search clinics using XMLHttpRequest
+	function pesquisarClinicas() {
+	    var query = inputClinica.value.trim();
 	
 	    if(query.length < 1){
 	        resultadosClinica.style.display = "none";
 	        return;
 	    }
 	
-	    timeoutClinica = setTimeout(function(){
-	
-	        fetch("procurar_clinicas_ajax.jsp?query=" + encodeURIComponent(query))
-	            .then(res => res.json())
-	            .then(data => {
+	    var xhr = new XMLHttpRequest();
+	    xhr.onreadystatechange = function() {
+	        if (xhr.readyState === 4 && xhr.status === 200) {
+	            try {
+	                var data = JSON.parse(xhr.responseText);
 	
 	                if(data.length > 0){
+	                    var html = "";
 	
-	                    let html = "";
-	
-	                    data.forEach(c => {
-	                        html += '<div onclick="abrirClinica(\'' + escapeJS(c.localidade) + '\')" ' +
+	                    for (var i = 0; i < data.length; i++) {
+	                        var c = data[i];
+	                        html += '<div class="resultado-item" onclick="abrirClinica(\'' + escapeJS(c.localidade) + '\')" ' +
 	                            'style="padding:14px; cursor:pointer; border-bottom:1px solid #F1F5F8;">' +
 	                            '<strong style="color:#0B2A42;">VetCare ' + escapeHtml(c.localidade) + '</strong><br>' +
 	                            '<small style="color:#57606F;">' + escapeHtml(c.morada) + ', ' + escapeHtml(c.codPostal) + '</small>' +
 	                            '</div>';
-	                    });
+	                    }
 	
 	                    resultadosClinica.innerHTML = html;
 	                    resultadosClinica.style.display = "block";
@@ -282,15 +294,27 @@
 	                        '<div style="padding:14px; color:#57606F;">📭 Nenhuma clínica encontrada</div>';
 	                    resultadosClinica.style.display = "block";
 	                }
-	            })
-	            .catch(err => {
-	                console.error(err);
+	            } catch (e) {
+	                console.error('Erro ao processar resposta:', e);
 	                resultadosClinica.innerHTML =
 	                    '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
 	                resultadosClinica.style.display = "block";
-	            });
+	            }
+	        } else if (xhr.readyState === 4) {
+	            console.error('Erro no servidor. Status:', xhr.status);
+	            resultadosClinica.innerHTML =
+	                '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+	            resultadosClinica.style.display = "block";
+	        }
+	    };
+	    var contextPath = "<%= request.getContextPath() %>";
+	    xhr.open("GET", contextPath + "/procurarClinicas?query=" + encodeURIComponent(query), true);
+	    xhr.send();
+	}
 	
-	    }, 250);
+	inputClinica.addEventListener("input", function(){
+	    clearTimeout(timeoutClinica);
+	    timeoutClinica = setTimeout(pesquisarClinicas, 250);
 	});
 	
 	function abrirClinica(localidade){
@@ -298,7 +322,7 @@
 	}
 	
 	function escapeHtml(text){
-	    const div = document.createElement("div");
+	    var div = document.createElement("div");
 	    div.textContent = text;
 	    return div.innerHTML;
 	}
@@ -312,9 +336,21 @@
 	        resultadosClinica.style.display = "none";
 	    }
 	});
+	
+	document.addEventListener('mouseover', function(e) {
+	    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+	        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+	        item.style.backgroundColor = '#EAF6FB';
+	    }
+	});
+	
+	document.addEventListener('mouseout', function(e) {
+	    if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
+	        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+	        item.style.backgroundColor = 'white';
+	    }
+	});
 	</script>
-
-
 
 
    

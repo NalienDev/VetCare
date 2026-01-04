@@ -33,7 +33,7 @@
 <div class="page-content">
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
-  <!-- ✅ PESQUISA + AUTOCOMPLETE (IGUAL AO QUE FUNCIONA) -->
+  <!-- PESQUISA + AUTOCOMPLETE -->
   <form method="GET" style="margin: 20px 0; display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;" autocomplete="off">
 	
 	  <div class="form-group" style="margin:0; position:relative; min-width:340px;">
@@ -49,7 +49,7 @@
 	      autocomplete="off"
 	    >
 
-	    <!-- ✅ dropdown do autocomplete (INLINE STYLE IGUAL AO QUE FUNCIONA) -->
+	    <!-- dropdown do autocomplete -->
 	    <div id="resultados" style="display:none; position:absolute; background:white; border:1px solid #DDE6EE; border-radius:14px 4px 14px 4px; max-height:260px; overflow-y:auto; width:100%; z-index:9999; margin-top:5px; box-shadow:0px 4px 15px rgba(0,0,0,0.15);"></div>
 	  </div>
 
@@ -144,47 +144,61 @@
 </div>
 
 <script>
-// ✅ CÓDIGO EXATAMENTE IGUAL AO QUE FUNCIONA
-const searchInput = document.getElementById('searchTutor');
-const resultadosDiv = document.getElementById('resultados');
+var searchInput = document.getElementById('searchTutor');
+var resultadosDiv = document.getElementById('resultados');
+var timeoutId = null;
 
-let timeoutId = null;
-
-searchInput.addEventListener('input', function() {
-    clearTimeout(timeoutId);
-    const query = this.value.trim();
+// Function to search tutors using XMLHttpRequest
+function pesquisarTutores() {
+    var query = searchInput.value.trim();
     
     if (query.length < 2) {
         resultadosDiv.style.display = 'none';
         return;
     }
 
-    timeoutId = setTimeout(function() {
-        fetch('procurar_tutores_ajax.jsp?query=' + encodeURIComponent(query))
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+                
                 if (data.length > 0) {
-                    let html = '';
-                    data.forEach(function(tutor) {
+                    var html = '';
+                    for (var i = 0; i < data.length; i++) {
+                        var tutor = data[i];
                         html += '<div class="resultado-item" onclick="selecionarTutor(\'' + escapeHtml(tutor.nome).replace(/'/g, "\\'") + '\')" ';
                         html += 'style="padding:14px; cursor:pointer; border-bottom:1px solid #F1F5F8; transition:0.2s;">';
                         html += '<strong style="color:#0B2A42;">' + escapeHtml(tutor.nome) + '</strong><br>';
                         html += '<small style="color:#57606F;">NIF: ' + tutor.nif + '</small>';
                         html += '</div>';
-                    });
+                    }
                     resultadosDiv.innerHTML = html;
                     resultadosDiv.style.display = 'block';
                 } else {
                     resultadosDiv.innerHTML = '<div style="padding:14px; color:#57606F;">📭 Nenhum tutor encontrado</div>';
                     resultadosDiv.style.display = 'block';
                 }
-            })
-            .catch(function(err) {
-                console.error('Erro:', err);
-                resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar</div>';
+            } catch (e) {
+                console.error('Erro ao processar resposta:', e);
+                resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao processar dados</div>';
                 resultadosDiv.style.display = 'block';
-            });
-    }, 300);
+            }
+        } else if (xhr.readyState === 4) {
+            console.error('Erro no servidor. Status:', xhr.status);
+            resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar</div>';
+            resultadosDiv.style.display = 'block';
+        }
+    };
+    var contextPath = "<%= request.getContextPath() %>";
+    xhr.open("GET", contextPath + "/procurarTutores?query=" + encodeURIComponent(query), true);
+    xhr.send();
+}
+
+// Event listener for input with debounce
+searchInput.addEventListener('input', function() {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(pesquisarTutores, 300);
 });
 
 function selecionarTutor(nome) {
@@ -193,7 +207,7 @@ function selecionarTutor(nome) {
 }
 
 function escapeHtml(text) {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
@@ -206,14 +220,14 @@ document.addEventListener('click', function(e) {
 
 document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
-        const item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
         item.style.backgroundColor = '#EAF6FB';
     }
 });
 
 document.addEventListener('mouseout', function(e) {
     if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
-        const item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
+        var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');
         item.style.backgroundColor = 'white';
     }
 });
