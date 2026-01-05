@@ -25,6 +25,15 @@
       padding: 8px 16px;
       font-size: 14px;
     }
+    .vet-badge {
+      background: #28a745;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
@@ -45,7 +54,7 @@
 <section class="page-hero">
   <div class="page-hero-inner">
     <h1>🕐 Gestão de Horários</h1>
-    <p>Horários de funcionamento por clínica e dia da semana.</p>
+    <p>Horários de funcionamento e atribuição de veterinários.</p>
   </div>
 </section>
 
@@ -63,6 +72,7 @@
         <th>Dia da Semana</th>
         <th>Hora Início</th>
         <th>Hora Fim</th>
+        <th>Veterinários</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -72,9 +82,16 @@
       Manipula manipula = new Manipula(cfg);
       
       try {
-        String sql = "SELECT localidade, diaUtil, horaInicio, horaFim FROM horario ORDER BY localidade, FIELD(diaUtil, 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta')";
-        
         Connection con = manipula.getLigacao();
+        
+        String sql = 
+            "SELECT h.localidade, h.diaUtil, h.horaInicio, h.horaFim, " +
+            "COUNT(e.nLicenca) as numVets " +
+            "FROM horario h " +
+            "LEFT JOIN escalado e ON e.localidade = h.localidade AND e.diaUtil = h.diaUtil " +
+            "GROUP BY h.localidade, h.diaUtil, h.horaInicio, h.horaFim " +
+            "ORDER BY h.localidade, FIELD(h.diaUtil, 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta')";
+        
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         
@@ -84,6 +101,7 @@
           temDados = true;
           String localidade = rs.getString("localidade");
           String diaUtil = rs.getString("diaUtil");
+          int numVets = rs.getInt("numVets");
       %>
           <tr>
             <td><strong><%= localidade %></strong></td>
@@ -91,6 +109,17 @@
             <td><%= rs.getTime("horaInicio").toString().substring(0, 5) %></td>
             <td><%= rs.getTime("horaFim").toString().substring(0, 5) %></td>
             <td>
+              <% if (numVets > 0) { %>
+                <span class="vet-badge"><%= numVets %> vet<%= numVets > 1 ? "s" : "" %></span>
+              <% } else { %>
+                <span style="color: #999;">Nenhum</span>
+              <% } %>
+            </td>
+            <td>
+              <a href="atribuir_veterinario_horario.jsp?localidade=<%= java.net.URLEncoder.encode(localidade, "UTF-8") %>&diaUtil=<%= java.net.URLEncoder.encode(diaUtil, "UTF-8") %>" 
+                 class="btn btn-primary btn-sm" style="margin-right: 5px;">
+                👨‍⚕️ Veterinários
+              </a>
               <a href="editar_horario.jsp?localidade=<%= java.net.URLEncoder.encode(localidade, "UTF-8") %>&diaUtil=<%= java.net.URLEncoder.encode(diaUtil, "UTF-8") %>" 
                  class="btn btn-primary btn-sm">
                 ✏️ Editar
@@ -103,7 +132,7 @@
         if (!temDados) {
       %>
           <tr>
-            <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+            <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
               🔭 Nenhum horário cadastrado
             </td>
           </tr>
@@ -116,7 +145,7 @@
       } catch (Exception e) {
       %>
         <tr>
-          <td colspan="5" style="text-align: center; padding: 2rem; color: #DC3545;">
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #DC3545;">
             ❌ Erro ao carregar dados: <%= e.getMessage() %>
           </td>
         </tr>
