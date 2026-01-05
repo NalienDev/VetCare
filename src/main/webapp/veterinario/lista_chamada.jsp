@@ -26,8 +26,8 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>Lista de Chamada</h1>
-    <p>Agendamentos de hoje e futuros por data-hora.</p>
+    <h1>📋 Lista de Chamada</h1>
+    <p>Suas consultas agendadas nos dias em que trabalha.</p>
   </div>
 </section>
 
@@ -42,7 +42,7 @@
                value="<%= request.getParameter("nLicenca") != null ? request.getParameter("nLicenca") : "" %>"
                placeholder="Digite sua licença profissional">
       </div>
-      <button type="submit" class="btn btn-primary">📋 Ver Lista de Chamada</button>
+      <button type="submit" class="btn btn-primary">📋 Ver Minhas Consultas</button>
     </form>
   </div>
 
@@ -53,114 +53,171 @@
       Manipula manipula = new Manipula(cfg);
       
       try {
-          String sql = 
-              "SELECT a.idAgendamento, a.dataHrAgenda, a.tipoServ, a.statusAgendamento, " +
-              "       c.nomeCompleto AS cliente, c.NIF " +
-              "FROM agendamento a " +
-              "INNER JOIN agenda ag ON a.idAgendamento = ag.idAgendamento " +
-              "INNER JOIN cliente c ON ag.NIF = c.NIF " +
-              "WHERE a.dataHrAgenda >= CURDATE() " +
-              "ORDER BY a.dataHrAgenda ASC " +
-              "LIMIT 50";
-          
           Connection con = manipula.getLigacao();
-          PreparedStatement ps = con.prepareStatement(sql);
-          ResultSet rs = ps.executeQuery();
           
-          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-          boolean temAgendamentos = false;
+          // ✅ VALIDAR SE VETERINÁRIO EXISTE
+          String sqlCheckVet = "SELECT nome FROM veterinario WHERE nLicenca = ?";
+          PreparedStatement psCheckVet = con.prepareStatement(sqlCheckVet);
+          psCheckVet.setString(1, nLicenca);
+          ResultSet rsCheckVet = psCheckVet.executeQuery();
+          
+          if (!rsCheckVet.next()) {
+              rsCheckVet.close();
+              psCheckVet.close();
   %>
-          
-          <div class="table-card">
-            <h3>📅 Seus Agendamentos</h3>
-            <table class="tabela">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Data/Hora</th>
-                  <th>Cliente</th>
-                  <th>NIF</th>
-                  <th>Tipo Serviço</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-          <%
-          
-          while (rs.next()) {
-              temAgendamentos = true;
-
-              int idAgend = rs.getInt("idAgendamento");
-              Timestamp dataHora = rs.getTimestamp("dataHrAgenda");
-              String status = rs.getString("statusAgendamento");
-              String tipoServ = rs.getString("tipoServ");
-
-              // ✅ Definir badge conforme status real
-              String badgeClass = "badge badge-success"; // default
-              String statusTexto = status;
-
-              if ("marcado".equalsIgnoreCase(status)) {
-                  badgeClass = "badge badge-success";
-                  statusTexto = "Marcado";
-              } else if ("cancelado".equalsIgnoreCase(status)) {
-                  badgeClass = "badge badge-danger";
-                  statusTexto = "Cancelado";
-              } else if ("concluido".equalsIgnoreCase(status)) {
-                  badgeClass = "badge badge-primary";
-                  statusTexto = "Concluído";
-              } else {
-                  badgeClass = "badge";
-              }
-          %>
-              <tr>
-                  <td><strong><%= idAgend %></strong></td>
-                  <td><%= sdf.format(dataHora) %></td>
-                  <td><%= rs.getString("cliente") %></td>
-                  <td><%= rs.getString("NIF") %></td>
-                  <td><%= tipoServ %></td>
-
-                  <!-- ✅ STATUS REAL DA BD -->
-                  <td>
-                      <span class="<%= badgeClass %>">
-                          <%= statusTexto %>
-                      </span>
-                  </td>
-
-                  <td>
-                      <% if ("marcado".equalsIgnoreCase(status)) { %>
-                          <!-- ✅ só deixa atender se estiver marcado -->
-                          <a href="selecionar_animal_atender.jsp?idAgendamento=<%= idAgend %>&nif=<%= rs.getString("NIF") %>" 
-                             class="btn btn-primary">
-                              📝 Atender
-                          </a>
-                      <% } else { %>
-                          <span style="color:#57606F; font-weight:700;">
-                              —
-                          </span>
-                      <% } %>
-                  </td>
-              </tr>
-          <%
-          }
-          
-          if (!temAgendamentos) {
-          %>
-              <tr>
-                  <td colspan="7" style="text-align: center; padding: 2rem;">
-                      📭 Não há agendamentos futuros
-                  </td>
-              </tr>
-          <%
-          }
-          %>
-              </tbody>
-            </table>
-          </div>
+              <div class="mensagem erro">
+                  ❌ Veterinário com licença <%= nLicenca %> não encontrado.
+              </div>
   <%
-          
-          rs.close();
-          ps.close();
+          } else {
+              String nomeVet = rsCheckVet.getString("nome");
+              rsCheckVet.close();
+              psCheckVet.close();
+  %>
+              <div class="mensagem" style="background: #E8F4F8; border-left: 4px solid #4A90E2;">
+                  👨‍⚕️ <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
+              </div>
+  <%
+              // ✅ QUERY QUE BUSCA APENAS CONSULTAS DO VETERINÁRIO
+              // Lógica: Consultas nos dias/horários em que o veterinário está escalado
+              String sql = 
+                  "SELECT DISTINCT " +
+                  "  a.idAgendamento, " +
+                  "  a.dataHrAgenda, " +
+                  "  a.tipoServ, " +
+                  "  a.statusAgendamento, " +
+                  "  c.nomeCompleto AS cliente, " +
+                  "  c.NIF, " +
+                  "  e.localidade " +
+                  "FROM agendamento a " +
+                  "INNER JOIN agenda ag ON a.idAgendamento = ag.idAgendamento " +
+                  "INNER JOIN cliente c ON ag.NIF = c.NIF " +
+                  "INNER JOIN escalado e ON e.nLicenca = ? " +
+                  "INNER JOIN horario h ON h.localidade = e.localidade AND h.diaUtil = e.diaUtil " +
+                  "WHERE a.dataHrAgenda >= CURDATE() " +
+                  "  AND DAYOFWEEK(a.dataHrAgenda) BETWEEN 2 AND 6 " + // Segunda a Sexta
+                  "  AND e.diaUtil = CASE DAYOFWEEK(a.dataHrAgenda) " +
+                  "      WHEN 2 THEN 'Segunda' " +
+                  "      WHEN 3 THEN 'Terça' " +
+                  "      WHEN 4 THEN 'Quarta' " +
+                  "      WHEN 5 THEN 'Quinta' " +
+                  "      WHEN 6 THEN 'Sexta' " +
+                  "    END " +
+                  "  AND TIME(a.dataHrAgenda) >= h.horaInicio " +
+                  "  AND TIME(a.dataHrAgenda) < h.horaFim " +
+                  "ORDER BY a.dataHrAgenda ASC " +
+                  "LIMIT 100";
+              
+              PreparedStatement ps = con.prepareStatement(sql);
+              ps.setString(1, nLicenca);
+              ResultSet rs = ps.executeQuery();
+              
+              SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+              SimpleDateFormat sdfDia = new SimpleDateFormat("EEEE", new Locale("pt", "PT"));
+              boolean temAgendamentos = false;
+  %>
+              
+              <div class="table-card">
+                <h3>📅 Suas Consultas Agendadas</h3>
+                <table class="tabela">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Data/Hora</th>
+                      <th>Dia da Semana</th>
+                      <th>Clínica</th>
+                      <th>Cliente</th>
+                      <th>NIF</th>
+                      <th>Tipo Serviço</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+              <%
+              
+              while (rs.next()) {
+                  temAgendamentos = true;
+
+                  int idAgend = rs.getInt("idAgendamento");
+                  Timestamp dataHora = rs.getTimestamp("dataHrAgenda");
+                  String status = rs.getString("statusAgendamento");
+                  String tipoServ = rs.getString("tipoServ");
+                  String localidade = rs.getString("localidade");
+
+                  // Badge conforme status
+                  String badgeClass = "badge badge-success";
+                  String statusTexto = status;
+
+                  if ("marcado".equalsIgnoreCase(status)) {
+                      badgeClass = "badge badge-success";
+                      statusTexto = "Marcado";
+                  } else if ("cancelado".equalsIgnoreCase(status)) {
+                      badgeClass = "badge badge-danger";
+                      statusTexto = "Cancelado";
+                  } else if ("realizado".equalsIgnoreCase(status)) {
+                      badgeClass = "badge badge-primary";
+                      statusTexto = "Realizado";
+                  } else if ("confirmado".equalsIgnoreCase(status)) {
+                      badgeClass = "badge badge-info";
+                      statusTexto = "Confirmado";
+                  }
+              %>
+                  <tr>
+                      <td><strong><%= idAgend %></strong></td>
+                      <td><%= sdf.format(dataHora) %></td>
+                      <td><%= sdfDia.format(dataHora) %></td>
+                      <td><strong><%= localidade %></strong></td>
+                      <td><%= rs.getString("cliente") %></td>
+                      <td><%= rs.getString("NIF") %></td>
+                      <td><%= tipoServ %></td>
+                      <td>
+                          <span class="<%= badgeClass %>">
+                              <%= statusTexto %>
+                          </span>
+                      </td>
+                      <td>
+                          <% if ("marcado".equalsIgnoreCase(status)) { %>
+                              <a href="selecionar_animal_atender.jsp?idAgendamento=<%= idAgend %>&nif=<%= rs.getString("NIF") %>" 
+                                 class="btn btn-primary">
+                                  📝 Atender
+                              </a>
+                          <% } else { %>
+                              <span style="color:#57606F; font-weight:700;">
+                                  —
+                              </span>
+                          <% } %>
+                      </td>
+                  </tr>
+              <%
+              }
+              
+              if (!temAgendamentos) {
+              %>
+                  <tr>
+                      <td colspan="9" style="text-align: center; padding: 2rem;">
+                          <div style="color:#57606F; font-weight:700; margin-bottom: 16px;">
+                              📭 Não há consultas agendadas para você
+                          </div>
+                          <div style="background: #FFF3CD; border: 2px solid #FFC107; border-radius: 12px; padding: 16px; max-width: 600px; margin: 0 auto; font-weight: 700; color: #856404;">
+                              ℹ️ As consultas aparecem aqui quando são agendadas nos dias e horários em que você está escalado.<br>
+                              <strong style="display: block; margin-top: 8px;">
+                                  Para ver seu horário de trabalho, acesse "Meu Perfil".
+                              </strong>
+                          </div>
+                      </td>
+                  </tr>
+              <%
+              }
+              %>
+                  </tbody>
+                </table>
+              </div>
+  <%
+              
+              rs.close();
+              ps.close();
+          }
           
       } catch (Exception e) {
   %>

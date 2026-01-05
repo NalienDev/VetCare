@@ -35,19 +35,24 @@
 
   <div class="menu-grid">
 
-    <a href="pesquisar_animal.jsp" class="menu-card">
-      <h2>Pesquisar Animal</h2>
-      <p>Encontre fichas clínicas pelo nome do tutor (autocomplete).</p>
+    <a href="perfil_veterinario.jsp" class="menu-card">
+      <h2>Meu Perfil</h2>
+      <p>Horários, estatísticas e calendário de consultas.</p>
     </a>
 
     <a href="lista_chamada.jsp" class="menu-card">
       <h2>Lista de Chamada</h2>
-      <p>Agendamentos de hoje e futuros por data-hora.</p>
+      <p>Suas consultas agendadas nos dias em que trabalha.</p>
+    </a>
+
+    <a href="pesquisar_animal.jsp" class="menu-card">
+      <h2>Pesquisar Animal</h2>
+      <p>Encontre fichas clínicas pelo nome do tutor.</p>
     </a>
 
     <a href="gestao_agendamentos_vet.jsp" class="menu-card">
-      <h2>Agendar/Cancelar Serviços</h2>
-      <p>Gestão de agendamentos de serviços veterinários.</p>
+      <h2>Gerir Agendamentos</h2>
+      <p>Agendar ou cancelar serviços veterinários.</p>
     </a>
     
     <a href="pesquisar_arvore.jsp" class="menu-card">
