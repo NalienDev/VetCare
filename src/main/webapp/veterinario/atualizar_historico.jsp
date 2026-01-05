@@ -366,7 +366,7 @@ try {
       <!-- CONSULTA -->
       <div id="camposConsulta" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🩺 Consulta</h3>
-        <div class="form-group"><label>Motivo</label><input type="text" name="motivo" id="motivo"></div>
+        <div class="form-group"><label>Motivo *</label><input type="text" name="motivo" id="motivo"></div>
         <div class="form-group"><label>Sintomas *</label><textarea name="sintomas" id="sintomas" rows="3"></textarea></div>
         <div class="form-group"><label>Medicação</label><textarea name="medicacao" id="medicacao" rows="2"></textarea></div>
         <div class="form-group"><label>Diagnóstico *</label><textarea name="diagnostico" id="diagnostico" rows="3"></textarea></div>
