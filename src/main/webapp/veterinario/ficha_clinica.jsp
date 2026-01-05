@@ -506,6 +506,9 @@ try {
         <a href="historico_clinico.jsp?idFichaClin=<%= idFicha %>" class="btn btn-primary">
           📋 Ver Histórico Clínico
         </a>
+        <a href="arvore_genealogica.jsp?idFichaClin=<%= idFicha %>&origem=ficha" class="btn btn-primary">
+          🌳 Ver Árvore Genealógica
+        </a>
       </div>
 
     </div>

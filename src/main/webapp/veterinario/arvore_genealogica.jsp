@@ -79,6 +79,8 @@
 
 <%
 String idParam = request.getParameter("idFichaClin");
+String origem = request.getParameter("origem");
+
 if (idParam == null) {
     response.sendRedirect("pesquisar_animal.jsp");
     return;
@@ -109,7 +111,11 @@ try {
 </section>
 
 <div class="page-content">
-  <a href="pesquisar_arvore.jsp" class="btn-voltar">← Voltar</a>
+  <% if ("ficha".equals(origem)) { %>
+    <a href="ficha_clinica.jsp?idFichaClin=<%= idFicha %>" class="btn-voltar">← Voltar à Ficha</a>
+  <% } else { %>
+    <a href="pesquisar_arvore.jsp" class="btn-voltar">← Voltar</a>
+  <% } %>
   
   <div class="arvore-container">
     <div class="nivel-label">🌳 Pais</div>
