@@ -42,12 +42,15 @@
                value="<%= request.getParameter("nLicenca") != null ? request.getParameter("nLicenca") : "" %>"
                placeholder="Digite sua licença profissional">
       </div>
-      <button type="submit" class="btn btn-primary">📋 Ver Minhas Consultas</button>
+      <button type="submit" class="btn btn-primary">Ver as Minhas Consultas</button>
     </form>
   </div>
 
   <%
   String nLicenca = request.getParameter("nLicenca");
+  String mostrarTodas = request.getParameter("mostrarTodas");
+  boolean exibirHistorico = "true".equals(mostrarTodas);
+  
   if (nLicenca != null && !nLicenca.isEmpty()) {
       Configura cfg = new Configura();
       Manipula manipula = new Manipula(cfg);
@@ -75,11 +78,29 @@
               psCheckVet.close();
   %>
               <div class="mensagem" style="background: #E8F4F8; border-left: 4px solid #4A90E2;">
-                  👨‍⚕️ <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
+                   <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
+              </div>
+
+              <!-- BOTÃO PARA ALTERNAR ENTRE PRÓXIMAS E TODAS -->
+              <div style="margin: 20px 0; text-align: center;">
+                  <% if (!exibirHistorico) { %>
+                      <a href="?nLicenca=<%= nLicenca %>&mostrarTodas=true" 
+                         class="btn btn-secondary" 
+                         style="background: #6C757D; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700;">
+                            Ver Histórico Completo (Incluir Consultas Anteriores)
+                      </a>
+                  <% } else { %>
+                      <a href="?nLicenca=<%= nLicenca %>" 
+                         class="btn btn-primary" 
+                         style="padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700;">
+                             Ver Apenas Próximas Consultas
+                      </a>
+                  <% } %>
               </div>
   <%
-              // ✅ QUERY QUE BUSCA APENAS CONSULTAS DO VETERINÁRIO
-              // Lógica: Consultas nos dias/horários em que o veterinário está escalado
+              // ✅ QUERY COM FILTRO OPCIONAL DE DATA
+              String condicaoData = exibirHistorico ? "" : "AND a.dataHrAgenda >= CURDATE() ";
+              
               String sql = 
                   "SELECT DISTINCT " +
                   "  a.idAgendamento, " +
@@ -94,8 +115,8 @@
                   "INNER JOIN cliente c ON ag.NIF = c.NIF " +
                   "INNER JOIN escalado e ON e.nLicenca = ? " +
                   "INNER JOIN horario h ON h.localidade = e.localidade AND h.diaUtil = e.diaUtil " +
-                  "WHERE a.dataHrAgenda >= CURDATE() " +
-                  "  AND DAYOFWEEK(a.dataHrAgenda) BETWEEN 2 AND 6 " + // Segunda a Sexta
+                  "WHERE DAYOFWEEK(a.dataHrAgenda) BETWEEN 2 AND 6 " + // Segunda a Sexta
+                  condicaoData +
                   "  AND e.diaUtil = CASE DAYOFWEEK(a.dataHrAgenda) " +
                   "      WHEN 2 THEN 'Segunda' " +
                   "      WHEN 3 THEN 'Terça' " +
@@ -105,8 +126,8 @@
                   "    END " +
                   "  AND TIME(a.dataHrAgenda) >= h.horaInicio " +
                   "  AND TIME(a.dataHrAgenda) < h.horaFim " +
-                  "ORDER BY a.dataHrAgenda ASC " +
-                  "LIMIT 100";
+                  "ORDER BY a.dataHrAgenda " + (exibirHistorico ? "DESC" : "ASC") + " " +
+                  "LIMIT 500";
               
               PreparedStatement ps = con.prepareStatement(sql);
               ps.setString(1, nLicenca);
@@ -118,7 +139,7 @@
   %>
               
               <div class="table-card">
-                <h3>📅 Suas Consultas Agendadas</h3>
+                <h3>📅 <%= exibirHistorico ? "Histórico Completo de Consultas" : "Suas Próximas Consultas" %></h3>
                 <table class="tabela">
                   <thead>
                     <tr>
@@ -145,6 +166,10 @@
                   String tipoServ = rs.getString("tipoServ");
                   String localidade = rs.getString("localidade");
 
+                  // Verificar se é consulta passada
+                  boolean isPassada = dataHora.getTime() < System.currentTimeMillis();
+                  String rowStyle = isPassada && exibirHistorico ? "background-color: #f8f9fa; opacity: 0.8;" : "";
+
                   // Badge conforme status
                   String badgeClass = "badge badge-success";
                   String statusTexto = status;
@@ -163,7 +188,7 @@
                       statusTexto = "Confirmado";
                   }
               %>
-                  <tr>
+                  <tr style="<%= rowStyle %>">
                       <td><strong><%= idAgend %></strong></td>
                       <td><%= sdf.format(dataHora) %></td>
                       <td><%= sdfDia.format(dataHora) %></td>
@@ -197,7 +222,7 @@
                   <tr>
                       <td colspan="9" style="text-align: center; padding: 2rem;">
                           <div style="color:#57606F; font-weight:700; margin-bottom: 16px;">
-                              📭 Não há consultas agendadas para você
+                              📭 <%= exibirHistorico ? "Não há consultas registradas" : "Não há consultas agendadas para você" %>
                           </div>
                           <div style="background: #FFF3CD; border: 2px solid #FFC107; border-radius: 12px; padding: 16px; max-width: 600px; margin: 0 auto; font-weight: 700; color: #856404;">
                               ℹ️ As consultas aparecem aqui quando são agendadas nos dias e horários em que você está escalado.<br>
