@@ -27,12 +27,41 @@
       text-decoration: none;
       color: inherit;
       display: block;
+      position: relative;
     }
     
     .animal-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
       border-color: #0B2A42;
+    }
+
+    .animal-card.falecido {
+      background: #F1F3F5;
+      border-color: #B0B7C3;
+      opacity: 0.88;
+      filter: grayscale(0.65);
+    }
+    .animal-card.falecido:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border-color: #B0B7C3;
+    }
+
+    .falecido-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: #D72638;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
     }
     
     .animal-header {
@@ -74,6 +103,27 @@
       padding: 30px;
       margin-top: 30px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* ✅ ficha cinzenta se falecido */
+    .ficha-content.falecido {
+      background: #F1F3F5;
+      border-color: #B0B7C3;
+      opacity: 0.92;
+    }
+
+    .falecido-big {
+      background: #FDECEC;
+      border: 2px solid #D72638;
+      color: #D72638;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-weight: 900;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
     }
     
     .section-title {
@@ -229,7 +279,7 @@
   <div class="animals-grid">
   <%
               PreparedStatement psAnimais = con.prepareStatement(
-                  "SELECT f.idFichaClin, f.nome, f.dataNasc, r.nomeRaca, e.nomeComum AS especie " +
+                  "SELECT f.idFichaClin, f.nome, f.dataNasc, f.dataFalecimento, r.nomeRaca, e.nomeComum AS especie " +
                   "FROM fichaClinicaAnimal f " +
                   "JOIN tutor t ON t.idFichaClin = f.idFichaClin " +
                   "LEFT JOIN fichaRaca fr ON f.idFichaClin = fr.idFichaClin " +
@@ -248,25 +298,40 @@
                   String especie = rsAnimais.getString("especie");
                   
                   java.sql.Date dataNasc = rsAnimais.getDate("dataNasc");
+                  java.sql.Date dataFal = rsAnimais.getDate("dataFalecimento");
+
+                  boolean falecido = (dataFal != null);
+
                   int idade = 0;
                   if (dataNasc != null) {
                       LocalDate nascimento = dataNasc.toLocalDate();
                       idade = Period.between(nascimento, LocalDate.now()).getYears();
                   }
   %>
-    <a href="?nif=<%= nif %>&idFichaClin=<%= idFicha %>" class="animal-card">
+    <a href="?nif=<%= nif %>&idFichaClin=<%= idFicha %>" 
+       class="animal-card <%= falecido ? "falecido" : "" %>">
+       
+      <% if(falecido) { %>
+        <div class="falecido-badge">FALECIDO</div>
+      <% } %>
+
       <div class="animal-header">
         <img src="../fotoAnimal?id=<%= idFicha %>" class="animal-photo" alt="<%= nome %>">
         <div>
           <h3 class="animal-name"><%= nome %></h3>
           <div class="animal-info">
             <%= especie != null ? especie : "Animal" %> | <%= idade %> <%= idade == 1 ? "ano" : "anos" %>
+            <% if(falecido) { %>
+              <span style="color:#D72638; font-weight:900;"> | <%= dataFal.toString() %></span>
+            <% } %>
           </div>
         </div>
       </div>
+
       <div style="text-align: center; padding-top: 8px; color: #0B2A42; font-weight: 800; font-size: 13px;">
         <img src="../images/icon-eye.png" alt="Ver" class="icon-inline">Ver Ficha Completa
       </div>
+
     </a>
   <%
               }
@@ -308,6 +373,10 @@
                   String nome = rsFicha.getString("nome");
                   String sexo = rsFicha.getString("sexo");
                   java.sql.Date dataNasc = rsFicha.getDate("dataNasc");
+                  java.sql.Date dataFal = rsFicha.getDate("dataFalecimento");
+
+                  boolean falecido = (dataFal != null);
+
                   String raca = rsFicha.getString("nomeRaca");
                   String especie = rsFicha.getString("especie");
                   String estadoReprod = rsFicha.getString("estadoReprod");
@@ -328,7 +397,14 @@
     📖 <span>Ficha clínica de <strong><%= nome %></strong> (somente leitura)</span>
   </div>
   
-  <div class="ficha-content">
+  <div class="ficha-content <%= falecido ? "falecido" : "" %>">
+
+    <% if(falecido) { %>
+      <div class="falecido-big">
+        <span>Este animal está marcado como <strong>FALECIDO</strong> — <%= dataFal.toString() %></span>
+      </div>
+    <% } %>
+
     <div style="text-align: center; margin-bottom: 30px;">
       <img src="../fotoAnimal?id=<%= idFicha %>" 
            style="width: 200px; height: 200px; object-fit: cover; border-radius: 20px; border: 4px solid #E7EEF4; box-shadow: 0 8px 20px rgba(0,0,0,0.15);"
@@ -336,9 +412,12 @@
       <h2 style="margin: 16px 0 4px 0; font-size: 32px; font-weight: 900; color: #0B2A42;"><%= nome %></h2>
       <p style="margin: 0; color: #57606F; font-weight: 700; font-size: 16px;">
         ID: #<%= idFicha %> | <%= especie != null ? especie : "Animal" %>
+        <% if(falecido) { %>
+          <span style="color:#D72638; font-weight:900;"> | Falecido</span>
+        <% } %>
       </p>
     </div>
-    
+
     <h3 class="section-title">Informações Básicas</h3>
     <div class="info-grid">
       <div class="info-item">
@@ -346,27 +425,39 @@
         <div class="info-value">
           <% if ("M".equals(sexo)) { %>
             <img src="../images/icon-male.png" alt="Macho" class="icon-gender">Macho
-          <% } else { %>
+          <% } else if ("F".equals(sexo)) { %>
             <img src="../images/icon-female.png" alt="Fêmea" class="icon-gender">Fêmea
+          <% } else { %>
+            ⚧️ Não aplicável
           <% } %>
         </div>
       </div>
+
       <div class="info-item">
         <div class="info-label">Idade</div>
-        <div class="info-value"><%= idade %> <%= idade == 1 ? "ano" : "anos" %></div>
+        <div class="info-value">
+          <%= idade %> <%= idade == 1 ? "ano" : "anos" %>
+          <% if(falecido) { %>
+            <span style="color:#D72638; font-weight:900; font-size:13px;"> (falecido)</span>
+          <% } %>
+        </div>
       </div>
+
       <div class="info-item">
         <div class="info-label">Raça</div>
         <div class="info-value"><%= raca != null ? raca : "N/D" %></div>
       </div>
+
       <div class="info-item">
         <div class="info-label">Peso Atual</div>
         <div class="info-value"><%= pesoAtual > 0 ? String.format("%.2f kg", pesoAtual) : "N/D" %></div>
       </div>
+
       <div class="info-item">
         <div class="info-label">Estado Reprodutivo</div>
         <div class="info-value"><%= estadoReprod != null ? estadoReprod : "N/D" %></div>
       </div>
+
       <div class="info-item">
         <div class="info-label">Tutor</div>
         <div class="info-value"><%= tutor %></div>
@@ -391,7 +482,7 @@
             else if (cor.equalsIgnoreCase("Branco")) corCss = "#FFFFFF";
             else if (cor.equalsIgnoreCase("Castanho")) corCss = "#8B5A2B";
             else if (cor.equalsIgnoreCase("Laranja")) corCss = "#F2994A";
-            else if (cor.equalsIgnoreCase("Cinza")) corCss = "#BDBDBD";
+            else if (cor.equalsIgnoreCase("Cinza") || cor.equalsIgnoreCase("Cinzento")) corCss = "#BDBDBD";
             else if (cor.equalsIgnoreCase("Bege")) corCss = "#F2CBA4";
             else if (cor.equalsIgnoreCase("Amarelo")) corCss = "#F2C94C";
             else if (cor.equalsIgnoreCase("Tigrado")) 
