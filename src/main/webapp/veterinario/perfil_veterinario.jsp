@@ -50,6 +50,41 @@
       font-size: 14px;
     }
     
+    .horarios-trabalho {
+      background: white;
+      border: 2px solid #E7EEF4;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .horarios-trabalho h3 {
+      margin: 0 0 20px 0;
+      color: #0B2A42;
+      font-size: 18px;
+    }
+    .horario-item {
+      background: #F8F9FA;
+      border-left: 4px solid #4A90E2;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    .horario-dia {
+      font-weight: 700;
+      color: #0B2A42;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .horario-detalhes {
+      color: #666;
+      font-size: 14px;
+    }
+    .horario-clinica {
+      color: #4A90E2;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+    
     .calendario {
       background: white;
       border: 2px solid #E7EEF4;
@@ -205,6 +240,11 @@
       color: #666;
       font-size: 14px;
     }
+    .consulta-clinica {
+      color: #28A745;
+      font-weight: 600;
+      margin-top: 5px;
+    }
     
     .legenda {
       display: flex;
@@ -358,6 +398,59 @@
   </div>
   
   <%
+              // BUSCAR HORÁRIOS DE TRABALHO
+              String sqlHorarios = 
+                  "SELECT e.diaUtil, e.localidade, h.horaInicio, h.horaFim " +
+                  "FROM escalado e " +
+                  "JOIN horario h ON h.localidade = e.localidade AND h.diaUtil = e.diaUtil " +
+                  "WHERE e.nLicenca = ? " +
+                  "ORDER BY " +
+                  "  CASE e.diaUtil " +
+                  "    WHEN 'Segunda' THEN 1 " +
+                  "    WHEN 'Terça' THEN 2 " +
+                  "    WHEN 'Quarta' THEN 3 " +
+                  "    WHEN 'Quinta' THEN 4 " +
+                  "    WHEN 'Sexta' THEN 5 " +
+                  "  END, e.localidade";
+              
+              PreparedStatement psHorarios = con.prepareStatement(sqlHorarios);
+              psHorarios.setString(1, nLicenca);
+              ResultSet rsHorarios = psHorarios.executeQuery();
+  %>
+  
+  <!-- HORÁRIOS DE TRABALHO -->
+  <div class="horarios-trabalho">
+    <h3>📅 Os Meus Horários de Trabalho</h3>
+    <%
+              boolean temHorarios = false;
+              while (rsHorarios.next()) {
+                  temHorarios = true;
+                  String diaUtil = rsHorarios.getString("diaUtil");
+                  String localidade = rsHorarios.getString("localidade");
+                  Time horaInicio = rsHorarios.getTime("horaInicio");
+                  Time horaFim = rsHorarios.getTime("horaFim");
+    %>
+    <div class="horario-item">
+      <div class="horario-dia"><%= diaUtil %>-feira</div>
+      <div class="horario-detalhes">🕒 <%= horaInicio.toString().substring(0,5) %> às <%= horaFim.toString().substring(0,5) %></div>
+      <div class="horario-clinica">📍 <%= localidade %></div>
+    </div>
+    <%
+              }
+              
+              if (!temHorarios) {
+    %>
+    <div style="text-align: center; color: #666; padding: 20px;">
+      Nenhum horário de trabalho definido.
+    </div>
+    <%
+              }
+              rsHorarios.close();
+              psHorarios.close();
+    %>
+  </div>
+  
+  <%
               // PARÂMETROS DO CALENDÁRIO
               String mesParam = request.getParameter("mes");
               String anoParam = request.getParameter("ano");
@@ -388,6 +481,7 @@
                   "  a.tipoServ, " +
                   "  a.statusAgendamento, " +
                   "  c.nomeCompleto as cliente, " +
+                  "  e.localidade, " +
                   "  DAY(a.dataHrAgenda) as dia " +
                   "FROM agendamento a " +
                   "JOIN agenda ag ON ag.idAgendamento = a.idAgendamento " +
@@ -424,6 +518,7 @@
                   consulta.put("tipo", rsCons.getString("tipoServ"));
                   consulta.put("status", rsCons.getString("statusAgendamento"));
                   consulta.put("cliente", rsCons.getString("cliente"));
+                  consulta.put("localidade", rsCons.getString("localidade"));
                   
                   if (!consultasPorDia.containsKey(dia)) {
                       consultasPorDia.put(dia, new ArrayList<>());
@@ -569,6 +664,7 @@
                       String tipo = (String) consulta.get("tipo");
                       String status = (String) consulta.get("status");
                       String cliente = (String) consulta.get("cliente");
+                      String localidade = (String) consulta.get("localidade");
                       
                       String classItem = "consulta-item";
                       if ("realizado".equals(status)) {
@@ -579,6 +675,7 @@
       <div class="consulta-hora"><%= sdfHora.format(dataHora) %></div>
       <div class="consulta-tipo"><%= tipo %></div>
       <div class="consulta-cliente">Cliente: <%= cliente %></div>
+      <div class="consulta-clinica">📍 Clínica: <%= localidade %></div>
       <div class="consulta-cliente">Status: <%= status %></div>
     </div>
     <%
@@ -618,20 +715,17 @@ function irParaHoje() {
 }
 
 function mostrarConsultas(dia) {
-  // Esconder todas as consultas
   var todasConsultas = document.querySelectorAll('.consultas-dia');
   todasConsultas.forEach(function(el) {
     el.classList.remove('active');
   });
   
-  // Mostrar consultas do dia selecionado
   var consultasDia = document.getElementById('consultas-dia-' + dia);
   if (consultasDia) {
     consultasDia.classList.add('active');
-    consultasDia.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+	consultasDia.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}
 }
 </script>
-
 </body>
 </html>

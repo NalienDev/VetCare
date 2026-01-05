@@ -78,7 +78,7 @@
               psCheckVet.close();
   %>
               <div class="mensagem" style="background: #E8F4F8; border-left: 4px solid #4A90E2;">
-                   <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
+                    <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
               </div>
 
               <!-- BOTÃO PARA ALTERNAR ENTRE PRÓXIMAS E TODAS -->
@@ -93,7 +93,7 @@
                       <a href="?nLicenca=<%= nLicenca %>" 
                          class="btn btn-primary" 
                          style="padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700;">
-                             Ver Apenas Próximas Consultas
+                            Ver Apenas Próximas Consultas
                       </a>
                   <% } %>
               </div>
