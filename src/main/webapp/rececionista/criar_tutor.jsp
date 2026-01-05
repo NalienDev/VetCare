@@ -31,8 +31,7 @@
 </section>
 
 <div class="page-content">
-  <a href="menu.jsp" class="btn-voltar">← Voltar</a>
-
+	<a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
   <%
     String mensagem = "";
     String tipoMensagem = "";
