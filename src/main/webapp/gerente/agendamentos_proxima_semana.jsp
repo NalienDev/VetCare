@@ -370,7 +370,7 @@
     </div>
     
     <%
-        // AGENDAMENTOS POR DIA
+        
         String sqlPorDia = 
             "SELECT " +
             "  DATE(a.dataHrAgenda) AS dia, " +
@@ -492,7 +492,7 @@
                 
                 <div class="servico-expandido" id="<%= servicoId %>">
                     <%
-                    // BUSCAR DETALHES DOS AGENDAMENTOS DESTE SERVIÇO
+                    
                     String sqlDetalhes = 
                         "SELECT DISTINCT " +
                         "  a.idAgendamento, " +
@@ -605,7 +605,7 @@ function toggleServico(id) {
         expandido.classList.remove('ativo');
         icon.textContent = '▼';
     } else {
-        // Fechar todos os outros
+        
         var todosExpandidos = document.querySelectorAll('.servico-expandido');
         var todosIcons = document.querySelectorAll('.expandir-icon');
         todosExpandidos.forEach(function(el) {
@@ -615,7 +615,7 @@ function toggleServico(id) {
             el.textContent = '▼';
         });
         
-        // Abrir este
+        
         expandido.classList.add('ativo');
         icon.textContent = '▲';
     }

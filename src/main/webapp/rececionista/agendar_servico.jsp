@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
-    /* Estilos para ícones inline */
+    
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -18,21 +18,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -100,7 +97,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
         Connection con = manipula.getLigacao();
         boolean primeiraVez = "sim".equals(primeiraVezStr);
         
-        // ✅ VALIDAÇÃO: Se primeira vez, verificar se tem animais
         if(primeiraVez) {
             PreparedStatement psCheck = con.prepareStatement(
                 "SELECT COUNT(*) as total FROM tutor WHERE NIF = ?"
@@ -123,7 +119,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
             }
         }
         
-        // ✅ SE PASSOU VALIDAÇÃO, CRIAR AGENDAMENTO COM DISTRIBUIÇÃO AUTOMÁTICA
         if (mensagem.isEmpty()) {
             con.setAutoCommit(false);
             
@@ -147,7 +142,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                 con.rollback();
             } else {
                 
-                // ✅ VALIDAR HORÁRIO DA CLÍNICA
                 String sqlCheckHorario = 
                     "SELECT horaInicio, horaFim FROM horario " +
                     "WHERE localidade = ? AND diaUtil = ?";
@@ -181,7 +175,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                         con.rollback();
                     } else {
                         
-                        // ✅ BUSCAR VETERINÁRIOS E DISTRIBUIR AUTOMATICAMENTE
                         String sqlVets = 
                             "SELECT e.nLicenca, v.nome, " +
                             "  COUNT(a.idAgendamento) as numConsultas " +
@@ -221,7 +214,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                             rsVets.close();
                             psVets.close();
                             
-                            // ✅ CRIAR AGENDAMENTO
                             String sqlAgendamento = 
                                 "INSERT INTO agendamento (dataHrAgenda, tipoServ, statusAgendamento, custos, primeiraVez) " +
                                 "VALUES (?, ?, 'marcado', ?, ?)";
@@ -237,7 +229,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                                 if (rsKeys.next()) {
                                     int idAgendamento = rsKeys.getInt(1);
                                     
-                                    // Ligar ao cliente
                                     String sqlAgenda = "INSERT INTO agenda (idAgendamento, NIF) VALUES (?, ?)";
                                     PreparedStatement psAgenda = con.prepareStatement(sqlAgenda);
                                     psAgenda.setInt(1, idAgendamento);

@@ -10,7 +10,6 @@
   
   <style>
   
-    /* Estilos para ícones inline */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -19,21 +18,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -135,21 +131,16 @@ java.sql.Time horaFim = null;
 try {
     Connection con = manipula.getLigacao();
 
-    // =============================================
-    // PROCESSAR AÇÕES
-    // =============================================
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String acao = request.getParameter("acao");
         
         con.setAutoCommit(false);
         
-        // ADICIONAR VETERINÁRIO
         if ("adicionar".equals(acao)) {
             String nLicenca = request.getParameter("nLicenca");
             
             if (nLicenca != null && !nLicenca.trim().isEmpty()) {
                 
-                // ✅ VALIDAÇÃO 1: Verificar se veterinário existe
                 String sqlCheckVet = "SELECT nome FROM veterinario WHERE nLicenca = ?";
                 PreparedStatement psCheckVet = con.prepareStatement(sqlCheckVet);
                 psCheckVet.setString(1, nLicenca);
@@ -165,7 +156,6 @@ try {
                     rsCheckVet.close();
                     psCheckVet.close();
                     
-                    // ✅ VALIDAÇÃO 2: Verificar se já está atribuído a este horário
                     String sqlCheckExiste = 
                         "SELECT COUNT(*) as total FROM escalado " +
                         "WHERE nLicenca = ? AND localidade = ? AND diaUtil = ?";
@@ -188,7 +178,6 @@ try {
                         tipoMensagem = "erro";
                     } else {
                         
-                        // ✅ VALIDAÇÃO 3: Verificar sobreposição de horários no mesmo dia
                         String sqlCheckSobreposicao = 
                             "SELECT h2.localidade, h2.horaInicio, h2.horaFim " +
                             "FROM escalado e " +
@@ -223,7 +212,6 @@ try {
                             rsCheckSobreposicao.close();
                             psCheckSobreposicao.close();
                             
-                            // ✅ TUDO OK: Inserir atribuição
                             String sqlInsert = 
                                 "INSERT INTO escalado (nLicenca, localidade, diaUtil) VALUES (?, ?, ?)";
                             
@@ -253,7 +241,6 @@ try {
             }
         }
         
-        // REMOVER VETERINÁRIO
         else if ("remover".equals(acao)) {
             String nLicenca = request.getParameter("nLicenca");
             
@@ -282,9 +269,6 @@ try {
         con.setAutoCommit(true);
     }
 
-    // =============================================
-    // CARREGAR DADOS DO HORÁRIO
-    // =============================================
     PreparedStatement psHorario = con.prepareStatement(
         "SELECT horaInicio, horaFim FROM horario WHERE localidade=? AND diaUtil=?"
     );
@@ -326,7 +310,6 @@ try {
     </ul>
   </div>
 
-  <!-- ✅ VETERINÁRIOS JÁ ATRIBUÍDOS -->
   <div class="veterinarios-atribuidos">
     <h3 style="margin: 0 0 15px 0; color: #0B2A42;">Veterinários Escalados</h3>
     <%
@@ -376,7 +359,6 @@ try {
     %>
   </div>
 
-  <!-- ✅ ADICIONAR VETERINÁRIO -->
   <form method="POST" class="formulario">
     <input type="hidden" name="acao" value="adicionar">
     
@@ -389,7 +371,7 @@ try {
       <select name="nLicenca" required>
         <option value="">-- Selecione --</option>
         <%
-        // Listar veterinários disponíveis (excluir os já atribuídos)
+        
         String sqlVets = 
             "SELECT v.nLicenca, v.nome, v.contacto " +
             "FROM veterinario v " +
@@ -431,7 +413,6 @@ try {
     </div>
   </form>
 
-  <!-- ✅ TABELA DE OUTROS HORÁRIOS DO VETERINÁRIO SELECIONADO (via JavaScript) -->
   <div id="outrosHorarios" style="display: none; margin-top: 30px;">
     <div class="warning-box">
       <h3>⚠️ Outros Horários deste Veterinário</h3>
@@ -441,7 +422,7 @@ try {
 </div>
 
 <script>
-// Mostrar outros horários quando selecionar veterinário
+
 document.querySelector('select[name="nLicenca"]').addEventListener('change', function() {
     var nLicenca = this.value;
     var divOutros = document.getElementById('outrosHorarios');
@@ -452,7 +433,6 @@ document.querySelector('select[name="nLicenca"]').addEventListener('change', fun
         return;
     }
     
-    // Fazer request para obter horários
     fetch('get_horarios_veterinario.jsp?nLicenca=' + encodeURIComponent(nLicenca))
         .then(response => response.text())
         .then(html => {

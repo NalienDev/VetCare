@@ -37,9 +37,6 @@ Manipula manipula = new Manipula(cfg);
 try {
     Connection con = manipula.getLigacao();
     
-    // ============================
-    // BUSCAR DADOS DO ANIMAL
-    // ============================
     String sqlAnimal = 
         "SELECT f.nome, c.nomeCompleto AS tutor " +
         "FROM fichaClinicaAnimal f " +
@@ -70,9 +67,6 @@ try {
         rsAnimal.close();
         psAnimal.close();
         
-        // ============================
-        // BUSCAR ID DO HISTÓRICO
-        // ============================
         String sqlHistorico = "SELECT idHistorico FROM historicoClinico WHERE idFichaClin = ?";
         PreparedStatement psHist = con.prepareStatement(sqlHistorico);
         psHist.setInt(1, idFicha);
@@ -85,9 +79,6 @@ try {
             
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-            // ============================
-            // CONSULTAS
-            // ============================
             String sqlConsultas = 
                 "SELECT dataConsulta, motivo, sintomas, diagnostico, medicacao " +
                 "FROM consultaHist WHERE idHistorico = ? ORDER BY dataConsulta DESC";
@@ -141,9 +132,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // VACINAÇÕES
-            // ============================
             String sqlVacinas = 
                 "SELECT dataVacina, tipoVacina, fabricante " +
                 "FROM vacinacao WHERE idHistorico = ? ORDER BY dataVacina DESC";
@@ -193,9 +181,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // DESPARASITAÇÃO
-            // ============================
             String sqlDes = 
                 "SELECT dataDesparasitacao, tipoDesparasitacao, produtosUtilizados " +
                 "FROM desparasitacao WHERE idHistorico = ? ORDER BY dataDesparasitacao DESC";
@@ -245,9 +230,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // EXAMES FÍSICOS
-            // ============================
             String sqlExames = 
                 "SELECT dataHora, temperatura, peso, freqCard, freqResp " +
                 "FROM exameFis WHERE idHistorico = ? ORDER BY dataHora DESC LIMIT 20";
@@ -305,9 +287,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // RESULTADOS DE EXAMES
-            // ============================
             String sqlResEx = 
                 "SELECT dataHora, tipoExame, resultadosEx " +
                 "FROM resultadoEx WHERE idHistorico = ? ORDER BY dataHora DESC LIMIT 20";
@@ -357,9 +336,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // CIRURGIAS
-            // ============================
             String sqlCir = 
                 "SELECT dataCirurgia, tipoCirurgia, notasPosOp " +
                 "FROM cirurgiaHist WHERE idHistorico = ? ORDER BY dataCirurgia DESC";
@@ -409,9 +385,6 @@ try {
             </div>
 
   <%
-            // ============================
-            // TRATAMENTOS TERAPÊUTICOS
-            // ============================
             String sqlTrat = 
                 "SELECT dataTrat, tipoTratamento, descricao " +
                 "FROM TratTerapHist WHERE idHistorico = ? ORDER BY dataTrat DESC";

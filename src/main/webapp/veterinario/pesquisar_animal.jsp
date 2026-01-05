@@ -7,7 +7,6 @@
   <title>VetCare - Pesquisar Animal</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   <style>
-    /* Estilos para ícones inline */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -16,21 +15,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -80,7 +76,6 @@ var resultadosDiv = document.getElementById('resultados');
 var animaisContainer = document.getElementById('animaisContainer');
 var timeoutId = null;
 
-// Function to search tutors using XMLHttpRequest
 function pesquisarTutores() {
     var query = searchInput.value.trim();
     
@@ -127,13 +122,11 @@ function pesquisarTutores() {
     xhr.send();
 }
 
-// Event listener for input with debounce
 searchInput.addEventListener('input', function() {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(pesquisarTutores, 300);
 });
 
-// Handle Enter key press
 function handleEnterKey(event) {
     if (event.keyCode === 13 || event.which === 13) {
         event.preventDefault();
@@ -148,7 +141,6 @@ function selecionarTutor(nif, nome) {
     carregarAnimais(nif);
 }
 
-// Function to load animals using XMLHttpRequest
 function carregarAnimais(nif) {
     animaisContainer.innerHTML = '<div style="text-align:center; padding:40px;"><p>⏳ Carregando animais...</p></div>';
     
@@ -198,14 +190,12 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Close dropdown when clicking outside
 document.addEventListener('click', function(e) {
     if (!searchInput.contains(e.target) && !resultadosDiv.contains(e.target)) {
         resultadosDiv.style.display = 'none';
     }
 });
 
-// Hover effects
 document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('resultado-item') || e.target.closest('.resultado-item')) {
         var item = e.target.classList.contains('resultado-item') ? e.target : e.target.closest('.resultado-item');

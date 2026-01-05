@@ -8,7 +8,6 @@
   <title>VetCare - Lista de Chamada</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   <style>
-    /* Estilos para ícones inline */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -17,21 +16,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -88,7 +84,6 @@
       try {
           Connection con = manipula.getLigacao();
           
-          // ✅ VALIDAR SE VETERINÁRIO EXISTE
           String sqlCheckVet = "SELECT nome FROM veterinario WHERE nLicenca = ?";
           PreparedStatement psCheckVet = con.prepareStatement(sqlCheckVet);
           psCheckVet.setString(1, nLicenca);
@@ -111,7 +106,6 @@
                     <strong><%= nomeVet %></strong> (Licença: <%= nLicenca %>)
               </div>
 
-              <!-- BOTÃO PARA ALTERNAR ENTRE PRÓXIMAS E TODAS -->
               <div style="margin: 20px 0; text-align: center;">
                   <% if (!exibirHistorico) { %>
                       <a href="?nLicenca=<%= nLicenca %>&mostrarTodas=true" 
@@ -128,7 +122,6 @@
                   <% } %>
               </div>
   <%
-              // ✅ QUERY COM FILTRO OPCIONAL DE DATA
               String condicaoData = exibirHistorico ? "" : "AND a.dataHrAgenda >= CURDATE() ";
               
               String sql = 
@@ -196,11 +189,9 @@
                   String tipoServ = rs.getString("tipoServ");
                   String localidade = rs.getString("localidade");
 
-                  // Verificar se é consulta passada
                   boolean isPassada = dataHora.getTime() < System.currentTimeMillis();
                   String rowStyle = isPassada && exibirHistorico ? "background-color: #f8f9fa; opacity: 0.8;" : "";
 
-                  // Badge conforme status
                   String badgeClass = "badge badge-success";
                   String statusTexto = status;
 

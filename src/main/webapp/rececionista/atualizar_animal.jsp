@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
-    /* ✨ CORES MELHORADAS - Sistema visual bonito */
+    
     .color-palette {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
@@ -186,14 +186,13 @@ Manipula manipula = new Manipula(cfg);
 String mensagem = "";
 String tipoMensagem = "";
 
-// Dados atuais
 String nome = "";
 String sexo = "";
 String filiacao = "";
 String alergias = "";
 String estadoReprod = "";
 java.sql.Date dataNasc = null;
-java.sql.Date dataFalecimento = null; // ✅ ADICIONADO
+java.sql.Date dataFalecimento = null;
 String nomeRaca = "";
 String coresStr = "";
 String outrasDistint = "";
@@ -201,9 +200,6 @@ String outrasDistint = "";
 try {
     Connection con = manipula.getLigacao();
 
-    // =============================================
-    // GUARDAR ALTERAÇÕES
-    // =============================================
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         nome = request.getParameter("nome");
         sexo = request.getParameter("sexo");
@@ -213,7 +209,6 @@ try {
         nomeRaca = request.getParameter("nomeRaca");
         outrasDistint = request.getParameter("outrasDistint");
         
-        // ✅ Processar cores selecionadas (múltiplas checkboxes)
         String[] coresSelecionadas = request.getParameterValues("cores");
         if (coresSelecionadas != null && coresSelecionadas.length > 0) {
             coresStr = String.join(", ", coresSelecionadas);
@@ -228,7 +223,6 @@ try {
 
         con.setAutoCommit(false);
 
-        // Update ficha
         PreparedStatement psUp = con.prepareStatement(
             "UPDATE fichaClinicaAnimal SET nome=?, sexo=?, dataNasc=?, filiacao=?, alergias=?, estadoReprod=?, dataFalecimento=? WHERE idFichaClin=?"
         );
@@ -239,7 +233,6 @@ try {
         psUp.setString(5, (alergias != null && !alergias.trim().isEmpty()) ? alergias : null);
         psUp.setString(6, estadoReprod);
         
-        // ✅ Processar dataFalecimento
         String dataFalecimentoStr = request.getParameter("dataFalecimento");
         if (dataFalecimentoStr != null && !dataFalecimentoStr.trim().isEmpty()) {
             psUp.setDate(7, java.sql.Date.valueOf(dataFalecimentoStr));
@@ -250,7 +243,6 @@ try {
         psUp.executeUpdate();
         psUp.close();
 
-        // Update raça
         PreparedStatement psR = con.prepareStatement(
             "UPDATE fichaRaca SET nomeRaca=? WHERE idFichaClin=?"
         );
@@ -259,7 +251,6 @@ try {
         psR.executeUpdate();
         psR.close();
 
-        // Foto (se vier nova)
         Part filePart = request.getPart("fotoPerfil");
         boolean temNovaFoto = (filePart != null && filePart.getSize() > 0);
         byte[] fotoBytes = null;
@@ -270,7 +261,6 @@ try {
             }
         }
 
-        // Update características (cores + outrasDistint + foto se existir)
         if (temNovaFoto) {
             PreparedStatement psCar = con.prepareStatement(
                 "UPDATE caracteristicasFic SET cores=?, outrasDistint=?, fotografia=? WHERE idFicha=?"
@@ -297,9 +287,6 @@ try {
         tipoMensagem = "sucesso";
     }
 
-    // =============================================
-    // CARREGAR DADOS ATUAIS PARA O FORM
-    // =============================================
     PreparedStatement ps = con.prepareStatement(
         "SELECT f.*, fr.nomeRaca, cf.cores, cf.outrasDistint " +
         "FROM fichaClinicaAnimal f " +
@@ -314,7 +301,7 @@ try {
         nome = rs.getString("nome");
         sexo = rs.getString("sexo");
         dataNasc = rs.getDate("dataNasc");
-        dataFalecimento = rs.getDate("dataFalecimento"); // ✅ ADICIONADO
+        dataFalecimento = rs.getDate("dataFalecimento");
         filiacao = rs.getString("filiacao");
         alergias = rs.getString("alergias");
         estadoReprod = rs.getString("estadoReprod");
@@ -326,7 +313,6 @@ try {
     rs.close();
     ps.close();
     
-    // ✅ Preparar array de cores selecionadas para JavaScript
     List<String> coresSelecionadas = new ArrayList<>();
     if (coresStr != null && !coresStr.trim().isEmpty() && !coresStr.equals("N/A")) {
         String[] coresArray = coresStr.split(",");
@@ -386,7 +372,6 @@ try {
       </p>
     </div>
 
-    <!-- ✨ SISTEMA DE CORES VISUAL MELHORADO -->
     <div class="color-palette">
         <label class="color-option">
           <input type="checkbox" name="cores" value="Preto" id="cor-preto">
@@ -511,7 +496,6 @@ try {
       <select name="estadoReprod" required>
         <option value="Inteiro" <%= "Inteiro".equals(estadoReprod) ? "selected" : "" %>>Inteiro</option>
 
-    <!-- ✅ NOVO CAMPO: Data de Falecimento -->
     <div class="form-group">
       <label>Data de Falecimento (opcional)</label>
       <input type="date" name="dataFalecimento" 
@@ -540,7 +524,7 @@ try {
 </div>
 
 <script>
-// ✅ Cores já selecionadas (vindas do servidor)
+
 const coresAtuais = [
 <%
     for (int i = 0; i < coresSelecionadas.size(); i++) {
@@ -549,7 +533,7 @@ const coresAtuais = [
     }
 %>
 ];
-// ✅ Marcar checkboxes com cores já guardadas
+
 window.addEventListener('DOMContentLoaded', function() {
   coresAtuais.forEach(function(cor) {
     const checkbox = document.querySelector('input[name="cores"][value="' + cor + '"]');
@@ -560,7 +544,7 @@ window.addEventListener('DOMContentLoaded', function() {
   updateSelectedColors();
 });
 
-// ✅ Atualizar display de cores selecionadas
+
 function updateSelectedColors() {
   const checkboxes = document.querySelectorAll('input[name="cores"]:checked');
   const container = document.getElementById('selectedColors');
@@ -580,12 +564,12 @@ function updateSelectedColors() {
   }
 }
 
-// ✅ Listener para atualizar quando selecionam cores
+
 document.querySelectorAll('input[name="cores"]').forEach(function(checkbox) {
   checkbox.addEventListener('change', updateSelectedColors);
 });
 
-// ✅ Preview da foto
+
 function previewFoto(input) {
   const preview = document.getElementById('fotoPreview');
   if (input.files && input.files[0]) {

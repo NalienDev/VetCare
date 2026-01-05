@@ -147,9 +147,6 @@ String tipoMensagem = "";
 try {
     Connection con = manipula.getLigacao();
 
-    // ===================================================
-    // MARCAR FALECIMENTO (RECECIONISTA)
-    // ===================================================
     String acao = request.getParameter("acao");
     if ("marcarFalecimento".equals(acao)) {
         String dataFal = request.getParameter("dataFalecimento");
@@ -170,9 +167,6 @@ try {
         }
     }
 
-    // ===================================================
-    // CARREGAR DADOS DO ANIMAL + TUTOR
-    // ===================================================
     String sql =
         "SELECT f.*, r.nomeRaca, e.nomeComum AS especie, r.expectativaVida, " +
         "       c.NIF AS nifTutor, c.nomeCompleto AS tutor, c.contactos, " +
@@ -298,7 +292,6 @@ try {
             <div class="info-value"><%= raca != null ? raca : "-" %></div>
           </div>
 
-          <!-- ✅ Sexo com icons -->
           <div class="info-item">
             <div class="info-label">Sexo</div>
             <div class="info-value">
@@ -373,7 +366,6 @@ try {
         </div>
       </div>
 
-      <!-- ✅ Marcar Falecimento -->
       <div class="info-section">
         <h3>⚠️ Falecimento</h3>
 

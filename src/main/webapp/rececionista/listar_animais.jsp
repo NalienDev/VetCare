@@ -33,7 +33,6 @@
 <div class="page-content">
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
-  <!-- PESQUISA + AUTOCOMPLETE -->
   <form method="GET" style="margin: 20px 0; display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;" autocomplete="off">
 	
 	  <div class="form-group" style="margin:0; position:relative; min-width:340px;">
@@ -49,7 +48,6 @@
 	      autocomplete="off"
 	    >
 
-	    <!-- dropdown do autocomplete -->
 	    <div id="resultados" style="display:none; position:absolute; background:white; border:1px solid #DDE6EE; border-radius:14px 4px 14px 4px; max-height:260px; overflow-y:auto; width:100%; z-index:9999; margin-top:5px; box-shadow:0px 4px 15px rgba(0,0,0,0.15);"></div>
 	  </div>
 
@@ -114,7 +112,6 @@
             <td><%= rs.getString("nome") %></td>
             <td><%= rs.getString("sexo") %></td>
 
-            <!-- ✅ DATA NASC + DATA FALECIMENTO AO LADO EM VERMELHO -->
             <td>
               <%= dataNasc != null ? dataNasc.toString() : "-" %>
               <% if(dataFal != null) { %>
@@ -161,7 +158,6 @@ var searchInput = document.getElementById('searchTutor');
 var resultadosDiv = document.getElementById('resultados');
 var timeoutId = null;
 
-// Function to search tutors using XMLHttpRequest
 function pesquisarTutores() {
     var query = searchInput.value.trim();
     
@@ -208,7 +204,6 @@ function pesquisarTutores() {
     xhr.send();
 }
 
-// Event listener for input with debounce
 searchInput.addEventListener('input', function() {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(pesquisarTutores, 300);

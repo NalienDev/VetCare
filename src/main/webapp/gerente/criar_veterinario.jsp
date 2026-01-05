@@ -67,7 +67,6 @@
         Connection con = manipula.getLigacao();
         con.setAutoCommit(false);
 
-        // Gerar próximo número de licença no formato PT-VET-XXXXX
         String sqlMax = "SELECT MAX(CAST(SUBSTRING(nLicenca, 8) AS UNSIGNED)) AS maxNum FROM veterinario WHERE nLicenca LIKE 'PT-VET-%'";
         PreparedStatement psMax = con.prepareStatement(sqlMax);
         ResultSet rsMax = psMax.executeQuery();
@@ -83,7 +82,6 @@
         rsMax.close();
         psMax.close();
 
-        // Inserir veterinário
         String sqlVet = "INSERT INTO veterinario (nLicenca, nome, contacto) VALUES (?, ?, ?)";
         PreparedStatement psVet = con.prepareStatement(sqlVet);
         psVet.setString(1, nLicenca);

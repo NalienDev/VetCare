@@ -32,7 +32,6 @@
 		  box-sizing: border-box;
 		}
 
-        /* ====== HEADER (com logo imagem) ====== */
         .main-header{
             background:white;
             border-bottom:1px solid #e6e6e6;
@@ -72,13 +71,11 @@
             text-decoration:underline;
         }
 
-        /* ===== HERO ===== */
         .hero{
             background: var(--bg-hero);
             padding: 46px 0 80px;
         }
 
-        /* alinhado à esquerda */
         .hero-inner{
             max-width:1400px;
             margin-left:80px;
@@ -107,7 +104,6 @@
 		    margin-top:32px;
 		}
 		
-		/* wrapper do input ocupa espaço livre */
 		.search-input-wrapper{
 		    flex:1;
 		    max-width:650px;
@@ -116,7 +112,6 @@
 		}
 
 
-        /* input com lupa dentro */
         .search-input-wrapper{
             position:relative;
         }
@@ -137,7 +132,6 @@
             color:#999;
         }
 
-        /* botão lupa dentro do input */
         .search-inside-btn{
             position:absolute;
             right:14px;
@@ -190,13 +184,11 @@
 		}
 		
 
-        /* icons */
         .btn-icon{
             width:18px;
             height:18px;
         }
 
-        /* tip */
         .tip{
             margin-top:14px;
             font-size:12.5px;
@@ -210,7 +202,6 @@
             text-decoration:underline;
         }
 
-        /* filtros */
         .filters{
             display:flex;
             gap:18px;
@@ -229,7 +220,6 @@
             cursor:pointer;
         }
 
-        /* list alinhada à esquerda */
         .clinics-container{
             max-width:1400px;
             margin-left:80px;
@@ -245,7 +235,6 @@
             color: var(--txt-dark);
         }
 
-        /* card */
         .clinic-card{
             width:560px;
             background: var(--card-bg);
@@ -340,7 +329,6 @@
 
 <body>
 
-<!-- HEADER -->
 <header class="main-header">
     <div class="header-content">
 
@@ -359,13 +347,11 @@
     </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-inner">
         <div class="breadcrumb">Página inicial / Hospitais e clínicas veterinárias</div>
         <h1>Hospitais e clínicas veterinárias</h1>
 
-        <!-- SEARCH + BOTÕES AO LADO -->
         <form method="GET" action="clinicas.jsp">
             <div class="search-grid">
 
@@ -398,13 +384,11 @@
             </div>
         </form>
 
-        <!-- TIP -->
         <div class="tip">
             <b>Dica!</b> Você pode pesquisar pelo nome da clínica, cidade ou usar sua localização para encontrar clínicas perto de você.
             <a href="#" onclick="alert('Ative a localização no navegador.'); return false;">Como habilitar.</a>
         </div>
 
-        <!-- FILTERS -->
         <div class="filters">
             <select><option>Ordenar por: Região</option></select>
             <select><option>Todas as horas</option></select>
@@ -414,7 +398,6 @@
     </div>
 </section>
 
-<!-- LIST -->
 <div class="clinics-container">
 
 <button id="btnShowAll" class="btn-showall" onclick="showAllClinics()">Mostrar todas as clínicas</button>
@@ -459,7 +442,6 @@
             String abre = rs.getString("abre");
             String fecha = rs.getString("fecha");
 
-            // GPS sem alterar o SELECT principal
             float lat = 0, lng = 0;
             String sqlGPS = "SELECT latitude, longitude FROM clinica WHERE localidade=?";
             PreparedStatement psGPS = con.prepareStatement(sqlGPS);
@@ -472,7 +454,6 @@
             rsGPS.close();
             psGPS.close();
 
-            // telefone + urgencias (hardcoded)
             String telefone = "210 000 000";
             boolean urgencias = false;
             if(localidade.equals("Vila Franca de Xira")){
@@ -632,7 +613,6 @@ var resultadosClinica = document.getElementById("resultadosClinica");
 
 var timeoutClinica = null;
 
-// Function to search clinics using XMLHttpRequest
 function pesquisarClinicas() {
     var query = inputClinica.value.trim();
 

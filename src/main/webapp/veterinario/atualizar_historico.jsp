@@ -50,9 +50,6 @@ String tipoRegistroAuto = "";
 try {
     Connection con = manipula.getLigacao();
 
-    // ============================
-    // VALIDAR ANIMAL
-    // ============================
     if (idFichaClinParam != null && !idFichaClinParam.trim().isEmpty()) {
         try {
             idFichaClin = Integer.parseInt(idFichaClinParam.trim());
@@ -65,9 +62,6 @@ try {
         throw new Exception("Animal não selecionado.");
     }
 
-    // ============================
-    // BUSCAR / CRIAR HISTÓRICO
-    // ============================
     String sqlHistorico = "SELECT idHistorico FROM historicoClinico WHERE idFichaClin=?";
     PreparedStatement psH = con.prepareStatement(sqlHistorico);
     psH.setInt(1, idFichaClin);
@@ -79,7 +73,6 @@ try {
     rsH.close(); 
     psH.close();
 
-    // Criar histórico se não existir
     if (idHistorico == 0) {
         String sqlInsert = "INSERT INTO historicoClinico (idFichaClin) VALUES (?)";
         PreparedStatement psCreate = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
@@ -100,9 +93,6 @@ try {
         }
     }
 
-    // ============================
-    // BUSCAR AGENDAMENTO
-    // ============================
     if (idAgendamentoParam != null && !idAgendamentoParam.trim().isEmpty()) {
         try {
             int idAgendamento = Integer.parseInt(idAgendamentoParam.trim());
@@ -119,13 +109,9 @@ try {
             rsAg.close(); 
             psAg.close();
         } catch (NumberFormatException e) {
-            // ID de agendamento inválido - continua sem dados do agendamento
         }
     }
 
-    // ============================
-    // DEFINIR TIPO AUTOMÁTICO
-    // ============================
     if (tipoServicoAgenda != null && !tipoServicoAgenda.trim().isEmpty()) {
         String ts = tipoServicoAgenda.toLowerCase();
 
@@ -139,27 +125,21 @@ try {
         else tipoRegistroAuto = "consulta";
     }
 
-    // ============================
-    // POST -> GUARDAR REGISTO
-    // ============================
     if ("POST".equalsIgnoreCase(request.getMethod())) {
 
         String tipoRegistro = request.getParameter("tipoRegistro");
         String dataHoraParam = request.getParameter("dataHora");
         boolean sucesso = false;
         
-        // Desativar autocommit para controlo manual da transação
         con.setAutoCommit(false);
 
         try {
-            // Parse data/hora
             Timestamp dataHoraRegisto = null;
             
             if (dataHoraParam != null && !dataHoraParam.trim().isEmpty()) {
                 try {
-                    // Formato: 2024-01-15T14:30 -> 2024-01-15 14:30:00
                     String dataFormatada = dataHoraParam.trim().replace("T", " ");
-                    if (dataFormatada.length() == 16) { // yyyy-MM-dd HH:mm
+                    if (dataFormatada.length() == 16) { 
                         dataFormatada += ":00";
                     }
                     dataHoraRegisto = Timestamp.valueOf(dataFormatada);
@@ -169,17 +149,11 @@ try {
                 }
             }
             
-            // Se ainda não temos data, usar a do agendamento ou atual
             if (dataHoraRegisto == null) {
                 dataHoraRegisto = (dataHoraAgenda != null) ? dataHoraAgenda : new Timestamp(System.currentTimeMillis());
             }
 
-            // ============================
-            // EXECUTAR INSERT CONFORME TIPO
-            // ============================
-            
             if ("consulta".equals(tipoRegistro)) {
-                // ✅ CONSULTA
                 String sql = "INSERT INTO consultaHist (idHistorico, dataConsulta, motivo, sintomas, diagnostico, medicacao) VALUES (?,?,?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -192,7 +166,6 @@ try {
                 sucesso = manipula.xDirectiva(sql, params);
             }
             else if ("vacina".equals(tipoRegistro)) {
-                // ✅ VACINAÇÃO
                 String sql = "INSERT INTO vacinacao (idHistorico, dataVacina, tipoVacina, fabricante) VALUES (?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -203,7 +176,6 @@ try {
                 sucesso = manipula.xDirectiva(sql, params);
             }
             else if ("desparasitacao".equals(tipoRegistro)) {
-                // ✅ DESPARASITAÇÃO
                 String sql = "INSERT INTO desparasitacao (idHistorico, dataDesparasitacao, tipoDesparasitacao, produtosUtilizados) VALUES (?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -214,7 +186,6 @@ try {
                 sucesso = manipula.xDirectiva(sql, params);
             }
             else if ("resultadoexame".equals(tipoRegistro)) {
-                // ✅ RESULTADO EXAME
                 String sql = "INSERT INTO resultadoEx (idHistorico, dataHora, tipoExame, resultadosEx) VALUES (?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -225,13 +196,11 @@ try {
                 sucesso = manipula.xDirectiva(sql, params);
             }
             else if ("examefisico".equals(tipoRegistro)) {
-                // ✅ EXAME FÍSICO
                 String sql = "INSERT INTO exameFis (idHistorico, dataHora, peso, temperatura, freqCard, freqResp) VALUES (?,?,?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
                 params.add(dataHoraRegisto);
                 
-                // Converter strings para números com validação
                 try {
                     params.add(Double.parseDouble(request.getParameter("peso")));
                     params.add(Double.parseDouble(request.getParameter("temperatura")));
@@ -244,7 +213,6 @@ try {
                 }
             }
             else if ("cirurgia".equals(tipoRegistro)) {
-                // ✅ CIRURGIA
                 String sql = "INSERT INTO cirurgiaHist (idHistorico, dataCirurgia, tipoCirurgia, notasPosOp) VALUES (?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -255,7 +223,6 @@ try {
                 sucesso = manipula.xDirectiva(sql, params);
             }
             else if ("tratamento".equals(tipoRegistro)) {
-                // ✅ TRATAMENTO
                 String sql = "INSERT INTO TratTerapHist (idHistorico, dataTrat, descricao, tipoTratamento) VALUES (?,?,?,?)";
                 List<Object> params = new ArrayList<>();
                 params.add(idHistorico);
@@ -269,9 +236,6 @@ try {
                 throw new Exception("Tipo de registo inválido: " + tipoRegistro);
             }
 
-            // ============================
-            // ATUALIZAR AGENDAMENTO
-            // ============================
             if (sucesso && idAgendamentoParam != null && !idAgendamentoParam.trim().isEmpty()) {
                 try {
                     String sqlUpdate = "UPDATE agendamento SET statusAgendamento='realizado' WHERE idAgendamento=?";
@@ -279,13 +243,9 @@ try {
                     paramsUpdate.add(Integer.parseInt(idAgendamentoParam.trim()));
                     manipula.xDirectiva(sqlUpdate, paramsUpdate);
                 } catch (NumberFormatException e) {
-                    // Não conseguiu atualizar agendamento mas o registo foi salvo
                 }
             }
 
-            // ============================
-            // COMMIT OU ROLLBACK
-            // ============================
             if (sucesso) {
                 con.commit();
                 mensagem = "✅ Registo guardado com sucesso!";
@@ -314,7 +274,6 @@ try {
     tipoMensagem = "erro";
     e.printStackTrace();
 } finally {
-    // Não fechar a conexão aqui se ainda precisamos exibir dados
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         manipula.desligar();
     }
@@ -363,7 +322,6 @@ try {
                required>
       </div>
 
-      <!-- CONSULTA -->
       <div id="camposConsulta" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🩺 Consulta</h3>
         <div class="form-group"><label>Motivo *</label><input type="text" name="motivo" id="motivo"></div>
@@ -372,21 +330,18 @@ try {
         <div class="form-group"><label>Diagnóstico *</label><textarea name="diagnostico" id="diagnostico" rows="3"></textarea></div>
       </div>
 
-      <!-- VACINAÇÃO -->
       <div id="camposVacina" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">💉 Vacinação</h3>
         <div class="form-group"><label>Tipo *</label><input type="text" name="tipoVacina" id="tipoVacina"></div>
         <div class="form-group"><label>Fabricante *</label><input type="text" name="fabricante" id="fabricante"></div>
       </div>
 
-      <!-- DESPARASITAÇÃO -->
       <div id="camposDes" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🪱 Desparasitação</h3>
         <div class="form-group"><label>Tipo *</label><input type="text" name="tipoDesparasitacao" id="tipoDesparasitacao"></div>
         <div class="form-group"><label>Produtos Utilizados *</label><input type="text" name="produtosUtilizados" id="produtosUtilizados"></div>
       </div>
 
-      <!-- EXAME FÍSICO -->
       <div id="camposExameFis" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🔬 Exame Físico</h3>
         <div class="form-group"><label>Peso (kg) *</label><input type="number" step="0.01" name="peso" id="peso"></div>
@@ -395,21 +350,18 @@ try {
         <div class="form-group"><label>Frequência Respiratória (rpm) *</label><input type="number" name="freqResp" id="freqResp"></div>
       </div>
 
-      <!-- RESULTADO EXAME -->
       <div id="camposRes" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">📄 Resultado Exame</h3>
         <div class="form-group"><label>Tipo *</label><input type="text" name="tipoExame" id="tipoExame"></div>
         <div class="form-group"><label>Resultados *</label><textarea name="resultadosEx" id="resultadosEx" rows="4"></textarea></div>
       </div>
 
-      <!-- CIRURGIA -->
       <div id="camposCir" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🏥 Cirurgia</h3>
         <div class="form-group"><label>Tipo *</label><input type="text" name="tipoCirurgia" id="tipoCirurgia"></div>
         <div class="form-group"><label>Notas</label><textarea name="notasPosOp" id="notasPosOp" rows="3"></textarea></div>
       </div>
 
-      <!-- TRATAMENTO -->
       <div id="camposTrat" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🧾 Tratamento Terapêutico</h3>
         <div class="form-group"><label>Tipo *</label><input type="text" name="tipoTratamento" id="tipoTratamento"></div>
@@ -427,7 +379,6 @@ try {
 function mostrarCampos() {
   const tipo = document.getElementById("tipoRegistro").value;
 
-  // Esconder todos
   document.getElementById("camposConsulta").style.display="none";
   document.getElementById("camposVacina").style.display="none";
   document.getElementById("camposDes").style.display="none";
@@ -436,7 +387,6 @@ function mostrarCampos() {
   document.getElementById("camposCir").style.display="none";
   document.getElementById("camposTrat").style.display="none";
 
-  // Remover required de todos os campos
   document.querySelectorAll('#camposConsulta input, #camposConsulta textarea').forEach(el => el.removeAttribute('required'));
   document.querySelectorAll('#camposVacina input').forEach(el => el.removeAttribute('required'));
   document.querySelectorAll('#camposDes input').forEach(el => el.removeAttribute('required'));
@@ -445,7 +395,6 @@ function mostrarCampos() {
   document.querySelectorAll('#camposCir input').forEach(el => el.removeAttribute('required'));
   document.querySelectorAll('#camposTrat input, #camposTrat textarea').forEach(el => el.removeAttribute('required'));
 
-  // Mostrar campos do tipo selecionado e adicionar required
   if(tipo==="consulta") {
     document.getElementById("camposConsulta").style.display="block";
     document.getElementById("sintomas").required = true;
@@ -485,16 +434,13 @@ function mostrarCampos() {
 }
 
 function validarFormulario() {
-  // Sem validações - aceita qualquer valor
   return true;
 }
 
-// Inicializar ao carregar
 mostrarCampos();
 </script>
 
 <%
-// Fechar conexão apenas no final
 if (manipula != null) {
     manipula.desligar();
 }

@@ -10,7 +10,6 @@
   
   <style>
   
-    /* Estilos para ícones inline */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -19,21 +18,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -342,7 +338,6 @@
       try {
           Connection con = manipula.getLigacao();
           
-          // BUSCAR DADOS DO VETERINÁRIO
           String sqlVet = 
               "SELECT nome, contacto " +
               "FROM veterinario WHERE nLicenca = ?";
@@ -364,7 +359,6 @@
               psVet.close();
   %>
   
-  <!-- HEADER DO PERFIL -->
   <div class="profile-header">
     <div class="profile-info">
       <h2><%= nome %></h2>
@@ -374,7 +368,6 @@
   </div>
   
   <%
-              // ESTATÍSTICAS
               String sqlStats = 
                   "SELECT " +
                   "  COUNT(DISTINCT CASE WHEN a.dataHrAgenda >= CURDATE() THEN a.idAgendamento END) as consultasFuturas, " +
@@ -411,7 +404,6 @@
               psStats.close();
   %>
   
-  <!-- ESTATÍSTICAS -->
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Consultas Futuras</div>
@@ -428,7 +420,6 @@
   </div>
   
   <%
-              // BUSCAR HORÁRIOS DE TRABALHO
               String sqlHorarios = 
                   "SELECT e.diaUtil, e.localidade, h.horaInicio, h.horaFim " +
                   "FROM escalado e " +
@@ -448,7 +439,6 @@
               ResultSet rsHorarios = psHorarios.executeQuery();
   %>
   
-  <!-- HORÁRIOS DE TRABALHO -->
   <div class="horarios-trabalho">
     <h3><img src="../images/icon-calendar.png" class="icon-inline" alt="Calendário"> Os Meus Horários de Trabalho</h3>
     <%
@@ -481,7 +471,6 @@
   </div>
   
   <%
-              // PARÂMETROS DO CALENDÁRIO
               String mesParam = request.getParameter("mes");
               String anoParam = request.getParameter("ano");
               
@@ -492,7 +481,6 @@
               int mesHoje = cal.get(Calendar.MONTH);
               int anoHoje = cal.get(Calendar.YEAR);
               
-              // Configurar calendário para o mês selecionado
               cal.set(Calendar.YEAR, anoAtual);
               cal.set(Calendar.MONTH, mesAtual);
               cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -503,7 +491,6 @@
               String[] nomesMeses = {"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                                      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"};
               
-              // BUSCAR CONSULTAS DO MÊS
               String sqlConsultas = 
                   "SELECT " +
                   "  a.idAgendamento, " +
@@ -558,7 +545,6 @@
               rsCons.close();
               psCons.close();
               
-              // BUSCAR DIAS DE TRABALHO
               String sqlDiasTrabalho = 
                   "SELECT DISTINCT e.diaUtil FROM escalado e WHERE e.nLicenca = ?";
               PreparedStatement psDias = con.prepareStatement(sqlDiasTrabalho);
@@ -573,7 +559,6 @@
               psDias.close();
   %>
   
-  <!-- CALENDÁRIO -->
   <div class="calendario">
     <div class="calendario-header">
       <div class="calendario-mes"><%= nomesMeses[mesAtual] %> <%= anoAtual %></div>
@@ -593,7 +578,6 @@
     </div>
     
     <div class="calendario-grid">
-      <!-- Headers dos dias -->
       <div class="calendario-dia-header">Dom</div>
       <div class="calendario-dia-header">Seg</div>
       <div class="calendario-dia-header">Ter</div>
@@ -603,14 +587,12 @@
       <div class="calendario-dia-header">Sáb</div>
       
       <%
-              // Dias vazios antes do primeiro dia
               for (int i = 1; i < primeiroDiaSemana; i++) {
       %>
         <div class="calendario-dia calendario-dia-vazio"></div>
       <%
               }
               
-              // Dias do mês
               for (int dia = 1; dia <= diasNoMes; dia++) {
                   cal.set(Calendar.DAY_OF_MONTH, dia);
                   int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
@@ -680,7 +662,6 @@
     </div>
   </div>
   
-  <!-- CONSULTAS POR DIA -->
   <%
               for (Map.Entry<Integer, List<Map<String, Object>>> entry : consultasPorDia.entrySet()) {
                   int dia = entry.getKey();

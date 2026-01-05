@@ -94,7 +94,6 @@ try {
         }
     }
 
-    // Carregar dados atuais
     PreparedStatement ps = con.prepareStatement("SELECT * FROM cliente WHERE NIF=?");
     ps.setString(1, nifParam);
     ResultSet rs = ps.executeQuery();

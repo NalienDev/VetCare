@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
-    /* ✅ ICONS INLINE */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -18,7 +17,6 @@
       vertical-align: -3px;
     }
 
-    /* ✨ CARDS DE ANIMAIS MODERNOS */
     .animals-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -57,7 +55,6 @@
       opacity: 0.7;
     }
 
-    /* ✅ BLOQUEADO (FALECIDO) */
     .animal-card.bloqueado {
       background: #F4F6F8;
       border-color: #D72638;
@@ -327,7 +324,6 @@ Manipula manipula = new Manipula(cfg);
 try {
     Connection con = manipula.getLigacao();
 
-    // Buscar tutor do agendamento
     PreparedStatement psTutor = con.prepareStatement(
       "SELECT c.NIF, c.nomeCompleto FROM agenda ag " +
       "JOIN cliente c ON c.NIF = ag.NIF " +
@@ -367,7 +363,6 @@ try {
   </div>
 
 <%
-    // ✅ buscar também dataFalecimento
     PreparedStatement psA = con.prepareStatement(
       "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, f.dataFalecimento, " +
       "r.nomeRaca, e.nomeComum as especie, " +

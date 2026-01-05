@@ -64,7 +64,6 @@ if (nif == null || nif.trim().isEmpty()) {
     try {
         Connection con = manipula.getLigacao();
         
-        // Buscar informações do cliente
         PreparedStatement psCliente = con.prepareStatement(
             "SELECT c.*, p.NIF as isPessoa " +
             "FROM cliente c " +
@@ -109,7 +108,6 @@ if (nif == null || nif.trim().isEmpty()) {
             rsCliente.close();
             psCliente.close();
             
-            // Contar animais
             PreparedStatement psCountAnimais = con.prepareStatement(
                 "SELECT COUNT(*) as total FROM tutor WHERE NIF = ?"
             );
@@ -122,7 +120,6 @@ if (nif == null || nif.trim().isEmpty()) {
             rsCount.close();
             psCountAnimais.close();
             
-            // Contar agendamentos
             PreparedStatement psCountAgend = con.prepareStatement(
                 "SELECT COUNT(*) as total FROM agenda WHERE NIF = ?"
             );
@@ -135,7 +132,6 @@ if (nif == null || nif.trim().isEmpty()) {
             rsCountAgend.close();
             psCountAgend.close();
             
-            // Buscar animais do cliente
             PreparedStatement psAnimais = con.prepareStatement(
                 "SELECT f.idFichaClin, f.nome, f.dataNasc, r.nomeRaca, e.nomeComum as especie " +
                 "FROM fichaClinicaAnimal f " +
@@ -160,7 +156,6 @@ if (nif == null || nif.trim().isEmpty()) {
 <div class="page-content">
   <a href="menu.jsp" class="btn-voltar">← Voltar ao Menu</a>
   
-  <!-- ESTATÍSTICAS -->
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px;">
     <div class="table-card" style="text-align: center; padding: 28px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px;">
       <div style="font-size: 48px; font-weight: 900; color: #0B2A42; margin-bottom: 8px;"><%= totalAnimais %></div>
@@ -173,7 +168,6 @@ if (nif == null || nif.trim().isEmpty()) {
     </div>
   </div>
   
-  <!-- INFORMAÇÕES PESSOAIS -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
     <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-clipboard.png" alt="Informações" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Informações Pessoais</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
@@ -206,7 +200,6 @@ if (nif == null || nif.trim().isEmpty()) {
     </div>
   </div>
   
-  <!-- MORADA -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
     <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-home.png" alt="Morada" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Morada</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
@@ -238,7 +231,6 @@ if (nif == null || nif.trim().isEmpty()) {
     </div>
   </div>
   
-  <!-- MEUS ANIMAIS -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
     <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-paw.png" alt="Animais" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Os Meus Animais</h3>
     

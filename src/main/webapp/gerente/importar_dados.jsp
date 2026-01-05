@@ -101,7 +101,6 @@
               Connection con = manipula.getLigacao();
               con.setAutoCommit(false);
               
-              // Próximo ID
               String sqlMaxId = "SELECT COALESCE(MAX(idFichaClin),0)+1 AS proximoId FROM fichaClinicaAnimal";
               PreparedStatement psMax = con.prepareStatement(sqlMaxId);
               ResultSet rsMax = psMax.executeQuery();
@@ -109,7 +108,6 @@
               if(rsMax.next()) idFicha = rsMax.getInt("proximoId");
               rsMax.close(); psMax.close();
               
-              // Inserir ficha
               String sqlFicha = "INSERT INTO fichaClinicaAnimal (idFichaClin, nome, sexo, dataNasc, filiacao, estadoReprod, alergias) VALUES (?,?,?,?,?,?,?)";
               PreparedStatement psFicha = con.prepareStatement(sqlFicha);
               psFicha.setInt(1, idFicha);
@@ -122,7 +120,6 @@
               psFicha.executeUpdate();
               psFicha.close();
               
-              // Associar raça
               String sqlRaca = "INSERT INTO fichaRaca (idFichaClin, nomeRaca) VALUES (?,?)";
               PreparedStatement psRaca = con.prepareStatement(sqlRaca);
               psRaca.setInt(1, idFicha);
@@ -130,7 +127,6 @@
               psRaca.executeUpdate();
               psRaca.close();
               
-              // Histórico
               String sqlHist = "INSERT INTO historicoClinico (idFichaClin) VALUES (?)";
               PreparedStatement psHist = con.prepareStatement(sqlHist);
               psHist.setInt(1, idFicha);

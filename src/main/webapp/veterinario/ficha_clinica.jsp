@@ -197,9 +197,6 @@ String mensagemPeso = "";
 try {
     Connection con = manipula.getLigacao();
 
-    // ============================
-    // ATUALIZAR PESO ATUAL
-    // ============================
     String acao = request.getParameter("acao");
     if ("atualizarPeso".equals(acao) && "POST".equalsIgnoreCase(request.getMethod())) {
         String novoPesoParam = request.getParameter("novoPeso");
@@ -207,7 +204,6 @@ try {
             try {
                 double novoPeso = Double.parseDouble(novoPesoParam.replace(",", "."));
                 
-                // ✅ Verifica se já existe registo em caracteristicasFic
                 PreparedStatement psCheck = con.prepareStatement(
                     "SELECT idFicha FROM caracteristicasFic WHERE idFicha = ?"
                 );
@@ -215,7 +211,6 @@ try {
                 ResultSet rsCheck = psCheck.executeQuery();
                 
                 if (rsCheck.next()) {
-                    // ✅ Existe: UPDATE
                     PreparedStatement psUpdate = con.prepareStatement(
                         "UPDATE caracteristicasFic SET peso = ? WHERE idFicha = ?"
                     );
@@ -225,7 +220,6 @@ try {
                     psUpdate.close();
                     mensagemPeso = "✅ Peso atualizado com sucesso!";
                 } else {
-                    // ✅ Não existe: INSERT (precisa de cores, foto e outrasDistint)
                     PreparedStatement psInsert = con.prepareStatement(
                         "INSERT INTO caracteristicasFic (idFicha, cores, fotografia, peso, outrasDistint) " +
                         "VALUES (?, 'N/A', '', ?, 'N/A')"

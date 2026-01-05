@@ -100,7 +100,6 @@
         Connection con = manipula.getLigacao();
         con.setAutoCommit(false);
 
-        // Verificar se a localidade existe
         String sqlVerifLoc = "SELECT localidade FROM clinica WHERE localidade = ?";
         PreparedStatement psVerifLoc = con.prepareStatement(sqlVerifLoc);
         psVerifLoc.setString(1, localidade);
@@ -116,7 +115,6 @@
           rsVerifLoc.close();
           psVerifLoc.close();
 
-          // Verificar se já existe horário para esta localidade e dia
           String sqlVerif = "SELECT diaUtil FROM horario WHERE localidade = ? AND diaUtil = ?";
           PreparedStatement psVerif = con.prepareStatement(sqlVerif);
           psVerif.setString(1, localidade);
@@ -133,7 +131,6 @@
             rsVerif.close();
             psVerif.close();
 
-            // Validar horários
             java.sql.Time inicio = java.sql.Time.valueOf(horaInicio + ":00");
             java.sql.Time fim = java.sql.Time.valueOf(horaFim + ":00");
 
@@ -142,7 +139,7 @@
               tipoMensagem = "erro";
               con.rollback();
             } else {
-              // Inserir horário
+              
               String sqlHorario = "INSERT INTO horario (diaUtil, horaInicio, horaFim, localidade) VALUES (?, ?, ?, ?)";
               PreparedStatement psHorario = con.prepareStatement(sqlHorario);
               psHorario.setString(1, diaUtil);

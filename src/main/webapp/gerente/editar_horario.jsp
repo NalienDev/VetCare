@@ -100,16 +100,12 @@ Manipula manipula = new Manipula(cfg);
 String mensagem = "";
 String tipoMensagem = "";
 
-// Dados atuais
 java.sql.Time horaInicio = null;
 java.sql.Time horaFim = null;
 
 try {
     Connection con = manipula.getLigacao();
 
-    // =============================================
-    // ELIMINAR HORÁRIO
-    // =============================================
     if ("DELETE".equalsIgnoreCase(request.getParameter("action"))) {
         con.setAutoCommit(false);
         
@@ -133,16 +129,12 @@ try {
         }
     }
 
-    // =============================================
-    // GUARDAR ALTERAÇÕES
-    // =============================================
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         String horaInicioStr = request.getParameter("horaInicio");
         String horaFimStr = request.getParameter("horaFim");
 
         con.setAutoCommit(false);
 
-        // Validar horários
         java.sql.Time inicio = java.sql.Time.valueOf(horaInicioStr + ":00");
         java.sql.Time fim = java.sql.Time.valueOf(horaFimStr + ":00");
 
@@ -151,7 +143,7 @@ try {
             tipoMensagem = "erro";
             con.rollback();
         } else {
-            // Update horário
+            
             PreparedStatement psUp = con.prepareStatement(
                 "UPDATE horario SET horaInicio=?, horaFim=? WHERE localidade=? AND diaUtil=?"
             );
@@ -177,9 +169,6 @@ try {
         }
     }
 
-    // =============================================
-    // CARREGAR DADOS ATUAIS PARA O FORM
-    // =============================================
     if (horaInicio == null) {
         PreparedStatement ps = con.prepareStatement(
             "SELECT horaInicio, horaFim FROM horario WHERE localidade=? AND diaUtil=?"

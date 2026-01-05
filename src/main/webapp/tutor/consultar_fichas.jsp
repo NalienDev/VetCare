@@ -127,7 +127,6 @@
       color: #0B2A42;
     }
 
-    /* ✅ NOVO: APRESENTAÇÃO DAS CORES */
     .color-tags {
       display: flex;
       flex-wrap: wrap;

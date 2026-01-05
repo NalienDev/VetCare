@@ -9,7 +9,6 @@
 
 </head>
 <body>
-    <!-- Header com logo e navegação -->
     <header class="main-header">
         <div class="header-content">
             <div class="logo">
@@ -24,13 +23,11 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">Porque o seu animal de estimação merece a melhor atenção</h1>
             
-            <!-- Menu de busca de clínicas -->
             <div class="clinic-search-box">
                 <div class="search-header">
                     <h2>Encontre uma clínica</h2>
@@ -81,13 +78,11 @@
         <img src="images/hero-cat.jpeg" alt="Gato" class="hero-image">
     </section>
 
-    <!-- Seção de Acesso ao Sistema -->
     <section class="quick-access">
         <div class="container">
             <h2 class="section-title">Acesso ao Sistema</h2>
             <div class="access-grid">
                 
-                <!-- Rececionista -->
                 <a href="rececionista/menu.jsp" class="access-card">
                     <div class="card-icon">
                         <img src="images/receptionist-icon.png" alt="Rececionista">
@@ -101,7 +96,6 @@
                     </ul>
                 </a>
 
-                <!-- Veterinário -->
                 <a href="veterinario/menu.jsp" class="access-card">
                     <div class="card-icon">
                         <img src="images/vet-icon.png" alt="Veterinário">
@@ -116,7 +110,6 @@
                     </ul>
                 </a>
 
-                <!-- Tutor -->
                 <a href="tutor/menu.jsp" class="access-card">
                     <div class="card-icon">
                         <img src="images/owner-icon.png" alt="Tutor">
@@ -130,7 +123,6 @@
                     </ul>
                 </a>
 
-                <!-- Gerente -->
                 <a href="gerente/menu.jsp" class="access-card">
                     <div class="card-icon">
                         <img src="images/manager-icon.png" alt="Gerente">
@@ -148,7 +140,6 @@
         </div>
     </section>
 
-    <!-- Seção Sobre -->
     <section id="sobre" class="about-section">
         <div class="container">
             <div class="about-content">
@@ -164,7 +155,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
@@ -192,7 +182,6 @@
     </footer>
     
     <script>
-	// Clínicas mais próximas
 	document.querySelector(".btn-clinicas-proximas").addEventListener("click", function(){
 	
 	    if(!navigator.geolocation){

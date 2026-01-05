@@ -8,7 +8,7 @@
   <title>VetCare - Agendar Serviço</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   <style>
-    /* Estilos para ícones inline */
+   
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -17,21 +17,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
@@ -79,16 +76,13 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
         Connection con = manipula.getLigacao();
         con.setAutoCommit(false);
         
-        // Parse data/hora
         java.sql.Timestamp dataHora = java.sql.Timestamp.valueOf(dataHoraStr.replace("T", " ") + ":00");
         java.math.BigDecimal custos = custosStr != null && !custosStr.isEmpty() ? new java.math.BigDecimal(custosStr) : null;
         
-        // Extrair informações da data
         Calendar cal = Calendar.getInstance();
         cal.setTime(dataHora);
-        int diaSemana = cal.get(Calendar.DAY_OF_WEEK); // 1=Domingo, 2=Segunda, ...
+        int diaSemana = cal.get(Calendar.DAY_OF_WEEK); 
         
-        // Converter para formato da BD
         String diaUtil = null;
         if (diaSemana == 2) diaUtil = "Segunda";
         else if (diaSemana == 3) diaUtil = "Terça";
@@ -102,7 +96,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
             con.rollback();
         } else {
             
-            // ✅ VALIDAR SE EXISTE HORÁRIO NA CLÍNICA
             String sqlCheckHorario = 
                 "SELECT horaInicio, horaFim FROM horario " +
                 "WHERE localidade = ? AND diaUtil = ?";
@@ -124,7 +117,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                 rsCheckHorario.close();
                 psCheckHorario.close();
                 
-                // Validar se hora está dentro do horário
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
                 String horaConsulta = timeFormat.format(dataHora);
                 
@@ -137,7 +129,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                     con.rollback();
                 } else {
                     
-                    // ✅ BUSCAR VETERINÁRIOS DISPONÍVEIS
                     String sqlVets = 
                         "SELECT e.nLicenca, v.nome, " +
                         "  COUNT(a.idAgendamento) as numConsultas " +
@@ -177,7 +168,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                         rsVets.close();
                         psVets.close();
                         
-                        // ✅ CRIAR AGENDAMENTO
                         String sqlAgendamento = 
                             "INSERT INTO agendamento (dataHrAgenda, tipoServ, statusAgendamento, custos, primeiraVez) " +
                             "VALUES (?, ?, 'marcado', ?, FALSE)";
@@ -192,7 +182,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                             if (rsKeys.next()) {
                                 int idAgendamento = rsKeys.getInt(1);
                                 
-                                // Ligar ao cliente
                                 String sqlAgenda = "INSERT INTO agenda (idAgendamento, NIF) VALUES (?, ?)";
                                 PreparedStatement psAgenda = con.prepareStatement(sqlAgenda);
                                 psAgenda.setInt(1, idAgendamento);

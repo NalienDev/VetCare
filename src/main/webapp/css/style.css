@@ -1,8 +1,3 @@
-/* ========================================
-   VETCARE - MODERN DESIGN SYSTEM
-   ======================================== */
-
-/* Reset & Base */
 * {
     margin: 0;
     padding: 0;
@@ -10,7 +5,6 @@
 }
 
 :root {
-    /* Cores principais */
     --primary-color: #2D9CDB;
     --secondary-color: #56CCF2;
     --accent-color: #F2C94C;
@@ -22,13 +16,11 @@
     --success: #27AE60;
     --warning: #F2C94C;
     --danger: #EB5757;
-    
-    /* Sombras */
+
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
-    
-    /* Transições */
+
     --transition: all 0.3s ease;
 }
 
@@ -39,9 +31,6 @@ body {
     background-color: #fff;
 }
 
-/* ========================================
-   HEADER
-   ======================================== */
 .main-header {
     background: white;
     box-shadow: var(--shadow-sm);
@@ -106,9 +95,6 @@ body {
     width: 100%;
 }
 
-/* ========================================
-   HERO SECTION
-   ======================================== */
 .hero {
     position: relative;
     height: 90vh;
@@ -158,10 +144,6 @@ body {
     opacity: 1;
 }
 
-/* ========================================
-   CLINIC SEARCH BOX (IGUAL À 2ª IMAGEM)
-   ======================================== */
-
 .clinic-search-box {
     background: #ffffff;
     border-radius: 20px 0px 20px 0px;
@@ -202,8 +184,6 @@ body {
   background: #EAF6FB;
 }
 
-
-/* Header */
 .search-header {
     display: flex;
     justify-content: space-between;
@@ -217,7 +197,6 @@ body {
     font-weight: 800;
 }
 
-/* Botão Todas as clínicas */
 .btn-todas-clinicas {
     background: #ffffff;
     color: #2D9CDB;
@@ -235,7 +214,6 @@ body {
     color: white;
 }
 
-/* Input + lupa */
 .search-input-wrapper {
     position: relative;
     margin-bottom: 1.6rem;
@@ -257,7 +235,6 @@ body {
     border-color: #2D9CDB;
 }
 
-/* Botão lupa igual da imagem */
 .btn-search-clinic {
     position: absolute;
     top: 50%;
@@ -280,7 +257,6 @@ body {
     opacity: 0.8;
 }
 
-/* Texto dica */
 .search-info {
     font-size: 0.88rem;
     color: #2F3542;
@@ -292,7 +268,6 @@ body {
     font-weight: 800;
 }
 
-/* Link como habilitar */
 .how-enable {
     margin-top: 0.35rem;
     display: inline-block;
@@ -302,7 +277,6 @@ body {
     cursor: pointer;
 }
 
-/* Botões inferiores */
 .search-actions {
     display: flex;
     gap: 22px;
@@ -310,12 +284,12 @@ body {
 }
 
 .btn-clinicas-proximas {
-    width: 310px;   /* maior */
+    width: 310px; 
     height: 60px;
 }
 
 .btn-urgencias {
-    width: 210px;   /* menor como na imagem */
+    width: 210px;
     height: 60px;
 }
 
@@ -334,7 +308,7 @@ body {
 }
 
 .btn-clinicas-proximas {
-    background: #9FD9BC;   /* verde */
+    background: #9FD9BC; 
     color: #0B3B2E;
 }
 
@@ -346,7 +320,7 @@ body {
 
 /* Urgências */
 .btn-urgencias {
-    background: #F1B6BE;   /* rosa */
+    background: #F1B6BE;  
     color: #7A0B0B;
 }
 
@@ -363,9 +337,6 @@ body {
     height: 18px;
 }
 
-/* ========================================
-   BUTTONS
-   ======================================== */
 .btn {
     display: inline-block;
     padding: 0.75rem 1.5rem;
@@ -431,9 +402,6 @@ body {
     background: #d63031;
 }
 
-/* ========================================
-   SECTIONS
-   ======================================== */
 .quick-access {
     padding: 6rem 2rem;
     background: var(--light-gray);
@@ -456,9 +424,6 @@ body {
     color: var(--text-dark);
 }
 
-/* ========================================
-   ACCESS CARDS - NOVO VISUAL MODERNO ✅
-   ======================================== */
 .access-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -480,7 +445,6 @@ body {
     transition: all 0.25s ease;
 }
 
-/* detalhe superior */
 .access-card::before {
     content: "";
     position: absolute;
@@ -491,7 +455,6 @@ body {
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
 }
 
-/* hover elegante */
 .access-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 14px 38px rgba(0,0,0,0.14);
@@ -499,7 +462,6 @@ body {
     background: #fafdff;
 }
 
-/* Ícone clean e coerente */
 .card-icon {
     width: 72px;
     height: 72px;
@@ -558,9 +520,6 @@ body {
     border-bottom: none;
 }
 
-/* ========================================
-   ABOUT SECTION
-   ======================================== */
 .about-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -587,9 +546,6 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* ========================================
-   FOOTER
-   ======================================== */
 .main-footer {
     background: var(--dark-color);
     color: white;
@@ -627,9 +583,6 @@ body {
     color: rgba(255,255,255,0.6);
 }
 
-/* ========================================
-   INTERNAL PAGES
-   ======================================== */
 .page-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -697,9 +650,6 @@ body {
     line-height: 1.6;
 }
 
-/* ========================================
-   FORMS
-   ======================================== */
 .content {
     padding: 3rem 2rem;
     max-width: 1200px;
@@ -754,9 +704,6 @@ body {
     margin-top: 2rem;
 }
 
-/* ========================================
-   TABLES
-   ======================================== */
 .tabela {
     width: 100%;
     border-collapse: collapse;
@@ -783,9 +730,6 @@ body {
     background: var(--light-gray);
 }
 
-/* ========================================
-   MESSAGES
-   ======================================== */
 .mensagem {
     padding: 1rem 1.5rem;
     border-radius: 8px;
@@ -811,9 +755,6 @@ body {
     border-left: 4px solid var(--warning);
 }
 
-/* ========================================
-   RESPONSIVE
-   ======================================== */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2rem;

@@ -25,7 +25,6 @@
       max-width:220px;
     }
 
-    /* ícones inline (consistência com outros JSPs) */
     .icon-inline {
       width: 16px;
       height: 16px;
@@ -71,7 +70,6 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
     try {
         Connection con = manipula.getLigacao();
 
-        // CANCELAR
         if ("cancelar".equals(acao)) {
             String sql = "UPDATE agendamento SET statusAgendamento='cancelado' WHERE idAgendamento=?";
             PreparedStatement ps = con.prepareStatement(sql);
@@ -87,7 +85,6 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
             ps.close();
         }
 
-        // REAGENDAR
         if ("reagendar".equals(acao)) {
             String novaData = request.getParameter("novaData");
 
@@ -191,7 +188,6 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                 </td>
                 <td>
 
-                    <!-- ✅ REAGENDAR -->
                     <form method="POST" class="reagendar-box">
                         <input type="hidden" name="idAgendamento" value="<%= idAgend %>">
                         <input type="hidden" name="acao" value="reagendar">
@@ -202,7 +198,6 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                         </button>
                     </form>
 
-                    <!-- ✅ CANCELAR -->
                     <form method="POST" style="display:inline;">
                         <input type="hidden" name="idAgendamento" value="<%= idAgend %>">
                         <input type="hidden" name="acao" value="cancelar">

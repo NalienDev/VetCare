@@ -87,7 +87,6 @@ String tipoMensagem = "";
 String detalhesDistribuicao = "";
 String nif = request.getParameter("nif");
 
-// ✅ PROCESSAR AGENDAMENTO
 if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
     String localidade = request.getParameter("localidade");
     String dataHoraStr = request.getParameter("dataHora");
@@ -99,7 +98,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
     try {
         Connection con = manipula.getLigacao();
         
-        // ✅ VALIDAÇÃO 1: Cliente já agendou antes?
         PreparedStatement psCheck = con.prepareStatement(
             "SELECT COUNT(*) as total FROM agenda ag " +
             "JOIN agendamento a ON a.idAgendamento = ag.idAgendamento " +
@@ -115,12 +113,11 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
         rsCheck.close();
         psCheck.close();
         
-        // ✅ VALIDAÇÃO 2: Se primeira vez, NÃO pode agendar online
         if(primeiraVez) {
             mensagem = "❌ Primeira consulta deve ser agendada pela rececionista. Por favor, contacte a clínica.";
             tipoMensagem = "erro";
         } else {
-            // ✅ VALIDAÇÃO 3: Tem animais registados?
+           
             PreparedStatement psAnimais = con.prepareStatement(
                 "SELECT COUNT(*) as total FROM tutor WHERE NIF = ?"
             );
@@ -138,12 +135,11 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
                 mensagem = "❌ Não tem animais registados. Contacte a rececionista.";
                 tipoMensagem = "erro";
             } else {
-                // ✅ PODE AGENDAR COM DISTRIBUIÇÃO AUTOMÁTICA!
+                
                 con.setAutoCommit(false);
                 
                 java.sql.Timestamp dataHora = java.sql.Timestamp.valueOf(dataHoraStr.replace("T", " ") + ":00");
                 
-                // Extrair dia da semana
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dataHora);
                 int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
@@ -161,7 +157,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
                     con.rollback();
                 } else {
                     
-                    // ✅ VALIDAR HORÁRIO
                     String sqlCheckHorario = 
                         "SELECT horaInicio, horaFim FROM horario " +
                         "WHERE localidade = ? AND diaUtil = ?";
@@ -195,7 +190,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
                             con.rollback();
                         } else {
                             
-                            // ✅ DISTRIBUIR VETERINÁRIO
                             String sqlVets = 
                                 "SELECT e.nLicenca, v.nome, " +
                                 "  COUNT(a.idAgendamento) as numConsultas " +
@@ -235,7 +229,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
                                 rsVets.close();
                                 psVets.close();
                                 
-                                // ✅ CRIAR AGENDAMENTO
                                 String sqlAgendamento = 
                                     "INSERT INTO agendamento (dataHrAgenda, tipoServ, statusAgendamento, custos, primeiraVez) " +
                                     "VALUES (?, ?, 'marcado', NULL, FALSE)";
@@ -313,7 +306,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
     </div>
   </div>
 
-  <!-- ✅ PASSO 1: Inserir NIF -->
   <% if (nif == null || nif.trim().isEmpty()) { %>
   
   <div class="formulario">
@@ -333,14 +325,13 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
   </div>
   
   <% } else { 
-      // ✅ PASSO 2: Verificar se pode agendar
+     
       Configura cfg = new Configura();
       Manipula manipula = new Manipula(cfg);
       
       try {
           Connection con = manipula.getLigacao();
           
-          // Verificar se é primeira vez
           PreparedStatement psCheck = con.prepareStatement(
               "SELECT COUNT(*) as total FROM agenda ag WHERE ag.NIF = ?"
           );
@@ -354,7 +345,6 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
           rsCheck.close();
           psCheck.close();
           
-          // Verificar animais
           PreparedStatement psAnimais = con.prepareStatement(
               "SELECT COUNT(*) as total FROM tutor WHERE NIF = ?"
           );
@@ -401,7 +391,7 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
   
   <% 
           } else {
-              // ✅ PODE AGENDAR!
+              
   %>
   
   <div class="alerta-info">

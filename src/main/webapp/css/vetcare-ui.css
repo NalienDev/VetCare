@@ -21,7 +21,6 @@ body{
   color:var(--txt-dark);
 }
 
-/* HEADER */
 .main-header{
   background:white;
   border-bottom:1px solid #e6e6e6;
@@ -61,7 +60,6 @@ body{
   text-decoration:underline;
 }
 
-/* HERO */
 .page-hero{
   background:var(--bg-hero);
   padding:40px 0 70px;
@@ -81,9 +79,6 @@ body{
   font-weight:500;
 }
 
-
-
-/* CONTAINER */
 .page-content{
   max-width:1400px;
   margin-left:80px;
@@ -91,7 +86,6 @@ body{
   padding-bottom:60px;
 }
 
-/* BACK BUTTON */
 .btn-voltar{
   display:inline-flex;
   align-items:center;
@@ -106,7 +100,6 @@ body{
   cursor:pointer;
 }
 
-/* MENU CARDS */
 .menu-grid{
   margin-top:40px;
   display:grid;
@@ -140,7 +133,6 @@ body{
   font-weight:500;
 }
 
-/* FORM CARD */
 .formulario{
   margin: 30px auto 0 auto;
   background:white;
@@ -185,7 +177,6 @@ body{
 }
 .form-row .form-group{ flex:1; }
 
-/* FORM ACTIONS */
 .form-actions{
   display:flex;
   gap:14px;
@@ -209,7 +200,6 @@ body{
 .btn-secondary{ background:#F0F4F8; color:var(--txt-dark); }
 .btn-danger{ background:#EB5757; color:white; }
 
-/* TABLE CARD */
 .table-card{
   margin-top:30px;
   background:white;
@@ -239,7 +229,6 @@ body{
 }
 
 
-/* BADGES */
 .badge{
   padding:6px 12px;
   border-radius:20px;
@@ -250,7 +239,6 @@ body{
 .badge-success{ background:#D4EDDA; color:#155724; }
 .badge-danger{ background:#F8D7DA; color:#721c24; }
 
-/* MESSAGE */
 .mensagem{
   padding:14px 16px;
   border-radius:16px 4px 16px 4px;
@@ -260,7 +248,6 @@ body{
 .mensagem.sucesso{ background:#D4EDDA; color:#155724; }
 .mensagem.erro{ background:#F8D7DA; color:#721c24; }
 
-/* AVATAR ANIMAL */
 .animal-avatar{
   width:46px;
   height:46px;
@@ -269,7 +256,6 @@ body{
   border:2px solid #E7EEF4;
 }
 
-/* RESPONSIVO */
 @media(max-width:1100px){
   .page-hero-inner, .page-content{
     margin-left:20px;

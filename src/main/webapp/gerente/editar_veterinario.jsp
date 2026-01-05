@@ -61,23 +61,18 @@ Manipula manipula = new Manipula(cfg);
 String mensagem = "";
 String tipoMensagem = "";
 
-// Dados atuais
 String nome = "";
 String contacto = "";
 
 try {
     Connection con = manipula.getLigacao();
 
-    // =============================================
-    // GUARDAR ALTERAÇÕES
-    // =============================================
     if ("POST".equalsIgnoreCase(request.getMethod())) {
         nome = request.getParameter("nome");
         contacto = request.getParameter("contacto");
 
         con.setAutoCommit(false);
 
-        // Update veterinário
         PreparedStatement psUp = con.prepareStatement(
             "UPDATE veterinario SET nome=?, contacto=? WHERE nLicenca=?"
         );
@@ -99,9 +94,6 @@ try {
         }
     }
 
-    // =============================================
-    // CARREGAR DADOS ATUAIS PARA O FORM
-    // =============================================
     PreparedStatement ps = con.prepareStatement(
         "SELECT nLicenca, nome, contacto FROM veterinario WHERE nLicenca=?"
     );

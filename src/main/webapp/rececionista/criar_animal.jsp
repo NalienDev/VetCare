@@ -56,7 +56,6 @@
 	  text-shadow: 0 0 4px rgba(0,0,0,0.6);
 	}
 	
-	/* ✅ LABEL BEM FORMATADO */
 	.color-label {
 	  font-size: 10px;
 	  font-weight: 900;
@@ -113,7 +112,6 @@
       String[] coresSelecionadas = request.getParameterValues("cores");
       String outrasDistint = request.getParameter("outrasDistint");
 
-      // Construir string de filiação no formato "pai, mae"
       String pai = (nomePai != null && !nomePai.trim().isEmpty()) ? nomePai.trim() : "Desconhecido";
       String mae = (nomeMae != null && !nomeMae.trim().isEmpty()) ? nomeMae.trim() : "Desconhecido";
       String filiacao = pai + ", " + mae;
@@ -125,7 +123,6 @@
         Connection con = manipula.getLigacao();
         con.setAutoCommit(false);
 
-        // Próximo ID
         String sqlMaxId = "SELECT COALESCE(MAX(idFichaClin),0)+1 AS proximoId FROM fichaClinicaAnimal";
         PreparedStatement psMax = con.prepareStatement(sqlMaxId);
         ResultSet rsMax = psMax.executeQuery();
@@ -133,14 +130,13 @@
         if(rsMax.next()) idFicha = rsMax.getInt("proximoId");
         rsMax.close(); psMax.close();
 
-        // Verificar se espécie existe, senão criar
         String sqlEsp = "SELECT nomeComum FROM especie WHERE nomeComum = ?";
         PreparedStatement psEsp = con.prepareStatement(sqlEsp);
         psEsp.setString(1, nomeEspecie);
         ResultSet rsEsp = psEsp.executeQuery();
         
         if (!rsEsp.next()) {
-          // Criar espécie
+          
           String sqlInsEsp = "INSERT INTO especie (nomeComum, nomeCientifico, regimeAlimentar, padraoAtividade, vocalizacao) VALUES (?,?,?,?,?)";
           PreparedStatement psInsEsp = con.prepareStatement(sqlInsEsp);
           psInsEsp.setString(1, nomeEspecie);
@@ -154,14 +150,13 @@
         rsEsp.close();
         psEsp.close();
 
-        // Verificar se raça existe, senão criar
         String sqlRaca = "SELECT nomeRaca FROM raca WHERE nomeRaca = ?";
         PreparedStatement psRaca = con.prepareStatement(sqlRaca);
         psRaca.setString(1, nomeRaca);
         ResultSet rsRaca = psRaca.executeQuery();
         
         if (!rsRaca.next()) {
-          // Criar raça
+          
           String sqlInsRaca = "INSERT INTO raca (nomeRaca, nomeComum, expectativaVida, pesoAdlt, comprimentoAdlt, porte, predisposicoesGen, cuidadosEsp) VALUES (?,?,?,?,?,?,?,?)";
           PreparedStatement psInsRaca = con.prepareStatement(sqlInsRaca);
           psInsRaca.setString(1, nomeRaca);
@@ -178,7 +173,6 @@
         rsRaca.close();
         psRaca.close();
 
-        // ✅ CORREÇÃO 1: Adicionar campo dataFalecimento
         String sqlFicha = "INSERT INTO fichaClinicaAnimal (idFichaClin,nome,sexo,dataNasc,filiacao,estadoReprod,alergias,dataFalecimento) VALUES (?,?,?,?,?,?,?,?)";
         PreparedStatement psFicha = con.prepareStatement(sqlFicha);
         psFicha.setInt(1, idFicha);
@@ -205,38 +199,33 @@
         psFicha.setString(5, filiacao);
         psFicha.setString(6, estadoReprod);
         psFicha.setString(7, (alergias != null && !alergias.trim().isEmpty()) ? alergias : null);
-        psFicha.setNull(8, java.sql.Types.DATE); // ✅ Animal vivo = NULL
+        psFicha.setNull(8, java.sql.Types.DATE);
         
         int linhas = psFicha.executeUpdate();
         psFicha.close();
 
         if (linhas > 0) {
 
-          // ✅ CORREÇÃO 2: Usar fichaRaca em vez de EDa
           PreparedStatement psR = con.prepareStatement("INSERT INTO fichaRaca (idFichaClin,nomeRaca) VALUES (?,?)");
           psR.setInt(1, idFicha);
           psR.setString(2, nomeRaca);
           psR.executeUpdate();
           psR.close();
 
-          // Tutor
           PreparedStatement psT = con.prepareStatement("INSERT INTO tutor (NIF,idFichaClin) VALUES (?,?)");
           psT.setString(1, nifTutor);
           psT.setInt(2, idFicha);
           psT.executeUpdate();
           psT.close();
 
-          // Histórico
           PreparedStatement psH = con.prepareStatement("INSERT INTO historicoClinico (idFichaClin) VALUES (?)");
           psH.setInt(1, idFicha);
           psH.executeUpdate();
           psH.close();
 
-          // FOTO + CARACTERÍSTICAS FÍSICAS
           Part filePart = request.getPart("fotoPerfil");
           String cores = (coresSelecionadas != null) ? String.join(", ", coresSelecionadas) : "N/A";
 
-          // Guardar foto NA BASE DE DADOS (BLOB) e não no filesystem
           byte[] fotoBytes = new byte[0];
           if (filePart != null && filePart.getSize() > 0) {
             try (InputStream is = filePart.getInputStream()) {
@@ -244,9 +233,8 @@
             }
           }
 
-          // Se não há foto, usar placeholder
           if (fotoBytes.length == 0) {
-            // Criar imagem placeholder 1x1 pixel transparente
+            
             fotoBytes = new byte[]{(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
           }
 
@@ -508,7 +496,6 @@ function carregarRacas() {
   var racaInput = document.getElementById('racaInput');
   var datalist = document.getElementById('racasList');
   
-  // Limpar datalist
   datalist.innerHTML = '';
   racaInput.value = '';
   
@@ -516,7 +503,6 @@ function carregarRacas() {
     racaGroup.style.display = 'block';
     racaInput.required = true;
     
-    // Preencher com todas as raças da espécie selecionada
     var racas = racasPorEspecie[especie];
     for (var i = 0; i < racas.length; i++) {
       var option = document.createElement('option');

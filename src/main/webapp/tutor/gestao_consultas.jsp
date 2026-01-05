@@ -127,7 +127,6 @@
 
           String idAgendamento = request.getParameter("idAgendamento");
 
-          // ✅ AVALIAR - SIMPLIFICADO
           if ("avaliar".equals(acao)) {
               String classificacao = request.getParameter("classificacao");
               String opiniao = request.getParameter("opiniao");
@@ -136,8 +135,7 @@
                   mensagem = "❌ Por favor, selecione uma classificação.";
                   tipoMensagem = "erro";
               } else {
-                  // ✅ NOVA ABORDAGEM: Criar servicoVet genérico para o agendamento
-                  // Obter próximo ID para servicoVet
+                  
                   String sqlMaxId = "SELECT COALESCE(MAX(idServico),0)+1 AS proximoId FROM servicoVet";
                   PreparedStatement psMaxId = con.prepareStatement(sqlMaxId);
                   ResultSet rsMaxId = psMaxId.executeQuery();
@@ -148,14 +146,12 @@
                   rsMaxId.close();
                   psMaxId.close();
                   
-                  // Criar servicoVet
                   String sqlServico = "INSERT INTO servicoVet (idServico) VALUES (?)";
                   PreparedStatement psServico = con.prepareStatement(sqlServico);
                   psServico.setInt(1, idServico);
                   psServico.executeUpdate();
                   psServico.close();
                   
-                  // Ligar ao agendamento via solicita
                   String sqlSolicita = "INSERT INTO solicita (idAgendamento, idServico) VALUES (?, ?)";
                   PreparedStatement psSolicita = con.prepareStatement(sqlSolicita);
                   psSolicita.setInt(1, Integer.parseInt(idAgendamento));
@@ -163,7 +159,6 @@
                   psSolicita.executeUpdate();
                   psSolicita.close();
                   
-                  // Verificar se já avaliou
                   String sqlCheck = "SELECT COUNT(*) as total FROM avalia WHERE NIF=? AND idServico=?";
                   PreparedStatement psCheck = con.prepareStatement(sqlCheck);
                   psCheck.setString(1, nif);
@@ -178,7 +173,7 @@
                   psCheck.close();
                   
                   if (!jaAvaliou) {
-                      // Inserir avaliação
+                      
                       String sqlAvalia = 
                           "INSERT INTO avalia (NIF, idServico, opiniao, classificacao, dataAv) " +
                           "VALUES (?, ?, ?, ?, CURDATE())";
@@ -369,7 +364,6 @@
           boolean podeAlterar = "marcado".equalsIgnoreCase(status);
           boolean podeAvaliar = "realizado".equalsIgnoreCase(status);
           
-          // ✅ Verificar se já avaliou (via solicita)
           boolean jaAvaliou = false;
           if (podeAvaliar) {
               String sqlCheckAval = 

@@ -19,7 +19,6 @@
     String abre = "";
     String fecha = "";
 
-    // ===== INFO EXTRA (SEM BD) =====
     String heroImg = "images/default.jpg";
     String telefone = "210 000 000";
     String email = "info@vetcare.pt";
@@ -64,7 +63,6 @@
         rs.close();
         ps.close();
 
-        // buscar horário
         String sql2 = "SELECT horaInicio, horaFim FROM horario WHERE localidade = ? LIMIT 1";
         PreparedStatement ps2 = con.prepareStatement(sql2);
         ps2.setString(1, localidade);
@@ -94,7 +92,6 @@
 <style>
     body { margin:0; font-family: 'Inter', Arial, sans-serif; background:#f7fafc; }
 
-    /* TOP NAV */
     .topbar {
         background: white;
         padding: 16px 48px;
@@ -126,7 +123,6 @@
     }
     .topbar a:hover { text-decoration:underline; }
 
-    /* HERO IMAGE */
     .hero {
         height: 520px;
         background-image: url('<%= heroImg %>');
@@ -283,7 +279,6 @@
 </head>
 <body>
 
-<!-- TOP NAV -->
 <div class="topbar">
     <div class="logo">
         <img src="images/logo.png" alt="VetCare Logo" class="logo-img">
@@ -295,7 +290,6 @@
     </nav>
 </div>
 
-<!-- HERO -->
 <div class="hero">
     <div class="hero-content">
         <h1>VetCare <%= localidade %></h1>
@@ -303,7 +297,6 @@
     </div>
 </div>
 
-<!-- INFO STRIP -->
 <div class="info-strip">
     <div class="info-item">
         <span class="info-icon">📍</span>
@@ -325,9 +318,7 @@
     <% } %>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="content">
-    <!-- LEFT COL -->
     <div>
         <div class="card">
             <h2>📍 Localização</h2>
@@ -339,7 +330,6 @@
         </div>
     </div>
 
-    <!-- RIGHT COL -->
     <div>
         <div class="hours-box">
             <div class="hours-title">
@@ -366,7 +356,6 @@
     </div>
 </div>
 
-<!-- SPECIALTIES -->
 <section class="specialties-section">
     <div class="specialties-box">
         <div class="specialties-title">

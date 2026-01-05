@@ -8,7 +8,6 @@
   <title>VetCare - Gestão de Agendamentos</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   <style>
-    /* Estilos para ícones inline */
     .icon-inline {
       width: 18px;
       height: 18px;
@@ -17,21 +16,18 @@
       display: inline-block;
     }
     
-    /* Ícones em botões */
     .btn .icon-inline {
       width: 16px;
       height: 16px;
       margin-right: 6px;
     }
     
-    /* Ícones em títulos */
     h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
     
-    /* Ícones em tabelas */
     .tabela .icon-inline {
       width: 16px;
       height: 16px;
