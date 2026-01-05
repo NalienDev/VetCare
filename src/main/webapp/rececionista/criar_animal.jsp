@@ -159,8 +159,8 @@
         rsRaca.close();
         psRaca.close();
 
-        // Inserir ficha animal
-        String sqlFicha = "INSERT INTO fichaClinicaAnimal (idFichaClin,nome,sexo,dataNasc,filiacao,estadoReprod,alergias) VALUES (?,?,?,?,?,?,?)";
+        // ✅ CORREÇÃO 1: Adicionar campo dataFalecimento
+        String sqlFicha = "INSERT INTO fichaClinicaAnimal (idFichaClin,nome,sexo,dataNasc,filiacao,estadoReprod,alergias,dataFalecimento) VALUES (?,?,?,?,?,?,?,?)";
         PreparedStatement psFicha = con.prepareStatement(sqlFicha);
         psFicha.setInt(1, idFicha);
         psFicha.setString(2, nome);
@@ -186,13 +186,14 @@
         psFicha.setString(5, filiacao);
         psFicha.setString(6, estadoReprod);
         psFicha.setString(7, (alergias != null && !alergias.trim().isEmpty()) ? alergias : null);
+        psFicha.setNull(8, java.sql.Types.DATE); // ✅ Animal vivo = NULL
         
         int linhas = psFicha.executeUpdate();
         psFicha.close();
 
         if (linhas > 0) {
 
-          // Raça
+          // ✅ CORREÇÃO 2: Usar fichaRaca em vez de EDa
           PreparedStatement psR = con.prepareStatement("INSERT INTO fichaRaca (idFichaClin,nomeRaca) VALUES (?,?)");
           psR.setInt(1, idFicha);
           psR.setString(2, nomeRaca);
@@ -219,31 +220,29 @@
           // Guardar foto NA BASE DE DADOS (BLOB) e não no filesystem
           byte[] fotoBytes = new byte[0];
           if (filePart != null && filePart.getSize() > 0) {
-            try (InputStream input = filePart.getInputStream()) {
-              fotoBytes = input.readAllBytes();
+            try (InputStream is = filePart.getInputStream()) {
+              fotoBytes = is.readAllBytes();
             }
           }
 
-          // Guardar características na BD
-          String sqlFoto = "INSERT INTO caracteristicasFic (idFicha, cores, fotografia, peso, outrasDistint) VALUES (?,?,?,?,?)";
-          PreparedStatement psFoto = con.prepareStatement(sqlFoto);
-          psFoto.setInt(1, idFicha);
-          psFoto.setString(2, cores);
-          psFoto.setBytes(3, fotoBytes);
-          psFoto.setNull(4, java.sql.Types.DECIMAL);
-          psFoto.setString(5, (outrasDistint != null && !outrasDistint.trim().isEmpty()) ? outrasDistint : "N/A");
-          psFoto.executeUpdate();
-          psFoto.close();
+          // Se não há foto, usar placeholder
+          if (fotoBytes.length == 0) {
+            // Criar imagem placeholder 1x1 pixel transparente
+            fotoBytes = new byte[]{(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+          }
 
-          PreparedStatement psC = con.prepareStatement("INSERT INTO contem (idFichaClin) VALUES (?)");
-          psC.setInt(1, idFicha);
-          psC.executeUpdate();
-          psC.close();
+          String sqlCarac = "INSERT INTO caracteristicasFic (idFicha,cores,fotografia,peso,outrasDistint) VALUES (?,?,?,NULL,?)";
+          PreparedStatement psCarac = con.prepareStatement(sqlCarac);
+          psCarac.setInt(1, idFicha);
+          psCarac.setString(2, cores);
+          psCarac.setBytes(3, fotoBytes);
+          psCarac.setString(4, (outrasDistint != null && !outrasDistint.trim().isEmpty()) ? outrasDistint : "N/A");
+          psCarac.executeUpdate();
+          psCarac.close();
 
           con.commit();
           mensagem = "✅ Animal registado com sucesso! ID: " + idFicha;
           tipoMensagem = "sucesso";
-
         } else {
           con.rollback();
           mensagem = "❌ Erro ao registar animal";
@@ -265,53 +264,57 @@
   <% } %>
 
   <form method="POST" class="formulario" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>NIF do Tutor *</label>
-      <input type="text" name="nifTutor" pattern="[0-9]{9}" maxlength="9" required>
-    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>NIF do Tutor *</label>
+        <input type="text" name="nifTutor" pattern="[0-9]{9}" maxlength="9" required>
+      </div>
 
-    <div class="form-group">
-      <label>Nome do Animal *</label>
-      <input type="text" name="nome" maxlength="100" required>
+      <div class="form-group">
+        <label>Nome do Animal *</label>
+        <input type="text" name="nome" maxlength="100" required>
+      </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label>Sexo *</label>
         <select name="sexo" required>
-          <option value="">Selecione...</option>
-          <option value="M">🐕 Macho</option>
-          <option value="F">🐕 Fêmea</option>
+          <option value="M">Macho</option>
+          <option value="F">Fêmea</option>
+          <option value="N">Não aplicável</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>Data de Nascimento *</label>
-        <input type="date" name="dataNasc" required max="<%= java.time.LocalDate.now() %>">
+        <input type="date" name="dataNasc" required>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>Espécie *</label>
-      <select name="nomeEspecie" id="especieSelect" required onchange="carregarRacas()">
-        <option value="">Selecione...</option>
-        <option value="Cão">🐕 Cão</option>
-        <option value="Gato">🐈 Gato</option>
-        <option value="Coelho">🐰 Coelho</option>
-        <option value="Porquinho da Índia">🐹 Porquinho da Índia</option>
-        <option value="Hamster">🐹 Hamster</option>
-        <option value="Cavalo">🐴 Cavalo</option>
-        <option value="Pássaro">🦜 Pássaro</option>
-        <option value="Tartaruga">🐢 Tartaruga</option>
-        <option value="Furão">🦦 Furão</option>
-        <option value="Chinchila">🐭 Chinchila</option>
-      </select>
-    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Espécie *</label>
+        <input type="text" name="nomeEspecie" id="especieSelect" list="especiesList" maxlength="100" required onchange="carregarRacas()">
+        <datalist id="especiesList">
+          <option value="Cão">
+          <option value="Gato">
+          <option value="Coelho">
+          <option value="Porquinho da Índia">
+          <option value="Hamster">
+          <option value="Cavalo">
+          <option value="Pássaro">
+          <option value="Tartaruga">
+          <option value="Furão">
+          <option value="Chinchila">
+        </datalist>
+      </div>
 
-    <div class="form-group" id="racaGroup" style="display:none;">
-      <label>Raça *</label>
-      <input type="text" name="nomeRaca" id="racaInput" list="racasList" maxlength="100" placeholder="Escreva ou selecione a raça...">
-      <datalist id="racasList"></datalist>
+      <div class="form-group" id="racaGroup" style="display:none;">
+        <label>Raça *</label>
+        <input type="text" name="nomeRaca" id="racaInput" list="racasList" maxlength="100">
+        <datalist id="racasList"></datalist>
+      </div>
     </div>
 
     <div class="form-group">

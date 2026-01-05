@@ -193,6 +193,7 @@ String filiacao = "";
 String alergias = "";
 String estadoReprod = "";
 java.sql.Date dataNasc = null;
+java.sql.Date dataFalecimento = null; // ✅ ADICIONADO
 String nomeRaca = "";
 String coresStr = "";
 String outrasDistint = "";
@@ -229,7 +230,7 @@ try {
 
         // Update ficha
         PreparedStatement psUp = con.prepareStatement(
-            "UPDATE fichaClinicaAnimal SET nome=?, sexo=?, dataNasc=?, filiacao=?, alergias=?, estadoReprod=? WHERE idFichaClin=?"
+            "UPDATE fichaClinicaAnimal SET nome=?, sexo=?, dataNasc=?, filiacao=?, alergias=?, estadoReprod=?, dataFalecimento=? WHERE idFichaClin=?"
         );
         psUp.setString(1, nome);
         psUp.setString(2, sexo);
@@ -237,7 +238,15 @@ try {
         psUp.setString(4, (filiacao != null && !filiacao.trim().isEmpty()) ? filiacao : "Desconhecido");
         psUp.setString(5, (alergias != null && !alergias.trim().isEmpty()) ? alergias : null);
         psUp.setString(6, estadoReprod);
-        psUp.setInt(7, idFicha);
+        
+        // ✅ Processar dataFalecimento
+        String dataFalecimentoStr = request.getParameter("dataFalecimento");
+        if (dataFalecimentoStr != null && !dataFalecimentoStr.trim().isEmpty()) {
+            psUp.setDate(7, java.sql.Date.valueOf(dataFalecimentoStr));
+        } else {
+            psUp.setNull(7, java.sql.Types.DATE);
+        }
+        psUp.setInt(8, idFicha);
         psUp.executeUpdate();
         psUp.close();
 
@@ -305,6 +314,7 @@ try {
         nome = rs.getString("nome");
         sexo = rs.getString("sexo");
         dataNasc = rs.getDate("dataNasc");
+        dataFalecimento = rs.getDate("dataFalecimento"); // ✅ ADICIONADO
         filiacao = rs.getString("filiacao");
         alergias = rs.getString("alergias");
         estadoReprod = rs.getString("estadoReprod");
@@ -500,6 +510,18 @@ try {
       <label>Estado Reprodutivo *</label>
       <select name="estadoReprod" required>
         <option value="Inteiro" <%= "Inteiro".equals(estadoReprod) ? "selected" : "" %>>Inteiro</option>
+
+    <!-- ✅ NOVO CAMPO: Data de Falecimento -->
+    <div class="form-group">
+      <label>Data de Falecimento (opcional)</label>
+      <input type="date" name="dataFalecimento" 
+             value="<%= (dataFalecimento != null) ? dataFalecimento.toString() : "" %>"
+             max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
+      <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
+        ⚠️ Deixe vazio se o animal estiver vivo.
+      </small>
+    </div>
+
         <option value="Castrado" <%= "Castrado".equals(estadoReprod) ? "selected" : "" %>>Castrado</option>
         <option value="Esterilizada" <%= "Esterilizada".equals(estadoReprod) ? "selected" : "" %>>Esterilizada</option>
       </select>

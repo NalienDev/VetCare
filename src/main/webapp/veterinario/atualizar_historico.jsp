@@ -274,7 +274,7 @@ try {
             // ============================
             if (sucesso && idAgendamentoParam != null && !idAgendamentoParam.trim().isEmpty()) {
                 try {
-                    String sqlUpdate = "UPDATE agendamento SET statusAgendamento='concluido' WHERE idAgendamento=?";
+                    String sqlUpdate = "UPDATE agendamento SET statusAgendamento='realizado' WHERE idAgendamento=?";
                     List<Object> paramsUpdate = new ArrayList<>();
                     paramsUpdate.add(Integer.parseInt(idAgendamentoParam.trim()));
                     manipula.xDirectiva(sqlUpdate, paramsUpdate);
