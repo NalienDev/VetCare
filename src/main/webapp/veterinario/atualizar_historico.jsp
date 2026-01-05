@@ -110,7 +110,8 @@ try {
         if (ts.contains("consulta")) tipoRegistroAuto = "consulta";
         else if (ts.contains("vacina")) tipoRegistroAuto = "vacina";
         else if (ts.contains("desparasit")) tipoRegistroAuto = "desparasitacao";
-        else if (ts.contains("exame")) tipoRegistroAuto = "resultadoexame";
+        else if (ts.contains("exame") && !ts.contains("fisico")) tipoRegistroAuto = "resultadoexame";
+        else if (ts.contains("fisico")) tipoRegistroAuto = "examefisico";
         else if (ts.contains("cirurgia")) tipoRegistroAuto = "cirurgia";
         else if (ts.contains("tratamento")) tipoRegistroAuto = "tratamento";
         else tipoRegistroAuto = "consulta";
@@ -122,8 +123,19 @@ try {
     if ("POST".equalsIgnoreCase(request.getMethod())) {
 
         String tipoRegistro = request.getParameter("tipoRegistro");
+        String dataHoraParam = request.getParameter("dataHora");
         boolean sucesso = false;
         con.setAutoCommit(false);
+
+        // Parse data/hora manual se fornecida
+        Timestamp dataHoraRegisto = dataHoraAgenda;
+        if (dataHoraParam != null && !dataHoraParam.trim().isEmpty()) {
+            try {
+                dataHoraRegisto = Timestamp.valueOf(dataHoraParam.trim().replace("T", " ") + ":00");
+            } catch (Exception e) {
+                dataHoraRegisto = dataHoraAgenda;
+            }
+        }
 
         // ✅ CONSULTA
         if ("consulta".equals(tipoRegistro)) {
@@ -131,7 +143,7 @@ try {
                 "INSERT INTO consultaHist (idHistorico, dataConsulta, motivo, sintomas, diagnostico, medicacao) VALUES (?,?,?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setTimestamp(2, dataHoraAgenda);
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("motivo"));
             ps.setString(4, request.getParameter("sintomas"));
             ps.setString(5, request.getParameter("diagnostico"));
@@ -146,7 +158,7 @@ try {
                 "INSERT INTO vacinacao (idHistorico, dataVacina, tipoVacina, fabricante) VALUES (?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setDate(2, new java.sql.Date(dataHoraAgenda.getTime()));
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("tipoVacina"));
             ps.setString(4, request.getParameter("fabricante"));
             sucesso = ps.executeUpdate() > 0;
@@ -159,7 +171,7 @@ try {
                 "INSERT INTO desparasitacao (idHistorico, dataDesparasitacao, tipoDesparasitacao, produtosUtilizados) VALUES (?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setDate(2, new java.sql.Date(dataHoraAgenda.getTime()));
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("tipoDesparasitacao"));
             ps.setString(4, request.getParameter("produtosUtilizados"));
             sucesso = ps.executeUpdate() > 0;
@@ -172,9 +184,24 @@ try {
                 "INSERT INTO resultadoEx (idHistorico, dataHora, tipoExame, resultadosEx) VALUES (?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setTimestamp(2, dataHoraAgenda);
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("tipoExame"));
             ps.setString(4, request.getParameter("resultadosEx"));
+            sucesso = ps.executeUpdate() > 0;
+            ps.close();
+        }
+
+        // ✅ EXAME FÍSICO
+        else if ("examefisico".equals(tipoRegistro)) {
+            PreparedStatement ps = con.prepareStatement(
+                "INSERT INTO exameFis (idHistorico, dataHora, peso, temperatura, freqCard, freqResp) VALUES (?,?,?,?,?,?)"
+            );
+            ps.setInt(1, idHistorico);
+            ps.setTimestamp(2, dataHoraRegisto);
+            ps.setDouble(3, Double.parseDouble(request.getParameter("peso")));
+            ps.setDouble(4, Double.parseDouble(request.getParameter("temperatura")));
+            ps.setInt(5, Integer.parseInt(request.getParameter("freqCard")));
+            ps.setInt(6, Integer.parseInt(request.getParameter("freqResp")));
             sucesso = ps.executeUpdate() > 0;
             ps.close();
         }
@@ -185,7 +212,7 @@ try {
                 "INSERT INTO cirurgiaHist (idHistorico, dataCirurgia, tipoCirurgia, notasPosOp) VALUES (?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setDate(2, new java.sql.Date(dataHoraAgenda.getTime()));
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("tipoCirurgia"));
             ps.setString(4, request.getParameter("notasPosOp"));
             sucesso = ps.executeUpdate() > 0;
@@ -198,7 +225,7 @@ try {
                 "INSERT INTO TratTerapHist (idHistorico, dataTrat, descricao, tipoTratamento) VALUES (?,?,?,?)"
             );
             ps.setInt(1, idHistorico);
-            ps.setDate(2, new java.sql.Date(dataHoraAgenda.getTime()));
+            ps.setTimestamp(2, dataHoraRegisto);
             ps.setString(3, request.getParameter("descricaoTrat"));
             ps.setString(4, request.getParameter("tipoTratamento"));
             sucesso = ps.executeUpdate() > 0;
@@ -263,54 +290,71 @@ try {
           <option value="consulta" <%= "consulta".equals(tipoRegistroAuto) ? "selected" : "" %>>🩺 Consulta</option>
           <option value="vacina" <%= "vacina".equals(tipoRegistroAuto) ? "selected" : "" %>>💉 Vacinação</option>
           <option value="desparasitacao" <%= "desparasitacao".equals(tipoRegistroAuto) ? "selected" : "" %>>🪱 Desparasitação</option>
+          <option value="examefisico" <%= "examefisico".equals(tipoRegistroAuto) ? "selected" : "" %>>🔬 Exame Físico</option>
           <option value="resultadoexame" <%= "resultadoexame".equals(tipoRegistroAuto) ? "selected" : "" %>>📄 Resultado Exame</option>
           <option value="cirurgia" <%= "cirurgia".equals(tipoRegistroAuto) ? "selected" : "" %>>🏥 Cirurgia</option>
           <option value="tratamento" <%= "tratamento".equals(tipoRegistroAuto) ? "selected" : "" %>>🧾 Tratamento Terapêutico</option>
         </select>
       </div>
 
+      <div class="form-group">
+        <label>Data e Hora *</label>
+        <input type="datetime-local" name="dataHora" 
+               value="<%= dataHoraAgenda != null ? new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(dataHoraAgenda) : "" %>" 
+               required>
+      </div>
+
       <!-- CONSULTA -->
       <div id="camposConsulta" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🩺 Consulta</h3>
         <div class="form-group"><label>Motivo</label><input type="text" name="motivo"></div>
-        <div class="form-group"><label>Sintomas *</label><textarea name="sintomas" rows="3"></textarea></div>
-        <div class="form-group"><label>Diagnóstico *</label><textarea name="diagnostico" rows="3"></textarea></div>
-        <div class="form-group"><label>Medicação *</label><textarea name="medicacao" rows="3"></textarea></div>
+        <div class="form-group"><label>Sintomas *</label><textarea name="sintomas" rows="3" required></textarea></div>
+        <div class="form-group"><label>Medicação</label><textarea name="medicacao" rows="2"></textarea></div>
+        <div class="form-group"><label>Diagnóstico *</label><textarea name="diagnostico" rows="3" required></textarea></div>
       </div>
 
       <!-- VACINAÇÃO -->
       <div id="camposVacina" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">💉 Vacinação</h3>
-        <div class="form-group"><label>Tipo Vacina *</label><input type="text" name="tipoVacina"></div>
-        <div class="form-group"><label>Fabricante *</label><input type="text" name="fabricante"></div>
+        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoVacina" required></div>
+        <div class="form-group"><label>Fabricante *</label><input type="text" name="fabricante" required></div>
       </div>
 
       <!-- DESPARASITAÇÃO -->
       <div id="camposDes" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🪱 Desparasitação</h3>
-        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoDesparasitacao"></div>
-        <div class="form-group"><label>Produtos *</label><input type="text" name="produtosUtilizados"></div>
+        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoDesparasitacao" required></div>
+        <div class="form-group"><label>Produtos Utilizados *</label><input type="text" name="produtosUtilizados" required></div>
+      </div>
+
+      <!-- EXAME FÍSICO -->
+      <div id="camposExameFis" style="display:none;">
+        <h3 style="margin:20px 0 10px 0;">🔬 Exame Físico</h3>
+        <div class="form-group"><label>Peso (kg) *</label><input type="number" step="0.01" name="peso" required></div>
+        <div class="form-group"><label>Temperatura (°C) *</label><input type="number" step="0.1" name="temperatura" required></div>
+        <div class="form-group"><label>Frequência Cardíaca (bpm) *</label><input type="number" name="freqCard" required></div>
+        <div class="form-group"><label>Frequência Respiratória (rpm) *</label><input type="number" name="freqResp" required></div>
       </div>
 
       <!-- RESULTADO EXAME -->
       <div id="camposRes" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">📄 Resultado Exame</h3>
-        <div class="form-group"><label>Tipo Exame *</label><input type="text" name="tipoExame"></div>
-        <div class="form-group"><label>Resultados *</label><textarea name="resultadosEx" rows="3"></textarea></div>
+        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoExame" required></div>
+        <div class="form-group"><label>Resultados *</label><textarea name="resultadosEx" rows="4" required></textarea></div>
       </div>
 
       <!-- CIRURGIA -->
       <div id="camposCir" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🏥 Cirurgia</h3>
-        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoCirurgia"></div>
-        <div class="form-group"><label>Notas</label><textarea name="notasPosOp" rows="2"></textarea></div>
+        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoCirurgia" required></div>
+        <div class="form-group"><label>Notas</label><textarea name="notasPosOp" rows="3"></textarea></div>
       </div>
 
       <!-- TRATAMENTO -->
       <div id="camposTrat" style="display:none;">
         <h3 style="margin:20px 0 10px 0;">🧾 Tratamento Terapêutico</h3>
-        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoTratamento"></div>
-        <div class="form-group"><label>Descrição *</label><textarea name="descricaoTrat" rows="3"></textarea></div>
+        <div class="form-group"><label>Tipo *</label><input type="text" name="tipoTratamento" required></div>
+        <div class="form-group"><label>Descrição *</label><textarea name="descricaoTrat" rows="3" required></textarea></div>
       </div>
 
       <div class="form-actions">
@@ -327,6 +371,7 @@ function mostrarCampos() {
   document.getElementById("camposConsulta").style.display="none";
   document.getElementById("camposVacina").style.display="none";
   document.getElementById("camposDes").style.display="none";
+  document.getElementById("camposExameFis").style.display="none";
   document.getElementById("camposRes").style.display="none";
   document.getElementById("camposCir").style.display="none";
   document.getElementById("camposTrat").style.display="none";
@@ -334,6 +379,7 @@ function mostrarCampos() {
   if(tipo==="consulta") document.getElementById("camposConsulta").style.display="block";
   if(tipo==="vacina") document.getElementById("camposVacina").style.display="block";
   if(tipo==="desparasitacao") document.getElementById("camposDes").style.display="block";
+  if(tipo==="examefisico") document.getElementById("camposExameFis").style.display="block";
   if(tipo==="resultadoexame") document.getElementById("camposRes").style.display="block";
   if(tipo==="cirurgia") document.getElementById("camposCir").style.display="block";
   if(tipo==="tratamento") document.getElementById("camposTrat").style.display="block";

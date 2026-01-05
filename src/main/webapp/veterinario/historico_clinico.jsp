@@ -100,8 +100,8 @@ try {
                     <th>Data/Hora</th>
                     <th>Motivo</th>
                     <th>Sintomas</th>
-                    <th>Diagnóstico</th>
                     <th>Medicação</th>
+                    <th>Diagnóstico</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,8 +113,8 @@ try {
                     <td><%= sdf.format(rsConsultas.getTimestamp("dataConsulta")) %></td>
                     <td><%= rsConsultas.getString("motivo") != null ? rsConsultas.getString("motivo") : "-" %></td>
                     <td><%= rsConsultas.getString("sintomas") %></td>
+                    <td><%= rsConsultas.getString("medicacao") != null ? rsConsultas.getString("medicacao") : "-" %></td>
                     <td><%= rsConsultas.getString("diagnostico") %></td>
-                    <td><%= rsConsultas.getString("medicacao") %></td>
                   </tr>
   <%
             }
@@ -122,7 +122,7 @@ try {
   %>
                   <tr>
                     <td colspan="5" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem consultas registadas
+                      🔭 Sem consultas registadas
                     </td>
                   </tr>
   <%
@@ -152,8 +152,8 @@ try {
               <table class="tabela">
                 <thead>
                   <tr>
-                    <th>Data</th>
-                    <th>Tipo de Vacina</th>
+                    <th>Data e Hora</th>
+                    <th>Tipo</th>
                     <th>Fabricante</th>
                   </tr>
                 </thead>
@@ -161,9 +161,10 @@ try {
   <%
             while (rsVacinas.next()) {
                 temVacinas = true;
+                Timestamp ts = rsVacinas.getTimestamp("dataVacina");
   %>
                   <tr>
-                    <td><%= util.DataFormatter.LocalDateToString(rsVacinas.getDate("dataVacina").toLocalDate()) %></td>
+                    <td><%= sdf.format(ts) %></td>
                     <td><%= rsVacinas.getString("tipoVacina") %></td>
                     <td><%= rsVacinas.getString("fabricante") %></td>
                   </tr>
@@ -173,13 +174,65 @@ try {
   %>
                   <tr>
                     <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem vacinações registadas
+                      🔭 Sem vacinações registadas
                     </td>
                   </tr>
   <%
             }
             rsVacinas.close();
             psVacinas.close();
+  %>
+                </tbody>
+              </table>
+            </div>
+
+  <%
+            // ============================
+            // DESPARASITAÇÃO
+            // ============================
+            String sqlDes = 
+                "SELECT dataDesparasitacao, tipoDesparasitacao, produtosUtilizados " +
+                "FROM desparasitacao WHERE idHistorico = ? ORDER BY dataDesparasitacao DESC";
+            
+            PreparedStatement psDes = con.prepareStatement(sqlDes);
+            psDes.setInt(1, idHistorico);
+            ResultSet rsDes = psDes.executeQuery();
+            boolean temDes = false;
+  %>
+            <div class="table-card">
+              <h3>🪱 Desparasitação</h3>
+              <table class="tabela">
+                <thead>
+                  <tr>
+                    <th>Data e Hora</th>
+                    <th>Tipo</th>
+                    <th>Produtos Utilizados</th>
+                  </tr>
+                </thead>
+                <tbody>
+  <%
+            while (rsDes.next()) {
+                temDes = true;
+                Timestamp ts = rsDes.getTimestamp("dataDesparasitacao");
+  %>
+                  <tr>
+                    <td><%= sdf.format(ts) %></td>
+                    <td><%= rsDes.getString("tipoDesparasitacao") %></td>
+                    <td><%= rsDes.getString("produtosUtilizados") %></td>
+                  </tr>
+  <%
+            }
+            if (!temDes) {
+  %>
+                  <tr>
+                    <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
+                      🔭 Sem desparasitações registadas
+                    </td>
+                  </tr>
+  <%
+            }
+            rsDes.close();
+            psDes.close();
   %>
                 </tbody>
               </table>
@@ -204,8 +257,8 @@ try {
                 <thead>
                   <tr>
                     <th>Data/Hora</th>
-                    <th>Temperatura</th>
                     <th>Peso</th>
+                    <th>Temperatura</th>
                     <th>Freq. Cardíaca</th>
                     <th>Freq. Respiratória</th>
                   </tr>
@@ -217,8 +270,8 @@ try {
   %>
                   <tr>
                     <td><%= sdf.format(rsExames.getTimestamp("dataHora")) %></td>
-                    <td><%= String.format("%.1f °C", rsExames.getDouble("temperatura")) %></td>
                     <td><%= String.format("%.2f kg", rsExames.getDouble("peso")) %></td>
+                    <td><%= String.format("%.1f °C", rsExames.getDouble("temperatura")) %></td>
                     <td><%= rsExames.getInt("freqCard") %> bpm</td>
                     <td><%= rsExames.getInt("freqResp") %> rpm</td>
                   </tr>
@@ -228,7 +281,7 @@ try {
   %>
                   <tr>
                     <td colspan="5" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem exames físicos registados
+                      🔭 Sem exames físicos registados
                     </td>
                   </tr>
   <%
@@ -259,7 +312,7 @@ try {
                 <thead>
                   <tr>
                     <th>Data/Hora</th>
-                    <th>Tipo Exame</th>
+                    <th>Tipo</th>
                     <th>Resultados</th>
                   </tr>
                 </thead>
@@ -279,64 +332,13 @@ try {
   %>
                   <tr>
                     <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem resultados de exames registados
+                      🔭 Sem resultados de exames registados
                     </td>
                   </tr>
   <%
             }
             rsRes.close();
             psRes.close();
-  %>
-                </tbody>
-              </table>
-            </div>
-
-  <%
-            // ============================
-            // DESPARASITAÇÃO
-            // ============================
-            String sqlDes = 
-                "SELECT dataDesparasitacao, tipoDesparasitacao, produtosUtilizados " +
-                "FROM desparasitacao WHERE idHistorico = ? ORDER BY dataDesparasitacao DESC";
-            
-            PreparedStatement psDes = con.prepareStatement(sqlDes);
-            psDes.setInt(1, idHistorico);
-            ResultSet rsDes = psDes.executeQuery();
-            boolean temDes = false;
-  %>
-            <div class="table-card">
-              <h3>🪱 Desparasitação</h3>
-              <table class="tabela">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Produtos Utilizados</th>
-                  </tr>
-                </thead>
-                <tbody>
-  <%
-            while (rsDes.next()) {
-                temDes = true;
-  %>
-                  <tr>
-                    <td><%= util.DataFormatter.LocalDateToString(rsDes.getDate("dataDesparasitacao").toLocalDate()) %></td>
-                    <td><%= rsDes.getString("tipoDesparasitacao") %></td>
-                    <td><%= rsDes.getString("produtosUtilizados") %></td>
-                  </tr>
-  <%
-            }
-            if (!temDes) {
-  %>
-                  <tr>
-                    <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem desparasitações registadas
-                    </td>
-                  </tr>
-  <%
-            }
-            rsDes.close();
-            psDes.close();
   %>
                 </tbody>
               </table>
@@ -360,18 +362,19 @@ try {
               <table class="tabela">
                 <thead>
                   <tr>
-                    <th>Data</th>
-                    <th>Tipo Cirurgia</th>
-                    <th>Notas Pós-Op</th>
+                    <th>Data e Hora</th>
+                    <th>Tipo</th>
+                    <th>Notas</th>
                   </tr>
                 </thead>
                 <tbody>
   <%
             while (rsCir.next()) {
                 temCir = true;
+                Timestamp ts = rsCir.getTimestamp("dataCirurgia");
   %>
                   <tr>
-                    <td><%= util.DataFormatter.LocalDateToString(rsCir.getDate("dataCirurgia").toLocalDate()) %></td>
+                    <td><%= sdf.format(ts) %></td>
                     <td><%= rsCir.getString("tipoCirurgia") %></td>
                     <td><%= rsCir.getString("notasPosOp") != null ? rsCir.getString("notasPosOp") : "-" %></td>
                   </tr>
@@ -381,7 +384,7 @@ try {
   %>
                   <tr>
                     <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem cirurgias registadas
+                      🔭 Sem cirurgias registadas
                     </td>
                   </tr>
   <%
@@ -411,7 +414,7 @@ try {
               <table class="tabela">
                 <thead>
                   <tr>
-                    <th>Data</th>
+                    <th>Data e Hora</th>
                     <th>Tipo</th>
                     <th>Descrição</th>
                   </tr>
@@ -420,9 +423,10 @@ try {
   <%
             while (rsTrat.next()) {
                 temTrat = true;
+                Timestamp ts = rsTrat.getTimestamp("dataTrat");
   %>
                   <tr>
-                    <td><%= util.DataFormatter.LocalDateToString(rsTrat.getDate("dataTrat").toLocalDate()) %></td>
+                    <td><%= sdf.format(ts) %></td>
                     <td><%= rsTrat.getString("tipoTratamento") %></td>
                     <td><%= rsTrat.getString("descricao") %></td>
                   </tr>
@@ -432,7 +436,7 @@ try {
   %>
                   <tr>
                     <td colspan="3" style="text-align:center; padding:2rem; color:#57606F;">
-                      📭 Sem tratamentos terapêuticos registados
+                      🔭 Sem tratamentos terapêuticos registados
                     </td>
                   </tr>
   <%
@@ -450,7 +454,7 @@ try {
             psHist.close();
   %>
             <div class="mensagem">
-              📭 Histórico clínico não encontrado para este animal
+              🔭 Histórico clínico não encontrado para este animal
             </div>
   <%
         }
