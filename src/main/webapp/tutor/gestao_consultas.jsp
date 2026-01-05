@@ -71,6 +71,17 @@
       font-weight: 700;
       margin-left: 8px;
     }
+    
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+    
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -294,7 +305,7 @@
                value="<%= nif != null ? nif : "" %>"
                placeholder="Digite seu NIF" required>
       </div>
-      <button type="submit" class="btn btn-primary">🔍 Consultar</button>
+      <button type="submit" class="btn btn-primary">Consultar</button>
     </form>
   </div>
 
@@ -324,7 +335,7 @@
 
   <div class="table-card" style="margin-top:25px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h3 style="margin: 0;">📋 Meus Agendamentos</h3>
+      <h3 style="margin: 0;">Os Meus Agendamentos</h3>
     </div>
     <table class="tabela">
       <thead>
@@ -396,7 +407,9 @@
               <input type="hidden" name="idAgendamento" value="<%= idAg %>">
               <input type="hidden" name="acao" value="reagendar">
               <input type="datetime-local" name="novaData" required>
-              <button type="submit" class="btn btn-primary">🕒 Reagendar</button>
+              <button type="submit" class="btn btn-primary">
+                <img src="../images/icon-calendar.png" alt="Reagendar" class="icon-inline">Reagendar
+              </button>
             </form>
 
             <form method="POST" style="display:inline;">
@@ -405,7 +418,7 @@
               <input type="hidden" name="acao" value="cancelar">
               <button type="submit" class="btn btn-danger"
                       onclick="return confirm('Tem a certeza que deseja cancelar?')">
-                ❌ Cancelar
+                <img src="../images/icon-cancel.png" alt="Cancelar" class="icon-inline">Cancelar
               </button>
             </form>
             
@@ -491,7 +504,7 @@
     <% if(temDados) { %>
     <div style="margin-top: 20px; text-align: center;">
       <a href="agendar_servico.jsp?nif=<%= nif %>" class="btn btn-primary">
-        ➕ Agendar Nova Consulta
+        <img src="../images/icon-add.png" alt="Adicionar" class="icon-inline">Agendar Nova Consulta
       </a>
     </div>
     <% } %>

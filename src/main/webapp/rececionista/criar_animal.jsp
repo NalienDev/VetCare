@@ -8,47 +8,66 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   <style>
     .color-palette {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .color-option {
-      position: relative;
-      cursor: pointer;
-    }
-    .color-option input[type="checkbox"] {
-      position: absolute;
-      opacity: 0;
-    }
-    .color-box {
-      width: 50px;
-      height: 50px;
-      border-radius: 8px;
-      border: 3px solid transparent;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .color-option input:checked + .color-box {
-      border-color: #0B2A42;
-      box-shadow: 0 0 0 2px #4A90E2;
-    }
-    .color-option input:checked + .color-box::after {
-      content: '✓';
-      color: white;
-      font-weight: bold;
-      font-size: 24px;
-      text-shadow: 0 0 3px rgba(0,0,0,0.5);
-    }
-    .foto-preview {
-      max-width: 200px;
-      max-height: 200px;
-      margin-top: 10px;
-      border-radius: 12px;
-      display: none;
-    }
+	  display: grid;
+	  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+	  gap: 14px 10px; 
+	  margin-top: 12px;
+	  align-items: start;
+	}
+	
+	.color-option {
+	  display: flex;             
+	  flex-direction: column;
+	  align-items: center;        
+	  justify-content: flex-start;
+	  gap: 6px;
+	  cursor: pointer;
+	  user-select: none;
+	}
+	
+	.color-option input[type="checkbox"] {
+	  position: absolute;
+	  opacity: 0;
+	}
+	
+	.color-box {
+	  width: 50px;
+	  height: 50px;
+	  border-radius: 10px;
+	  border: 2px solid #DFE4EA;
+	  transition: 0.2s ease;
+	  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+	}
+	
+	.color-option input:checked + .color-box {
+	  border-color: #0B2A42;
+	  box-shadow: 0 0 0 3px rgba(74,144,226,0.25);
+	}
+	
+	.color-option input:checked + .color-box::after {
+	  content: "✓";
+	  color: white;
+	  font-weight: 900;
+	  font-size: 24px;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  height: 100%;
+	  text-shadow: 0 0 4px rgba(0,0,0,0.6);
+	}
+	
+	/* ✅ LABEL BEM FORMATADO */
+	.color-label {
+	  font-size: 10px;
+	  font-weight: 900;
+	  color: #57606F;
+	  text-transform: uppercase;
+	  text-align: center;
+	  line-height: 1.1;
+	  max-width: 70px;           
+	  word-break: break-word;      
+	}
+
   </style>
 </head>
 <body>
@@ -323,79 +342,112 @@
       <img id="fotoPreview" class="foto-preview" alt="Preview">
     </div>
 
-    <div class="form-group">
-      <label>Cores do Animal</label>
-      <div class="color-palette">
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Preto">
-          <div class="color-box" style="background:#000000"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Branco">
-          <div class="color-box" style="background:#FFFFFF; border:1px solid #ddd"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Castanho">
-          <div class="color-box" style="background:#8B4513"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Dourado">
-          <div class="color-box" style="background:#FFD700"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Cinzento">
-          <div class="color-box" style="background:#808080"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Laranja">
-          <div class="color-box" style="background:#FFA500"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Azul">
-          <div class="color-box" style="background:#4169E1"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Verde">
-          <div class="color-box" style="background:#228B22"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Vermelho">
-          <div class="color-box" style="background:#DC143C"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Amarelo">
-          <div class="color-box" style="background:#FFD700"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Rosa">
-          <div class="color-box" style="background:#FFB6C1"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Roxo">
-          <div class="color-box" style="background:#9370DB"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Bege">
-          <div class="color-box" style="background:#F5F5DC"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Creme">
-          <div class="color-box" style="background:#FFFACD"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Tigrado">
-          <div class="color-box" style="background:repeating-linear-gradient(45deg,#8B4513,#8B4513 10px,#D2691E 10px,#D2691E 20px)"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Malhado">
-          <div class="color-box" style="background:radial-gradient(circle, #000 30%, #fff 30%)"></div>
-        </label>
-        <label class="color-option">
-          <input type="checkbox" name="cores" value="Tricolor">
-          <div class="color-box" style="background:linear-gradient(120deg,#000 33%,#fff 33% 66%,#8B4513 66%)"></div>
-        </label>
-      </div>
-    </div>
+    <div class="color-palette">
+
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Preto">
+	    <div class="color-box" style="background:#000000"></div>
+	    <div class="color-label">Preto</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Branco">
+	    <div class="color-box" style="background:#FFFFFF; border:1px solid #ddd"></div>
+	    <div class="color-label">Branco</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Castanho">
+	    <div class="color-box" style="background:#8B4513"></div>
+	    <div class="color-label">Castanho</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Dourado">
+	    <div class="color-box" style="background:#FFD700"></div>
+	    <div class="color-label">Dourado</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Cinzento">
+	    <div class="color-box" style="background:#808080"></div>
+	    <div class="color-label">Cinzento</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Laranja">
+	    <div class="color-box" style="background:#FFA500"></div>
+	    <div class="color-label">Laranja</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Azul">
+	    <div class="color-box" style="background:#4169E1"></div>
+	    <div class="color-label">Azul</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Verde">
+	    <div class="color-box" style="background:#228B22"></div>
+	    <div class="color-label">Verde</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Vermelho">
+	    <div class="color-box" style="background:#DC143C"></div>
+	    <div class="color-label">Vermelho</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Amarelo">
+	    <div class="color-box" style="background:#FFD700"></div>
+	    <div class="color-label">Amarelo</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Rosa">
+	    <div class="color-box" style="background:#FFB6C1"></div>
+	    <div class="color-label">Rosa</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Roxo">
+	    <div class="color-box" style="background:#9370DB"></div>
+	    <div class="color-label">Roxo</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Bege">
+	    <div class="color-box" style="background:#F5F5DC"></div>
+	    <div class="color-label">Bege</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Creme">
+	    <div class="color-box" style="background:#FFFACD"></div>
+	    <div class="color-label">Creme</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Tigrado">
+	    <div class="color-box" style="background:repeating-linear-gradient(45deg,#8B4513,#8B4513 10px,#D2691E 10px,#D2691E 20px)"></div>
+	    <div class="color-label">Tigrado</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Malhado">
+	    <div class="color-box" style="background:radial-gradient(circle, #000 30%, #fff 30%)"></div>
+	    <div class="color-label">Malhado</div>
+	  </label>
+	
+	  <label class="color-option">
+	    <input type="checkbox" name="cores" value="Tricolor">
+	    <div class="color-box" style="background:linear-gradient(120deg,#000 33%,#fff 33% 66%,#8B4513 66%)"></div>
+	    <div class="color-label">Tricolor</div>
+	  </label>
+	
+	</div>
+
 
     <div class="form-group">
       <label>Outras Características Distintivas</label>

@@ -36,7 +36,7 @@
   <div class="menu-grid">
 
     <a href="perfil_veterinario.jsp" class="menu-card">
-      <h2>Meu Perfil</h2>
+      <h2>O Meu Perfil</h2>
       <p>Horários, estatísticas e calendário de consultas.</p>
     </a>
 

@@ -9,6 +9,36 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
+  
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+
     .profile-header {
       background: white;
       border: 2px solid #E7EEF4;
@@ -283,7 +313,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>Meu Perfil</h1>
+    <h1>O Meu Perfil</h1>
     <p>Horários, estatísticas e calendário de consultas.</p>
   </div>
 </section>
@@ -420,7 +450,7 @@
   
   <!-- HORÁRIOS DE TRABALHO -->
   <div class="horarios-trabalho">
-    <h3>📅 Os Meus Horários de Trabalho</h3>
+    <h3><img src="../images/icon-calendar.png" class="icon-inline" alt="Calendário"> Os Meus Horários de Trabalho</h3>
     <%
               boolean temHorarios = false;
               while (rsHorarios.next()) {
@@ -433,7 +463,7 @@
     <div class="horario-item">
       <div class="horario-dia"><%= diaUtil %>-feira</div>
       <div class="horario-detalhes">🕒 <%= horaInicio.toString().substring(0,5) %> às <%= horaFim.toString().substring(0,5) %></div>
-      <div class="horario-clinica">📍 <%= localidade %></div>
+      <div class="horario-clinica"><img src="../images/icon-pin.png" class="icon-inline" alt="Clínica"> <%= localidade %></div>
     </div>
     <%
               }
@@ -675,7 +705,7 @@
       <div class="consulta-hora"><%= sdfHora.format(dataHora) %></div>
       <div class="consulta-tipo"><%= tipo %></div>
       <div class="consulta-cliente">Cliente: <%= cliente %></div>
-      <div class="consulta-clinica">📍 Clínica: <%= localidade %></div>
+      <div class="consulta-clinica"><img src="../images/icon-pin.png" class="icon-inline" alt="Clínica"> Clínica: <%= localidade %></div>
       <div class="consulta-cliente">Status: <%= status %></div>
     </div>
     <%

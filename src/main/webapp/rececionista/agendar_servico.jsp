@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
 <%@ page import="vetcare.*, java.sql.*, java.util.*, java.text.*" %>
 <!DOCTYPE html>
 <html lang="pt">
@@ -9,6 +9,35 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+  
     .alerta-aviso {
       background: #FFF3CD;
       border: 2px solid #FFC107;
@@ -44,7 +73,9 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>📅 Agendar Serviço</h1>
+    <h1>
+      Agendar Serviço
+    </h1>
     <p>Marcar serviços com distribuição automática de veterinários.</p>
   </div>
 </section>
@@ -88,7 +119,6 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                 mensagem = "⚠️ Este cliente não tem animais registados. Por favor, registe um animal antes de agendar a primeira consulta.";
                 tipoMensagem = "erro";
             } else {
-                // Continua para criar agendamento
                 primeiraVez = true;
             }
         }
@@ -97,11 +127,9 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
         if (mensagem.isEmpty()) {
             con.setAutoCommit(false);
             
-            // Parse data/hora
             java.sql.Timestamp dataHora = java.sql.Timestamp.valueOf(dataHoraStr.replace("T", " ") + ":00");
             java.math.BigDecimal custos = custosStr != null && !custosStr.isEmpty() ? new java.math.BigDecimal(custosStr) : null;
             
-            // Extrair informações da data
             Calendar cal = Calendar.getInstance();
             cal.setTime(dataHora);
             int diaSemana = cal.get(Calendar.DAY_OF_WEEK);
@@ -114,7 +142,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
             else if (diaSemana == 6) diaUtil = "Sexta";
             
             if (diaUtil == null) {
-                mensagem = "❌ A clínica não funciona aos fins de semana!";
+                mensagem = "A clínica não funciona aos fins de semana!";
                 tipoMensagem = "erro";
                 con.rollback();
             } else {
@@ -130,7 +158,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                 ResultSet rsCheckHorario = psCheckHorario.executeQuery();
                 
                 if (!rsCheckHorario.next()) {
-                    mensagem = "❌ A clínica " + localidade + " não funciona às " + diaUtil + "-feiras!";
+                    mensagem = "A clínica " + localidade + " não funciona às " + diaUtil + "-feiras!";
                     tipoMensagem = "erro";
                     rsCheckHorario.close();
                     psCheckHorario.close();
@@ -141,13 +169,12 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                     rsCheckHorario.close();
                     psCheckHorario.close();
                     
-                    // Validar se hora está dentro do horário
                     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
                     String horaConsulta = timeFormat.format(dataHora);
                     
                     if (horaConsulta.compareTo(horaInicio.toString()) < 0 || 
                         horaConsulta.compareTo(horaFim.toString()) >= 0) {
-                        mensagem = "❌ Hora fora do horário de funcionamento! " +
+                        mensagem = "Hora fora do horário de funcionamento! " +
                                   "A clínica funciona das " + horaInicio.toString().substring(0,5) + 
                                   " às " + horaFim.toString().substring(0,5);
                         tipoMensagem = "erro";
@@ -182,7 +209,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                         ResultSet rsVets = psVets.executeQuery();
                         
                         if (!rsVets.next()) {
-                            mensagem = "❌ Não há veterinários disponíveis neste horário! Por favor, escalem veterinários primeiro.";
+                            mensagem = "Não há veterinários disponíveis neste horário! Por favor, escalem veterinários primeiro.";
                             tipoMensagem = "erro";
                             rsVets.close();
                             psVets.close();
@@ -220,21 +247,21 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                                     
                                     con.commit();
                                     
-                                    mensagem = "✅ Serviço agendado com sucesso! ID: " + idAgendamento;
+                                    mensagem = "Serviço agendado com sucesso! ID: " + idAgendamento;
                                     tipoMensagem = "sucesso";
                                     
                                     detalhesDistribuicao = 
                                         "<strong>Distribuição Automática:</strong><br>" +
-                                        "👨‍⚕️ Veterinário atribuído: <strong>" + nomeVet + "</strong> (Licença: " + nLicencaVet + ")<br>" +
+                                        "<img src='../images/icon-vet.png' class='icon-inline' alt='Veterinário'> Veterinário atribuído: <strong>" + nomeVet + "</strong> (Licença: " + nLicencaVet + ")<br>" +
                                         "📊 Consultas já atribuídas hoje: " + numConsultasAtual + "<br>" +
-                                        "📍 Clínica: " + localidade + "<br>" +
-                                        "📅 Data: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dataHora) + "<br>" +
+                                        "<img src='../images/icon-home.png' class='icon-inline' alt='Clínica'> Clínica: " + localidade + "<br>" +
+                                        "<img src='../images/icon-calendar.png' class='icon-inline' alt='Data'> Data: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dataHora) + "<br>" +
                                         "🔵 Primeira vez? " + (primeiraVez ? "Sim" : "Não");
                                 }
                                 rsKeys.close();
                             } else {
                                 con.rollback();
-                                mensagem = "❌ Erro ao criar agendamento";
+                                mensagem = "Erro ao criar agendamento";
                                 tipoMensagem = "erro";
                             }
                             psAgend.close();
@@ -247,7 +274,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
         }
         
     } catch (Exception e) {
-        mensagem = "❌ Erro: " + e.getMessage();
+        mensagem = "Erro: " + e.getMessage();
         tipoMensagem = "erro";
         e.printStackTrace();
     } finally {
@@ -261,6 +288,10 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
 
   <% if (!mensagem.isEmpty()) { %>
       <div class="mensagem <%= tipoMensagem %>">
+          <%= "sucesso".equals(tipoMensagem)
+                ? "<img src='../images/icon-calendar.png' class='icon-inline' alt='Sucesso'>"
+                : "<img src='../images/icon-cancel.png' class='icon-inline' alt='Erro'>"
+          %>
           <%= mensagem %>
           <% if (!detalhesDistribuicao.isEmpty()) { %>
               <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #28A745;">
@@ -287,13 +318,13 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
         <select name="localidade" required>
           <option value="">Selecione a clínica...</option>
           <%
-          Configura cfg = new Configura();
-          Manipula manipula = new Manipula(cfg);
+          Configura cfg2 = new Configura();
+          Manipula manipula2 = new Manipula(cfg2);
           
           try {
-              Connection con = manipula.getLigacao();
+              Connection con2 = manipula2.getLigacao();
               String sql = "SELECT DISTINCT localidade FROM horario ORDER BY localidade";
-              PreparedStatement ps = con.prepareStatement(sql);
+              PreparedStatement ps = con2.prepareStatement(sql);
               ResultSet rs = ps.executeQuery();
               
               while (rs.next()) {
@@ -307,7 +338,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
           } catch (Exception e) {
               e.printStackTrace();
           } finally {
-              manipula.desligar();
+              manipula2.desligar();
           }
           %>
         </select>
@@ -360,21 +391,16 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
       </div>
       
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">📅 Agendar com Distribuição Automática</button>
-        <button type="reset" class="btn btn-secondary">🔄 Limpar</button>
+        <button type="submit" class="btn btn-primary">
+          <img src="../images/icon-calendar.png" class="icon-inline" alt="Agendar"> Agendar com Distribuição Automática
+        </button>
+        <button type="reset" class="btn btn-secondary">
+          <img src="../images/icon-reset.png" class="icon-inline" alt="Limpar"> Limpar
+        </button>
       </div>
     </form>
   </div>
   
-  <div style="margin-top: 30px; padding: 20px; background: #E8F4F8; border-left: 4px solid #4A90E2; border-radius: 10px;">
-    <h3 style="margin: 0 0 10px 0; color: #0B2A42;">ℹ️ Como Funciona</h3>
-    <ul style="margin: 0; padding-left: 20px; color: #0B2A42;">
-      <li><strong>Passo 1:</strong> Sistema identifica veterinários escalados na clínica/dia</li>
-      <li><strong>Passo 2:</strong> Conta consultas de cada veterinário naquele dia</li>
-      <li><strong>Passo 3:</strong> Atribui ao veterinário com MENOS consultas</li>
-      <li><strong>Resultado:</strong> Carga de trabalho equilibrada! 🎯</li>
-    </ul>
-  </div>
 </div>
 
 </body>

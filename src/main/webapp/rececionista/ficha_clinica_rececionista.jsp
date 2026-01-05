@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
 <%@ page import="vetcare.*, java.sql.*, java.util.*, java.time.*, java.time.temporal.*" %>
 <!DOCTYPE html>
 <html lang="pt">
@@ -94,6 +94,20 @@
     .escalao-jovem { background: #D4EDDA; color: #155724; }
     .escalao-adulto { background: #CCE5FF; color: #004085; }
     .escalao-idoso { background: #F8D7DA; color: #721C24; }
+
+    /* Ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 6px 0 0;
+      display: inline-block;
+    }
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
 
     @media(max-width: 900px) {
       .ficha-container { flex-direction: column; }
@@ -204,7 +218,6 @@ try {
         LocalDate nascimento = dataNasc.toLocalDate();
         LocalDate hoje = LocalDate.now();
 
-        // ✅ idade com referência: hoje ou falecimento
         LocalDate referencia = (dataFal != null) ? dataFal.toLocalDate() : hoje;
         Period periodo = Period.between(nascimento, referencia);
         int anos = periodo.getYears();
@@ -213,7 +226,6 @@ try {
         long totalDias = ChronoUnit.DAYS.between(nascimento, referencia);
         long totalSemanas = totalDias / 7;
 
-        // ✅ escalão etário
         String escalao = "";
         String classeEscalao = "";
         if (expectativaVida > 0) {
@@ -249,7 +261,6 @@ try {
   <div class="ficha-container">
 
     <div class="ficha-foto">
-      <!-- ✅ Foto sempre do servlet / BD -->
       <img src="../fotoAnimal?id=<%= idFicha %>" alt="<%= nome %>">
 
       <div class="idade-box">
@@ -272,7 +283,7 @@ try {
     <div class="ficha-dados">
 
       <div class="info-section">
-        <h3>📋 Dados do Animal</h3>
+        <h3>Dados do Animal</h3>
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">Nome</div>
@@ -286,10 +297,19 @@ try {
             <div class="info-label">Raça</div>
             <div class="info-value"><%= raca != null ? raca : "-" %></div>
           </div>
+
+          <!-- ✅ Sexo com icons -->
           <div class="info-item">
             <div class="info-label">Sexo</div>
-            <div class="info-value"><%= "M".equals(sexo) ? "🐕 Macho" : "🐕 Fêmea" %></div>
+            <div class="info-value">
+              <% if ("M".equals(sexo)) { %>
+                <img src="../images/icon-male.png" class="icon-inline" alt="Macho"> Macho
+              <% } else { %>
+                <img src="../images/icon-female.png" class="icon-inline" alt="Fêmea"> Fêmea
+              <% } %>
+            </div>
           </div>
+
           <div class="info-item">
             <div class="info-label">Data de Nascimento</div>
             <div class="info-value"><%= util.DataFormatter.LocalDateToString(nascimento) %></div>
@@ -310,15 +330,15 @@ try {
         </div>
 
         <div style="display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;">
-          <!-- ✅ Botão atualizar animal (deves ter/ criar a página) -->
           <a href="atualizar_animal.jsp?idFichaClin=<%= idFicha %>" class="btn btn-primary">
-            ✏️ Atualizar Dados do Animal
+            <img src="../images/icon-edit.png" class="icon-inline" alt="Editar">
+            Atualizar Dados do Animal
           </a>
         </div>
       </div>
 
       <div class="info-section">
-        <h3>👤 Tutor</h3>
+        <h3>Tutor</h3>
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">NIF</div>
@@ -346,9 +366,9 @@ try {
         </div>
 
         <div style="display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;">
-          <!-- ✅ Botão atualizar tutor -->
           <a href="atualizar_tutor.jsp?NIF=<%= nifTutor %>&idFichaClin=<%= idFicha %>" class="btn btn-primary">
-            ✏️ Atualizar Dados do Tutor
+            <img src="../images/icon-edit.png" class="icon-inline" alt="Editar">
+            Atualizar Dados do Tutor
           </a>
         </div>
       </div>
@@ -362,7 +382,10 @@ try {
             <input type="hidden" name="idFichaClin" value="<%= idFicha %>">
             <input type="hidden" name="acao" value="marcarFalecimento">
             <input type="date" name="dataFalecimento" required max="<%= java.time.LocalDate.now() %>" style="max-width:220px;">
-            <button type="submit" class="btn btn-primary">🐾 Animal faleceu</button>
+            <button type="submit" class="btn btn-primary">
+              <img src="../images/icon-paw.png" class="icon-inline" alt="Pata">
+              Animal faleceu
+            </button>
           </form>
           <p style="margin-top:10px; color:#57606F; font-weight:600;">
             Após marcar falecimento, a idade passa a ser calculada com base na data de falecimento.
@@ -374,12 +397,7 @@ try {
         <% } %>
       </div>
 
-      <!-- ✅ Histórico (apenas consulta) -->
-      <div style="display:flex; gap:14px; margin-top:20px; flex-wrap:wrap;">
-        <a href="historico_clinico.jsp?idFichaClin=<%= idFicha %>" class="btn btn-primary">
-          📋 Ver Histórico Clínico
-        </a>
-      </div>
+      
 
     </div>
   </div>

@@ -12,6 +12,13 @@
     body { display: flex; flex-direction: column; min-height: 100vh; }
     .page-content { flex: 1; }
     .btn-sm { padding: 8px 16px; font-size: 14px; }
+    .btn-voltar { margin-bottom: 30px; }
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -31,7 +38,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>👨‍⚕️ Gestão de Veterinários</h1>
+    <h1>Gestão de Veterinários</h1>
     <p>Lista e gestão de médicos veterinários.</p>
   </div>
 </section>
@@ -40,7 +47,9 @@
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
   <div style="margin-bottom: 20px;">
-    <a href="criar_veterinario.jsp" class="btn btn-primary">➕ Novo Veterinário</a>
+    <a href="criar_veterinario.jsp" class="btn btn-primary">
+      <img src="../images/icon-add.png" alt="Adicionar" class="icon-inline">Novo Veterinário
+    </a>
   </div>
 
   <table class="tabela">
@@ -73,7 +82,9 @@
             <td><%= rs.getString("nome") %></td>
             <td><%= rs.getString("contacto") %></td>
             <td>
-              <a href="editar_veterinario.jsp?nLicenca=<%= nLicenca %>" class="btn btn-primary btn-sm">✏️ Editar</a>
+              <a href="editar_veterinario.jsp?nLicenca=<%= nLicenca %>" class="btn btn-primary btn-sm">
+                <img src="../images/icon-edit.png" alt="Editar" class="icon-inline">Editar
+              </a>
             </td>
           </tr>
       <%

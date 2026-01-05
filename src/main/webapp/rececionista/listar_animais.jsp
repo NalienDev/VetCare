@@ -83,7 +83,7 @@
 
             if (q != null && !q.trim().isEmpty()) {
               psLista = manipula.getLigacao().prepareStatement(
-                "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc " +
+                "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, f.dataFalecimento " +
                 "FROM fichaClinicaAnimal f " +
                 "LEFT JOIN tutor t ON t.idFichaClin = f.idFichaClin " +
                 "LEFT JOIN cliente c ON c.NIF = t.NIF " +
@@ -94,7 +94,8 @@
               psLista.setString(1, "%" + q.trim() + "%");
             } else {
               psLista = manipula.getLigacao().prepareStatement(
-                "SELECT idFichaClin, nome, sexo, dataNasc FROM fichaClinicaAnimal ORDER BY idFichaClin DESC"
+                "SELECT idFichaClin, nome, sexo, dataNasc, dataFalecimento " +
+                "FROM fichaClinicaAnimal ORDER BY idFichaClin DESC"
               );
             }
 
@@ -104,13 +105,25 @@
             while(rs != null && rs.next()){
               tem = true;
               int id = rs.getInt("idFichaClin");
+              java.sql.Date dataNasc = rs.getDate("dataNasc");
+              java.sql.Date dataFal = rs.getDate("dataFalecimento");
         %>
           <tr>
             <td><img class="animal-avatar" src="../fotoAnimal?id=<%= id %>" alt="foto"></td>
             <td><%= id %></td>
             <td><%= rs.getString("nome") %></td>
             <td><%= rs.getString("sexo") %></td>
-            <td><%= rs.getDate("dataNasc") %></td>
+
+            <!-- ✅ DATA NASC + DATA FALECIMENTO AO LADO EM VERMELHO -->
+            <td>
+              <%= dataNasc != null ? dataNasc.toString() : "-" %>
+              <% if(dataFal != null) { %>
+                <span style="color:#D72638; font-weight:900; margin-left:10px;">
+                  <%= dataFal.toString() %>
+                </span>
+              <% } %>
+            </td>
+
             <td>
               <a class="btn btn-primary" href="ficha_clinica_rececionista.jsp?idFichaClin=<%= id %>">
                 Ver Ficha Clínica
@@ -232,7 +245,6 @@ document.addEventListener('mouseout', function(e) {
     }
 });
 </script>
-
 
 </body>
 </html>

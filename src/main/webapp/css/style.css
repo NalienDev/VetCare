@@ -334,10 +334,9 @@ body {
 }
 
 .btn-clinicas-proximas {
-    background: #9FD9BC;   /* verde da imagem 1 */
+    background: #9FD9BC;   /* verde */
     color: #0B3B2E;
 }
-
 
 .btn-clinicas-proximas:hover {
     background: #6EE7B7;
@@ -347,7 +346,7 @@ body {
 
 /* Urgências */
 .btn-urgencias {
-    background: #F1B6BE;   /* rosa da imagem 1 */
+    background: #F1B6BE;   /* rosa */
     color: #7A0B0B;
 }
 
@@ -363,7 +362,6 @@ body {
     width: 18px;
     height: 18px;
 }
-
 
 /* ========================================
    BUTTONS
@@ -459,59 +457,79 @@ body {
 }
 
 /* ========================================
-   ACCESS CARDS
+   ACCESS CARDS - NOVO VISUAL MODERNO ✅
    ======================================== */
 .access-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     gap: 2rem;
 }
 
 .access-card {
     background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
+    border-radius: 18px 0px 18px 0px;
+    padding: 2.2rem;
     text-decoration: none;
     color: var(--text-dark);
-    transition: var(--transition);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     border: 2px solid transparent;
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
 }
 
+/* detalhe superior */
+.access-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+/* hover elegante */
 .access-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary-color);
+    box-shadow: 0 14px 38px rgba(0,0,0,0.14);
+    border-color: rgba(45,156,219,0.3);
+    background: #fafdff;
 }
 
+/* Ícone clean e coerente */
 .card-icon {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 1.6rem;
+    border-radius: 16px 0px 16px 0px;
+    background: rgba(45,156,219,0.12);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .card-icon img {
-    width: 50px;
-    height: 50px;
-    filter: brightness(0) invert(1);
+    width: 40px;
+    height: 40px;
+    filter: none;
+    opacity: 0.9;
 }
 
 .access-card h3 {
     font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
+    font-weight: 800;
+    color: #0B2A42;
+    margin-bottom: 0.8rem;
 }
 
 .access-card p {
+    font-size: 1rem;
     color: var(--text-light);
     margin-bottom: 1.5rem;
+    line-height: 1.6;
 }
 
 .card-features {
@@ -520,19 +538,20 @@ body {
 }
 
 .card-features li {
-    padding: 0.5rem 0;
-    color: var(--text-light);
-    border-bottom: 1px solid var(--light-gray);
+    padding: 0.55rem 0;
+    color: #57606F;
+    border-bottom: 1px solid #f0f2f5;
     position: relative;
     padding-left: 1.5rem;
+    font-weight: 600;
 }
 
 .card-features li::before {
-    content: '✓';
+    content: "✓";
     position: absolute;
     left: 0;
-    color: var(--success);
-    font-weight: bold;
+    color: var(--primary-color);
+    font-weight: 900;
 }
 
 .card-features li:last-child {

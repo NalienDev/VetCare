@@ -7,6 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VetCare - Meu Perfil</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
+  <style>
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
 
@@ -31,7 +36,7 @@ if (nif == null || nif.trim().isEmpty()) {
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>Meu Perfil</h1>
+    <h1>O Meu Perfil</h1>
     <p>Visualize as suas informações e animais</p>
   </div>
 </section>
@@ -46,7 +51,7 @@ if (nif == null || nif.trim().isEmpty()) {
         <input type="text" name="nif" pattern="[0-9]{9}" maxlength="9"
                placeholder="Digite seu NIF para ver o perfil" required>
       </div>
-      <button type="submit" class="btn btn-primary">🔍 Ver Perfil</button>
+      <button type="submit" class="btn btn-primary">Ver Perfil</button>
     </form>
   </div>
 </div>
@@ -147,7 +152,7 @@ if (nif == null || nif.trim().isEmpty()) {
 
 <section class="page-hero" style="background: #EAF6FB;">
   <div class="page-hero-inner">
-    <h1>👤 <%= nomeCompleto %></h1>
+    <h1><%= nomeCompleto %></h1>
     <p>NIF: <%= nif %> | <%= isPessoa ? "Pessoa Física" : "Empresa" %></p>
   </div>
 </section>
@@ -159,18 +164,18 @@ if (nif == null || nif.trim().isEmpty()) {
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px;">
     <div class="table-card" style="text-align: center; padding: 28px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px;">
       <div style="font-size: 48px; font-weight: 900; color: #0B2A42; margin-bottom: 8px;"><%= totalAnimais %></div>
-      <div style="font-size: 14px; font-weight: 800; color: #57606F; text-transform: uppercase;">🐾 <%= totalAnimais == 1 ? "Animal" : "Animais" %></div>
+      <div style="font-size: 14px; font-weight: 800; color: #57606F; text-transform: uppercase;"><img src="../images/icon-paw.png" alt="Animais" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"><%= totalAnimais == 1 ? "Animal" : "Animais" %></div>
     </div>
     
     <div class="table-card" style="text-align: center; padding: 28px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px;">
       <div style="font-size: 48px; font-weight: 900; color: #0B2A42; margin-bottom: 8px;"><%= totalAgendamentos %></div>
-      <div style="font-size: 14px; font-weight: 800; color: #57606F; text-transform: uppercase;">📅 <%= totalAgendamentos == 1 ? "Agendamento" : "Agendamentos" %></div>
+      <div style="font-size: 14px; font-weight: 800; color: #57606F; text-transform: uppercase;"><img src="../images/icon-calendar-small.png" alt="Agendamentos" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"><%= totalAgendamentos == 1 ? "Agendamento" : "Agendamentos" %></div>
     </div>
   </div>
   
   <!-- INFORMAÇÕES PESSOAIS -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
-    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;">📋 Informações Pessoais</h3>
+    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-clipboard.png" alt="Informações" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Informações Pessoais</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
       <div style="background: #F8FAFC; padding: 16px; border-radius: 12px;">
         <div style="font-size: 11px; font-weight: 800; color: #57606F; text-transform: uppercase; margin-bottom: 8px;">Nome Completo</div>
@@ -203,7 +208,7 @@ if (nif == null || nif.trim().isEmpty()) {
   
   <!-- MORADA -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
-    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;">🏠 Morada</h3>
+    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-home.png" alt="Morada" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Morada</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
       <div style="background: #F8FAFC; padding: 16px; border-radius: 12px;">
         <div style="font-size: 11px; font-weight: 800; color: #57606F; text-transform: uppercase; margin-bottom: 8px;">Morada Completa</div>
@@ -235,7 +240,7 @@ if (nif == null || nif.trim().isEmpty()) {
   
   <!-- MEUS ANIMAIS -->
   <div class="table-card" style="margin-top: 20px; background: white; border: 1px solid #E7EEF4; border-radius: 24px 6px 24px 6px; padding: 22px;">
-    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;">🐾 Meus Animais</h3>
+    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 900; color: #0B2A42;"><img src="../images/icon-paw.png" alt="Animais" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">Os Meus Animais</h3>
     
     <%
     boolean temAnimais = false;

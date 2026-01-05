@@ -7,6 +7,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VetCare - Lista de Chamada</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
+  <style>
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,7 +56,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>📋 Lista de Chamada</h1>
+    <h1>Lista de Chamada</h1>
     <p>Suas consultas agendadas nos dias em que trabalha.</p>
   </div>
 </section>
@@ -69,7 +99,7 @@
               psCheckVet.close();
   %>
               <div class="mensagem erro">
-                  ❌ Veterinário com licença <%= nLicenca %> não encontrado.
+                  <img src="../images/icons/icon-cancel.png" class="icon-inline" alt="Erro"> Veterinário com licença <%= nLicenca %> não encontrado.
               </div>
   <%
           } else {
@@ -139,7 +169,7 @@
   %>
               
               <div class="table-card">
-                <h3>📅 <%= exibirHistorico ? "Histórico Completo de Consultas" : "Suas Próximas Consultas" %></h3>
+                <h3><%= exibirHistorico ? "Histórico Completo de Consultas" : "As Suas Próximas Consultas" %></h3>
                 <table class="tabela">
                   <thead>
                     <tr>
@@ -205,7 +235,7 @@
                           <% if ("marcado".equalsIgnoreCase(status)) { %>
                               <a href="selecionar_animal_atender.jsp?idAgendamento=<%= idAgend %>&nif=<%= rs.getString("NIF") %>" 
                                  class="btn btn-primary">
-                                  📝 Atender
+                                  <img src="../images/icon-clipboard2.png" class="icon-inline" alt="Atender"> Atender
                               </a>
                           <% } else { %>
                               <span style="color:#57606F; font-weight:700;">
@@ -222,7 +252,7 @@
                   <tr>
                       <td colspan="9" style="text-align: center; padding: 2rem;">
                           <div style="color:#57606F; font-weight:700; margin-bottom: 16px;">
-                              📭 <%= exibirHistorico ? "Não há consultas registradas" : "Não há consultas agendadas para você" %>
+                              🔭 <%= exibirHistorico ? "Não há consultas registradas" : "Não há consultas agendadas para você" %>
                           </div>
                           <div style="background: #FFF3CD; border: 2px solid #FFC107; border-radius: 12px; padding: 16px; max-width: 600px; margin: 0 auto; font-weight: 700; color: #856404;">
                               ℹ️ As consultas aparecem aqui quando são agendadas nos dias e horários em que você está escalado.<br>
@@ -246,7 +276,7 @@
           
       } catch (Exception e) {
   %>
-          <div class="mensagem erro">❌ Erro: <%= e.getMessage() %></div>
+          <div class="mensagem erro"><img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro: <%= e.getMessage() %></div>
   <%
           e.printStackTrace();
       } finally {

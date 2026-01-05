@@ -25,6 +25,9 @@
       padding: 8px 16px;
       font-size: 14px;
     }
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
     .vet-badge {
       background: #28a745;
       color: white;
@@ -33,6 +36,12 @@
       font-size: 11px;
       font-weight: 700;
       margin-left: 8px;
+    }
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
     }
   </style>
 </head>
@@ -53,7 +62,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>🕐 Gestão de Horários</h1>
+    <h1>Gestão de Horários</h1>
     <p>Horários de funcionamento e atribuição de veterinários.</p>
   </div>
 </section>
@@ -62,7 +71,9 @@
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
   <div style="margin-bottom: 20px;">
-    <a href="criar_horario.jsp" class="btn btn-primary">➕ Novo Horário</a>
+    <a href="criar_horario.jsp" class="btn btn-primary">
+      <img src="../images/icon-add.png" alt="Adicionar" class="icon-inline">Novo Horário
+    </a>
   </div>
 
   <table class="tabela">
@@ -118,11 +129,11 @@
             <td>
               <a href="atribuir_veterinario_horario.jsp?localidade=<%= java.net.URLEncoder.encode(localidade, "UTF-8") %>&diaUtil=<%= java.net.URLEncoder.encode(diaUtil, "UTF-8") %>" 
                  class="btn btn-primary btn-sm" style="margin-right: 5px;">
-                👨‍⚕️ Veterinários
+                <img src="../images/icon-vet.png" alt="Veterinário" class="icon-inline">Veterinários
               </a>
               <a href="editar_horario.jsp?localidade=<%= java.net.URLEncoder.encode(localidade, "UTF-8") %>&diaUtil=<%= java.net.URLEncoder.encode(diaUtil, "UTF-8") %>" 
                  class="btn btn-primary btn-sm">
-                ✏️ Editar
+                <img src="../images/icon-edit.png" alt="Editar" class="icon-inline">Editar
               </a>
             </td>
           </tr>

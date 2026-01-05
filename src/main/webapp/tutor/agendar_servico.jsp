@@ -46,6 +46,17 @@
       font-weight: 700;
       color: #155724;
     }
+    
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+    
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -65,7 +76,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>📅 Agendar Consulta</h1>
+    <h1>Agendar Consulta</h1>
     <p>Marque uma consulta veterinária para o seu animal</p>
   </div>
 </section>
@@ -307,7 +318,7 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
   
   <div class="formulario">
     <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 900; color: #0B2A42;">
-      📋 Passo 1: Identificação
+        Passo 1: Identificação
     </h3>
     <form method="GET">
       <div class="form-group">
@@ -315,7 +326,9 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
         <input type="text" name="nif" pattern="[0-9]{9}" maxlength="9" required
                placeholder="Digite o seu NIF para continuar">
       </div>
-      <button type="submit" class="btn btn-primary">➡️ Continuar</button>
+      <button type="submit" class="btn btn-primary">
+        <img src="../images/icon-arrow-right.png" alt="Continuar" class="icon-inline">Continuar
+      </button>
     </form>
   </div>
   
@@ -392,7 +405,7 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
   %>
   
   <div class="alerta-info">
-    ✅ <div>
+    <div>
       <strong>Bem-vindo de volta!</strong><br>
       NIF: <strong><%= nif %></strong> | Animais registados: <strong><%= totalAnimais %></strong><br>
       Preencha o formulário abaixo para agendar a sua consulta.
@@ -401,7 +414,7 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
 
   <div class="formulario">
     <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 900; color: #0B2A42;">
-      📅 Passo 2: Detalhes da Consulta
+         Passo 2: Detalhes da Consulta
     </h3>
     <form method="POST">
       <input type="hidden" name="nif" value="<%= nif %>">
@@ -452,7 +465,9 @@ if ("POST".equalsIgnoreCase(request.getMethod()) && nif != null) {
       </div>
       
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">📅 Confirmar Agendamento</button>
+        <button type="submit" class="btn btn-primary">
+          <img src="../images/icon-calendar.png" alt="Agendar" class="icon-inline">Confirmar Agendamento
+        </button>
         <a href="?nif=" class="btn btn-secondary">← Voltar</a>
       </div>
     </form>

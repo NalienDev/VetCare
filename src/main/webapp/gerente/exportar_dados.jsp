@@ -81,6 +81,15 @@ if (idFicha != null) {
       color: #0B2A42;
       font-size: 16px;
     }
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -102,7 +111,7 @@ if (idFicha != null) {
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>📤 Exportar Ficha Clínica</h1>
+    <h1>Exportar Ficha Clínica</h1>
     <p>Exportação de dados clínicos em formato JSON.</p>
   </div>
 </section>
@@ -111,7 +120,7 @@ if (idFicha != null) {
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
   <div class="info-box">
-    <h3>📋 Exportar para JSON</h3>
+    <h3><img src="../images/icon-download-b.png" alt="Clipboard" class="icon-inline">Exportar para JSON</h3>
     <p>
       Introduza o ID da ficha clínica para descarregar os dados
       num ficheiro <strong>JSON</strong>, pronto para integração
@@ -134,13 +143,17 @@ if (idFicha != null) {
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">📥 Exportar JSON</button>
-      <button type="reset" class="btn btn-secondary">🔄 Limpar</button>
+      <button type="submit" class="btn btn-primary">
+        <img src="../images/icon-download.png" alt="Exportar" class="icon-inline">Exportar JSON
+      </button>
+      <button type="reset" class="btn btn-secondary">
+        <img src="../images/icon-reset.png" alt="Limpar" class="icon-inline">Limpar
+      </button>
     </div>
   </form>
 
   <div class="info-box" style="margin-top: 30px; background: #FFF3CD; border-left-color: #FFC107;">
-    <h3>💡 Nota</h3>
+    <h3><img src="../images/icon-lightbulb.png" alt="Ideia" class="icon-inline">Nota</h3>
     <p>
       O formato <strong>JSON</strong> é ideal para consumo por APIs,
       aplicações web e sistemas de interoperabilidade.

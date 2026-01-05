@@ -25,6 +25,15 @@
       padding: 8px 16px;
       font-size: 14px;
     }
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -44,7 +53,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>👥 Gestão de Tutores</h1>
+    <h1>Gestão de Tutores</h1>
     <p>Lista de tutores (pessoas) e seus animais.</p>
   </div>
 </section>
@@ -53,7 +62,9 @@
   <a href="menu.jsp" class="btn-voltar">← Voltar</a>
 
   <div style="margin-bottom: 20px;">
-    <a href="../rececionista/criar_tutor.jsp" class="btn btn-primary">➕ Novo Tutor</a>
+    <a href="../rececionista/criar_tutor.jsp" class="btn btn-primary">
+      <img src="../images/icon-add.png" alt="Adicionar" class="icon-inline">Novo Tutor
+    </a>
   </div>
 
   <table class="tabela">
@@ -102,7 +113,7 @@
             <td style="text-align: center;"><%= rs.getInt("numAnimais") %></td>
             <td>
               <a href="../rececionista/listar_animais.jsp?nif=<%= nif %>" class="btn btn-primary btn-sm">
-                🔍 Ver Animais
+                <img src="../images/icon-search.png" alt="Pesquisar" class="icon-inline">Ver Animais
               </a>
             </td>
           </tr>

@@ -24,6 +24,15 @@
       background:#F8FAFC;
       max-width:220px;
     }
+
+    /* ícones inline (consistência com outros JSPs) */
+    .icon-inline {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin: -2px 6px 0 0;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -123,11 +132,14 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
   <% } %>
 
   <div style="margin:20px 0;">
-    <a href="agendar_servico.jsp" class="btn btn-primary">➕ Agendar Novo Serviço</a>
+    <a href="agendar_servico.jsp" class="btn btn-primary">
+      <img src="../images/icon-add.png" class="icon-inline" alt="Agendar">
+      Agendar Novo Serviço
+    </a>
   </div>
 
   <div class="table-card">
-    <h3>📋 Agendamentos Marcados</h3>
+    <h3>Agendamentos Marcados</h3>
     <table class="tabela">
       <thead>
         <tr>
@@ -179,12 +191,15 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                 </td>
                 <td>
 
-                    <!-- ✅ REAGENDAR bonito -->
+                    <!-- ✅ REAGENDAR -->
                     <form method="POST" class="reagendar-box">
                         <input type="hidden" name="idAgendamento" value="<%= idAgend %>">
                         <input type="hidden" name="acao" value="reagendar">
                         <input type="datetime-local" name="novaData" required>
-                        <button type="submit" class="btn btn-primary">🕒 Reagendar</button>
+                        <button type="submit" class="btn btn-primary">
+                          <img src="../images/icon-calendar.png" class="icon-inline" alt="Reagendar">
+                          Reagendar
+                        </button>
                     </form>
 
                     <!-- ✅ CANCELAR -->
@@ -193,7 +208,8 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                         <input type="hidden" name="acao" value="cancelar">
                         <button type="submit" class="btn btn-danger"
                                 onclick="return confirm('Tem a certeza que deseja cancelar este agendamento?')">
-                            ❌ Cancelar
+                            <img src="../images/icon-cancel.png" class="icon-inline" alt="Cancelar">
+                            Cancelar
                         </button>
                     </form>
 

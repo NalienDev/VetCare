@@ -153,6 +153,20 @@
       border-radius: 50%;
       border: 2px solid rgba(0,0,0,0.2);
     }
+    
+    .icon-inline {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    
+    .icon-gender {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -194,7 +208,7 @@
         <input type="text" name="nif" pattern="[0-9]{9}" maxlength="9"
                placeholder="Digite seu NIF para ver seus animais" required>
       </div>
-      <button type="submit" class="btn btn-primary">🔍 Consultar</button>
+      <button type="submit" class="btn btn-primary">Consultar</button>
     </form>
   </div>
   
@@ -210,7 +224,7 @@
   %>
   
   <div class="readonly-notice">
-    📖 <span>Você está visualizando as fichas dos seus animais (somente leitura)</span>
+    📖 <span>Estás a visualizar as fichas dos teus animais (somente leitura)</span>
   </div>
   
   <div class="animals-grid">
@@ -252,7 +266,7 @@
         </div>
       </div>
       <div style="text-align: center; padding-top: 8px; color: #0B2A42; font-weight: 800; font-size: 13px;">
-        👁️ Ver Ficha Completa
+        <img src="../images/icon-eye.png" alt="Ver" class="icon-inline">Ver Ficha Completa
       </div>
     </a>
   <%
@@ -326,11 +340,17 @@
       </p>
     </div>
     
-    <h3 class="section-title">📋 Informações Básicas</h3>
+    <h3 class="section-title">Informações Básicas</h3>
     <div class="info-grid">
       <div class="info-item">
         <div class="info-label">Sexo</div>
-        <div class="info-value"><%= "M".equals(sexo) ? "♂️ Macho" : "♀️ Fêmea" %></div>
+        <div class="info-value">
+          <% if ("M".equals(sexo)) { %>
+            <img src="../images/icon-male.png" alt="Macho" class="icon-gender">Macho
+          <% } else { %>
+            <img src="../images/icon-female.png" alt="Fêmea" class="icon-gender">Fêmea
+          <% } %>
+        </div>
       </div>
       <div class="info-item">
         <div class="info-label">Idade</div>
@@ -355,7 +375,7 @@
     </div>
 
     <% if (cores != null && !cores.trim().isEmpty() && !cores.equalsIgnoreCase("N/A")) { %>
-    <h3 class="section-title">🎨 Características</h3>
+    <h3 class="section-title">Características</h3>
 
     <div class="info-item" style="margin-bottom: 16px;">
       <div class="info-label">Cores</div>

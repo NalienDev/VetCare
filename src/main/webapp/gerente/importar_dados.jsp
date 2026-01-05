@@ -40,6 +40,15 @@
       overflow-x: auto;
       border: 1px solid #E7EEF4;
     }
+    .btn-voltar {
+      margin-bottom: 30px;
+    }
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -59,7 +68,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>📥 Importar Dados</h1>
+    <h1>Importar Dados</h1>
     <p>Importar fichas clínicas a partir de ficheiros JSON.</p>
   </div>
 </section>
@@ -154,7 +163,7 @@
   <% } %>
 
   <div class="info-box">
-    <h3>📋 Importar Ficha Clínica</h3>
+    <h3><img src="../images/icon-upload-b.png" alt="Clipboard" class="icon-inline">Importar Ficha Clínica</h3>
     <p>Cole o conteúdo JSON exportado para importar uma ficha clínica no sistema.</p>
   </div>
 
@@ -170,13 +179,17 @@
     </div>
     
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">📥 Importar Dados</button>
-      <button type="reset" class="btn btn-secondary">🔄 Limpar</button>
+      <button type="submit" class="btn btn-primary">
+        <img src="../images/icon-upload.png" alt="Importar" class="icon-inline">Importar Dados
+      </button>
+      <button type="reset" class="btn btn-secondary">
+        <img src="../images/icon-reset.png" alt="Limpar" class="icon-inline">Limpar
+      </button>
     </div>
   </form>
 
   <div class="info-box" style="margin-top: 30px; background: #FFF3CD; border-left-color: #FFC107;">
-    <h3>💡 Exemplo de JSON</h3>
+    <h3><img src="../images/icon-lightbulb.png" alt="Ideia" class="icon-inline">Exemplo de JSON</h3>
     <pre>{
   "nome": "Rex",
   "sexo": "M",

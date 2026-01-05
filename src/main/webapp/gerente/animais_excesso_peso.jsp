@@ -40,7 +40,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>⚖️ Animais com Excesso de Peso</h1>
+    <h1>Animais com Excesso de Peso</h1>
     <p>Animais que excedem o peso adulto da raça.</p>
   </div>
 </section>

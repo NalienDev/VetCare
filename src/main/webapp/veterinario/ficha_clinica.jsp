@@ -358,7 +358,7 @@ try {
 
     <div class="ficha-dados">
       <div class="info-section">
-        <h3>📋 Informações Básicas</h3>
+        <h3>Informações Básicas</h3>
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">Nome</div>
@@ -403,7 +403,7 @@ try {
       </div>
 
       <div class="info-section">
-        <h3>⚖️ Peso Atual</h3>
+        <h3>Peso Atual</h3>
         <div class="info-value" style="font-size: 24px; margin-bottom: 12px;">
           <%= (rs.getBigDecimal("pesoAtual") != null) ? rs.getBigDecimal("pesoAtual") + " kg" : "Não definido" %>
         </div>
@@ -422,7 +422,8 @@ try {
       </div>
 
       <div class="info-section">
-        <h3>🎨 Cores e Características Físicas</h3>
+        <h3>Cores e Características Físicas</h3>
+        
 
         <div class="info-label" style="margin-bottom: 10px;">Cores do Animal</div>
         <div class="cores-display">
@@ -476,7 +477,7 @@ try {
       </div>
 
       <div class="info-section">
-        <h3>📏 Características da Raça</h3>
+        <h3>Características da Raça</h3>
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">Porte</div>

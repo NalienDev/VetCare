@@ -329,10 +329,10 @@ try {
   <% } %>
 
   <div class="mensagem">
-    🐾 Animal ID: <strong><%= idFichaClin %></strong> |
-    📌 Histórico ID: <strong><%= idHistorico %></strong>
+    Animal ID: <strong><%= idFichaClin %></strong> |
+    Histórico ID: <strong><%= idHistorico %></strong>
     <% if (dataHoraAgenda != null) { %>
-      | 📅 Agendamento: <strong><%= new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dataHoraAgenda) %></strong>
+      | Agendamento: <strong><%= new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dataHoraAgenda) %></strong>
       | Tipo: <strong><%= tipoServicoAgenda %></strong>
     <% } %>
   </div>

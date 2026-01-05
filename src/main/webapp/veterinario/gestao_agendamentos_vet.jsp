@@ -7,6 +7,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VetCare - Gestão de Agendamentos</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
+  <style>
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
 </head>
 <body>
 
@@ -53,13 +83,13 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                 mensagem = "✅ Agendamento cancelado com sucesso!";
                 tipoMensagem = "sucesso";
             } else {
-                mensagem = "❌ Erro ao cancelar agendamento";
+                mensagem = "Erro ao cancelar agendamento";
                 tipoMensagem = "erro";
             }
             ps.close();
         }
     } catch (Exception e) {
-        mensagem = "❌ Erro: " + e.getMessage();
+        mensagem = "Erro: " + e.getMessage();
         tipoMensagem = "erro";
         e.printStackTrace();
     } finally {
@@ -72,15 +102,22 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
   <a href="menu.jsp" class="btn-voltar">← Voltar ao Menu</a>
 
   <% if (!mensagem.isEmpty()) { %>
-      <div class="mensagem <%= tipoMensagem %>"><%= mensagem %></div>
+      <div class="mensagem <%= tipoMensagem %>">
+          <% if (tipoMensagem.equals("erro")) { %>
+              <img src="../images/icon-cancel.png" class="icon-inline" alt="Erro">
+          <% } %>
+          <%= mensagem %>
+      </div>
   <% } %>
 
   <div style="margin:20px 0;">
-    <a href="agendar_servico_vet.jsp" class="btn btn-primary">➕ Agendar Novo Serviço</a>
+    <a href="agendar_servico_vet.jsp" class="btn btn-primary">
+      <img src="../images/icon-add.png" class="icon-inline" alt="Adicionar"> Agendar Novo Serviço
+    </a>
   </div>
 
   <div class="table-card">
-    <h3>📋 Agendamentos Pendentes</h3>
+    <h3>Agendamentos Pendentes</h3>
     <table class="tabela">
       <thead>
         <tr>
@@ -139,7 +176,7 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
                             <input type="hidden" name="acao" value="cancelar">
                             <button type="submit" class="btn btn-danger" 
                                     onclick="return confirm('Tem a certeza que deseja cancelar este agendamento?')">
-                                ❌ Cancelar
+                                <img src="../images/icon-cancel.png" class="icon-inline" alt="Cancelar"> Cancelar
                             </button>
                         </form>
                     </td>
@@ -164,7 +201,7 @@ if (acao != null && "POST".equalsIgnoreCase(request.getMethod())) {
             %>
             <tr>
                 <td colspan="6" style="text-align: center; padding: 2rem; color: red;">
-                    ❌ Erro ao carregar dados: <%= e.getMessage() %>
+                    <img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro ao carregar dados: <%= e.getMessage() %>
                 </td>
             </tr>
             <%

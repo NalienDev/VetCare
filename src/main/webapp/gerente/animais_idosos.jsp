@@ -58,7 +58,7 @@
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>👴 Animais Idosos</h1>
+    <h1>Animais Idosos</h1>
     <p>Animais que atingiram ou ultrapassaram 75% da expectativa de vida.</p>
   </div>
 </section>

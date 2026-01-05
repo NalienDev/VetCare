@@ -360,8 +360,8 @@ try {
       <div class="form-group">
         <label>Sexo *</label>
         <select name="sexo" required>
-          <option value="M" <%= "M".equals(sexo) ? "selected" : "" %>>🐕 Macho</option>
-          <option value="F" <%= "F".equals(sexo) ? "selected" : "" %>>🐕 Fêmea</option>
+          <option value="M" <%= "M".equals(sexo) ? "selected" : "" %>>Macho</option>
+          <option value="F" <%= "F".equals(sexo) ? "selected" : "" %>>Fêmea</option>
           <option value="N" <%= "N".equals(sexo) ? "selected" : "" %>>Não aplicável</option>
         </select>
       </div>

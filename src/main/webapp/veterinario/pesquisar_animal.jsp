@@ -6,6 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VetCare - Pesquisar Animal</title>
   <link rel="stylesheet" href="../css/vetcare-ui.css">
+  <style>
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
 </head>
 <body>
 
@@ -83,12 +113,12 @@ function pesquisarTutores() {
                 }
             } catch (e) {
                 console.error('Erro ao processar resposta:', e);
-                resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">❌ Erro ao processar dados</div>';
+                resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;"><img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro ao processar dados</div>';
                 resultadosDiv.style.display = 'block';
             }
         } else if (xhr.readyState === 4) {
             console.error('Erro no servidor. Status:', xhr.status);
-            resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;">❌ Erro ao pesquisar</div>';
+            resultadosDiv.innerHTML = '<div style="padding:14px; color:#EB5757;"><img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro ao pesquisar</div>';
             resultadosDiv.style.display = 'block';
         }
     };
@@ -129,7 +159,7 @@ function carregarAnimais(nif) {
                 var data = JSON.parse(xhr.responseText);
                 
                 if (data.length > 0) {
-                    var html = '<div class="table-card"><h3 style="margin:0 0 20px 0; font-size:20px;">🐕 Animais do Tutor</h3><table class="tabela"><thead><tr><th>Nome</th><th>Espécie</th><th>Raça</th><th>Sexo</th><th>Idade</th><th>Ações</th></tr></thead><tbody>';
+                    var html = '<div class="table-card"><h3 style="margin:0 0 20px 0; font-size:20px;">Animais do Tutor</h3><table class="tabela"><thead><tr><th>Nome</th><th>Espécie</th><th>Raça</th><th>Sexo</th><th>Idade</th><th>Ações</th></tr></thead><tbody>';
                     
                     for (var i = 0; i < data.length; i++) {
                         var animal = data[i];
@@ -137,9 +167,9 @@ function carregarAnimais(nif) {
                         html += '<td><strong>' + escapeHtml(animal.nome) + '</strong></td>';
                         html += '<td>' + (animal.especie || '-') + '</td>';
                         html += '<td>' + (animal.raca || '-') + '</td>';
-                        html += '<td>' + (animal.sexo === 'M' ? '🐕 Macho' : '🐕 Fêmea') + '</td>';
+                        html += '<td>' + (animal.sexo === 'M' ? '<img src="../images/icon-male.png" class="icon-inline" alt="Macho"> Macho' : '<img src="../images/icon-female.png" class="icon-inline" alt="Fêmea"> Fêmea') + '</td>';
                         html += '<td>' + animal.idade + (animal.idade === 1 ? ' ano' : ' anos') + '</td>';
-                        html += '<td><a href="ficha_clinica.jsp?idFichaClin=' + animal.idFichaClin + '" class="btn btn-primary">📋 Ver Ficha Clínica</a></td>';
+                        html += '<td><a href="ficha_clinica.jsp?idFichaClin=' + animal.idFichaClin + '" class="btn btn-primary"><img src="../images/icon-clipboard3.png" class="icon-inline" alt="Ficha"> Ver Ficha Clínica</a></td>';
                         html += '</tr>';
                     }
                     
@@ -150,11 +180,11 @@ function carregarAnimais(nif) {
                 }
             } catch (e) {
                 console.error('Erro ao processar resposta:', e);
-                animaisContainer.innerHTML = '<div class="mensagem erro">❌ Erro ao processar dados</div>';
+                animaisContainer.innerHTML = '<div class="mensagem erro"><img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro ao processar dados</div>';
             }
         } else if (xhr.readyState === 4) {
             console.error('Erro no servidor. Status:', xhr.status);
-            animaisContainer.innerHTML = '<div class="mensagem erro">❌ Erro ao carregar animais</div>';
+            animaisContainer.innerHTML = '<div class="mensagem erro"><img src="../images/icon-cancel.png" class="icon-inline" alt="Erro"> Erro ao carregar animais</div>';
         }
     };
     var contextPath = "<%= request.getContextPath() %>";

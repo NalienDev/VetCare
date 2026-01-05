@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetCare - Sistema de Gestão Veterinária</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/style.css">
+
 </head>
 <body>
     <!-- Header com logo e navegação -->
@@ -60,8 +61,6 @@
 				    </div>
 				</div>
 
-
-                
                 <div class="search-info">
                     <p><strong>Dica!</strong> Você pode pesquisar pelo nome da clínica, cidade ou usar sua localização para encontrar clínicas perto de você.</p>
                     <p class="how-enable">Como habilitar:</p>
@@ -79,25 +78,26 @@
                 </div>
             </div>
         </div>
-        <!-- Adicione sua imagem de animal aqui -->
         <img src="images/hero-cat.jpeg" alt="Gato" class="hero-image">
     </section>
 
-    <!-- Secção de Acesso Rápido -->
+    <!-- Seção de Acesso ao Sistema -->
     <section class="quick-access">
         <div class="container">
             <h2 class="section-title">Acesso ao Sistema</h2>
             <div class="access-grid">
+                
                 <!-- Rececionista -->
                 <a href="rececionista/menu.jsp" class="access-card">
                     <div class="card-icon">
                         <img src="images/receptionist-icon.png" alt="Rececionista">
                     </div>
                     <h3>Rececionista</h3>
-                    <p>Gestão de tutores, animais e agendamentos</p>
+                    <p>Gestão de tutores, animais e agendamentos da clínica</p>
                     <ul class="card-features">
-                        <li>Criar e atualizar fichas</li>
-                        <li>Agendar serviços</li>
+                        <li>Criar e atualizar fichas de tutores e animais</li>
+                        <li>Agendar, cancelar e reagendar serviços</li>
+                        <li>Gestão de fotografias dos animais</li>
                     </ul>
                 </a>
 
@@ -107,10 +107,12 @@
                         <img src="images/vet-icon.png" alt="Veterinário">
                     </div>
                     <h3>Veterinário</h3>
-                    <p>Consulta e atualização de registos clínicos</p>
+                    <p>Consulta e atualização de registos clínicos dos animais</p>
                     <ul class="card-features">
-                        <li>Histórico clínico</li>
-                        <li>Lista de chamada</li>
+                        <li>Pesquisar animais por nome do tutor</li>
+                        <li>Consultar histórico clínico e idade detalhada</li>
+                        <li>Visualizar árvore genealógica</li>
+                        <li>Lista de chamada e atualização de históricos</li>
                     </ul>
                 </a>
 
@@ -120,10 +122,11 @@
                         <img src="images/owner-icon.png" alt="Tutor">
                     </div>
                     <h3>Tutor</h3>
-                    <p>Acesso aos dados dos seus animais</p>
+                    <p>Acompanhe a saúde e consultas dos seus animais</p>
                     <ul class="card-features">
-                        <li>Consultar fichas</li>
-                        <li>Gerir consultas</li>
+                        <li>Consultar fichas e histórico clínico</li>
+                        <li>Visualizar serviços agendados</li>
+                        <li>Agendar, reagendar ou rejeitar consultas</li>
                     </ul>
                 </a>
 
@@ -133,17 +136,19 @@
                         <img src="images/manager-icon.png" alt="Gerente">
                     </div>
                     <h3>Gerente</h3>
-                    <p>Administração completa do sistema</p>
+                    <p>Administração completa do sistema e relatórios</p>
                     <ul class="card-features">
-                        <li>Gestão de recursos</li>
-                        <li>Relatórios</li>
+                        <li>Gestão de veterinários, tutores e animais</li>
+                        <li>Definir horários de funcionamento</li>
+                        <li>Exportar/Importar fichas clínicas (XML/JSON)</li>
+                        <li>Relatórios de saúde e agendamentos</li>
                     </ul>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Secção Sobre -->
+    <!-- Seção Sobre -->
     <section id="sobre" class="about-section">
         <div class="container">
             <div class="about-content">
@@ -259,7 +264,6 @@
 	
 	var timeoutClinica = null;
 	
-	// Function to search clinics using XMLHttpRequest
 	function pesquisarClinicas() {
 	    var query = inputClinica.value.trim();
 	
@@ -291,19 +295,19 @@
 	
 	                } else {
 	                    resultadosClinica.innerHTML =
-	                        '<div style="padding:14px; color:#57606F;">📭 Nenhuma clínica encontrada</div>';
+	                        '<div style="padding:14px; color:#57606F;">Nenhuma clínica encontrada</div>';
 	                    resultadosClinica.style.display = "block";
 	                }
 	            } catch (e) {
 	                console.error('Erro ao processar resposta:', e);
 	                resultadosClinica.innerHTML =
-	                    '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+	                    '<div style="padding:14px; color:#EB5757;">Erro ao carregar clínicas</div>';
 	                resultadosClinica.style.display = "block";
 	            }
 	        } else if (xhr.readyState === 4) {
 	            console.error('Erro no servidor. Status:', xhr.status);
 	            resultadosClinica.innerHTML =
-	                '<div style="padding:14px; color:#EB5757;">⚠️ Erro ao carregar clínicas</div>';
+	                '<div style="padding:14px; color:#EB5757;">Erro ao carregar clínicas</div>';
 	            resultadosClinica.style.display = "block";
 	        }
 	    };
@@ -351,8 +355,5 @@
 	    }
 	});
 	</script>
-
-
-   
 </body>
 </html>

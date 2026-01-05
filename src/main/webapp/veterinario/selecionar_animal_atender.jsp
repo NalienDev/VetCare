@@ -9,6 +9,15 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
+    /* ✅ ICONS INLINE */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      margin-right: 6px;
+      vertical-align: -3px;
+    }
+
     /* ✨ CARDS DE ANIMAIS MODERNOS */
     .animals-grid {
       display: grid;
@@ -46,6 +55,33 @@
       right: 16px;
       font-size: 24px;
       opacity: 0.7;
+    }
+
+    /* ✅ BLOQUEADO (FALECIDO) */
+    .animal-card.bloqueado {
+      background: #F4F6F8;
+      border-color: #D72638;
+      opacity: 0.75;
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+    .animal-card.bloqueado:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: #D72638;
+    }
+    .bloqueado-badge {
+      background: #FDECEC;
+      color: #D72638;
+      border: 2px solid #D72638;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     
     .animal-header {
@@ -112,6 +148,9 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     
     .stat-value {
@@ -142,7 +181,7 @@
       color: #0B2A42;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
     
     .warning-badge {
@@ -165,7 +204,7 @@
       flex-wrap: wrap;
     }
     
-    .btn-atender {
+    .btn-atender, .btn-atualizar {
       flex: 1;
       min-width: 140px;
       display: inline-flex;
@@ -174,7 +213,6 @@
       gap: 8px;
       padding: 14px 20px;
       border-radius: 16px 4px 16px 4px;
-      background: #0B2A42;
       color: white;
       font-weight: 900;
       font-size: 14px;
@@ -183,31 +221,18 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
+    .btn-atender {
+      background: #0B2A42;
+    }
     .btn-atender:hover {
       background: #164164;
       transform: scale(1.02);
     }
-    
+
     .btn-atualizar {
-      flex: 1;
-      min-width: 140px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 20px;
-      border-radius: 16px 4px 16px 4px;
       background: #FFA500;
-      color: white;
-      font-weight: 900;
-      font-size: 14px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
     }
-    
     .btn-atualizar:hover {
       background: #FF8C00;
       transform: scale(1.02);
@@ -328,15 +353,23 @@ try {
 %>
 
   <div class="tutor-info">
-    <span>👤 <strong>Tutor:</strong> <%= nomeTutor %></span>
-    <span>📇 <strong>NIF:</strong> <%= nifTutor %></span>
-    <span>📅 <strong>Agendamento:</strong> #<%= idAgendamentoParam %></span>
+    <span>
+      <strong>Tutor:</strong> <%= nomeTutor %>
+    </span>
+
+    <span>
+      <strong>NIF:</strong> <%= nifTutor %>
+    </span>
+
+    <span>
+      <strong>Agendamento:</strong> #<%= idAgendamentoParam %>
+    </span>
   </div>
 
 <%
-    // Buscar animais com informações completas incluindo PESO ATUAL
+    // ✅ buscar também dataFalecimento
     PreparedStatement psA = con.prepareStatement(
-      "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, " +
+      "SELECT f.idFichaClin, f.nome, f.sexo, f.dataNasc, f.dataFalecimento, " +
       "r.nomeRaca, e.nomeComum as especie, " +
       "cf.cores, cf.peso as pesoAtual " +
       "FROM fichaClinicaAnimal f " +
@@ -357,21 +390,23 @@ try {
         tem = true;
         int idFicha = rsA.getInt("idFichaClin");
         
-        // ✅ PESO ATUAL vem direto da fichaClinicaAnimal.pesoAtual
         Double pesoAtual = null;
         double pesoDb = rsA.getDouble("pesoAtual");
         if(!rsA.wasNull() && pesoDb > 0) {
             pesoAtual = pesoDb;
         }
         
-        // Calcular idade
         java.sql.Date dataNasc = rsA.getDate("dataNasc");
+        java.sql.Date dataFal = rsA.getDate("dataFalecimento");
+
         int idade = 0;
         if(dataNasc != null) {
             LocalDate nascimento = dataNasc.toLocalDate();
             LocalDate hoje = LocalDate.now();
             idade = Period.between(nascimento, hoje).getYears();
         }
+
+        boolean falecido = (dataFal != null);
         
         java.util.Map<String, Object> animal = new java.util.HashMap<>();
         animal.put("idFichaClin", idFicha);
@@ -382,6 +417,8 @@ try {
         animal.put("cores", rsA.getString("cores"));
         animal.put("idade", idade);
         animal.put("pesoAtual", pesoAtual);
+        animal.put("falecido", falecido);
+        animal.put("dataFalecimento", dataFal);
         
         animais.add(animal);
     }
@@ -409,11 +446,21 @@ try {
             String cores = (String) animal.get("cores");
             int idade = (Integer) animal.get("idade");
             Double pesoAtual = (Double) animal.get("pesoAtual");
+            boolean falecido = (Boolean) animal.get("falecido");
+            java.sql.Date dataFalecimento = (java.sql.Date) animal.get("dataFalecimento");
             
             boolean semPeso = (pesoAtual == null || pesoAtual <= 0);
-            String sexoIcon = "M".equals(sexo) ? "♂️" : "♀️";
+            String sexoIcon = "M".equals(sexo) ? "../images/icon-male.png" : "../images/icon-female.png";
 %>
-    <div class="animal-card <%= semPeso ? "sem-peso" : "" %>">
+
+    <div class="animal-card <%= semPeso ? "sem-peso" : "" %> <%= falecido ? "bloqueado" : "" %>">
+
+      <% if(falecido) { %>
+        <div class="bloqueado-badge">
+          ❌ BLOQUEADO — Animal marcado como falecido (<%= dataFalecimento.toString() %>)
+        </div>
+      <% } %>
+
       <div class="animal-header">
         <img src="../fotoAnimal?id=<%= idFicha %>" class="animal-photo" alt="<%= nome %>">
         <div class="animal-info">
@@ -424,12 +471,16 @@ try {
       
       <div class="animal-stats">
         <div class="stat-item">
-          <div class="stat-label">🎂 Idade</div>
+          <div class="stat-label">
+            Idade
+          </div>
           <div class="stat-value"><%= idade %> <%= idade == 1 ? "ano" : "anos" %></div>
         </div>
         
         <div class="stat-item">
-          <div class="stat-label">⚖️ Peso Atual</div>
+          <div class="stat-label">
+            Peso Atual
+          </div>
           <div class="stat-value <%= semPeso ? "missing" : "" %>">
             <%= semPeso ? "Não definido" : String.format("%.2f kg", pesoAtual) %>
           </div>
@@ -437,22 +488,45 @@ try {
       </div>
       
       <div class="animal-details">
-        <span class="detail-tag"><%= sexoIcon %> <%= "M".equals(sexo) ? "Macho" : "Fêmea" %></span>
-        <% if(especie != null) { %><span class="detail-tag">🐾 <%= especie %></span><% } %>
-        <% if(raca != null) { %><span class="detail-tag">🧬 <%= raca %></span><% } %>
-        <% if(cores != null && !cores.equals("N/A")) { %><span class="detail-tag">🎨 <%= cores %></span><% } %>
+        <span class="detail-tag">
+          <img src="<%= sexoIcon %>" class="icon-inline" alt="Sexo">
+          <%= "M".equals(sexo) ? "Macho" : "Fêmea" %>
+        </span>
+        
+        <% if(especie != null) { %>
+        <span class="detail-tag">
+          <img src="../images/icon-paw.png" class="icon-inline" alt="Espécie">
+          <%= especie %>
+        </span>
+        <% } %>
+        
+        <% if(raca != null) { %>
+        <span class="detail-tag">
+          <img src="../images/icon-dna.png" class="icon-inline" alt="Raça">
+          <%= raca %>
+        </span>
+        <% } %>
+        
+        <% if(cores != null && !cores.equals("N/A")) { %>
+        <span class="detail-tag">
+          <img src="../images/icon-cores.png" class="icon-inline" alt="Cores">
+          <%= cores %>
+        </span>
+        <% } %>
       </div>
       
-      <% if(semPeso) { %>
+      <% if(semPeso && !falecido) { %>
       <div class="warning-badge">
         ⚠️ Este animal não tem peso atual registado
       </div>
       <% } %>
       
+      <% if(!falecido) { %>
       <div class="animal-actions">
         <a class="btn-atender" 
            href="atualizar_historico.jsp?idAgendamento=<%= idAgendamentoParam %>&idFichaClin=<%= idFicha %>">
-          ✅ Atender
+          <img src="../images/icon-clipboard2.png" class="icon-inline" alt="Atender">
+          Atender
         </a>
         
         <% if(semPeso) { %>
@@ -460,10 +534,13 @@ try {
            href="ficha_clinica.jsp?idFichaClin=<%= idFicha %>" 
            target="_blank"
            title="Atualizar dados do animal antes de atender">
-          📝 Atualizar Peso
+          <img src="../images/icon-edit.png" class="icon-inline" alt="Atualizar">
+          Atualizar Peso
         </a>
         <% } %>
       </div>
+      <% } %>
+      
     </div>
 <%
         }
