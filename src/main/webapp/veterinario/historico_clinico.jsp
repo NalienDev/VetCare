@@ -37,6 +37,9 @@ Manipula manipula = new Manipula(cfg);
 try {
     Connection con = manipula.getLigacao();
     
+    // ============================
+    // BUSCAR DADOS DO ANIMAL
+    // ============================
     String sqlAnimal = 
         "SELECT f.nome, c.nomeCompleto AS tutor " +
         "FROM fichaClinicaAnimal f " +
@@ -67,6 +70,9 @@ try {
         rsAnimal.close();
         psAnimal.close();
         
+        // ============================
+        // BUSCAR ID DO HISTÓRICO
+        // ============================
         String sqlHistorico = "SELECT idHistorico FROM historicoClinico WHERE idFichaClin = ?";
         PreparedStatement psHist = con.prepareStatement(sqlHistorico);
         psHist.setInt(1, idFicha);
@@ -76,8 +82,7 @@ try {
             int idHistorico = rsHist.getInt("idHistorico");
             rsHist.close();
             psHist.close();
-  %>
-  <%
+            
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
             // ============================
@@ -108,13 +113,14 @@ try {
   <%
             while (rsConsultas.next()) {
                 temConsultas = true;
+                Timestamp dataConsulta = rsConsultas.getTimestamp("dataConsulta");
   %>
                   <tr>
-                    <td><%= sdf.format(rsConsultas.getTimestamp("dataConsulta")) %></td>
+                    <td><%= dataConsulta != null ? sdf.format(dataConsulta) : "-" %></td>
                     <td><%= rsConsultas.getString("motivo") != null ? rsConsultas.getString("motivo") : "-" %></td>
-                    <td><%= rsConsultas.getString("sintomas") %></td>
+                    <td><%= rsConsultas.getString("sintomas") != null ? rsConsultas.getString("sintomas") : "-" %></td>
                     <td><%= rsConsultas.getString("medicacao") != null ? rsConsultas.getString("medicacao") : "-" %></td>
-                    <td><%= rsConsultas.getString("diagnostico") %></td>
+                    <td><%= rsConsultas.getString("diagnostico") != null ? rsConsultas.getString("diagnostico") : "-" %></td>
                   </tr>
   <%
             }
@@ -161,12 +167,12 @@ try {
   <%
             while (rsVacinas.next()) {
                 temVacinas = true;
-                Timestamp ts = rsVacinas.getTimestamp("dataVacina");
+                Timestamp dataVacina = rsVacinas.getTimestamp("dataVacina");
   %>
                   <tr>
-                    <td><%= sdf.format(ts) %></td>
-                    <td><%= rsVacinas.getString("tipoVacina") %></td>
-                    <td><%= rsVacinas.getString("fabricante") %></td>
+                    <td><%= dataVacina != null ? sdf.format(dataVacina) : "-" %></td>
+                    <td><%= rsVacinas.getString("tipoVacina") != null ? rsVacinas.getString("tipoVacina") : "-" %></td>
+                    <td><%= rsVacinas.getString("fabricante") != null ? rsVacinas.getString("fabricante") : "-" %></td>
                   </tr>
   <%
             }
@@ -213,12 +219,12 @@ try {
   <%
             while (rsDes.next()) {
                 temDes = true;
-                Timestamp ts = rsDes.getTimestamp("dataDesparasitacao");
+                Timestamp dataDes = rsDes.getTimestamp("dataDesparasitacao");
   %>
                   <tr>
-                    <td><%= sdf.format(ts) %></td>
-                    <td><%= rsDes.getString("tipoDesparasitacao") %></td>
-                    <td><%= rsDes.getString("produtosUtilizados") %></td>
+                    <td><%= dataDes != null ? sdf.format(dataDes) : "-" %></td>
+                    <td><%= rsDes.getString("tipoDesparasitacao") != null ? rsDes.getString("tipoDesparasitacao") : "-" %></td>
+                    <td><%= rsDes.getString("produtosUtilizados") != null ? rsDes.getString("produtosUtilizados") : "-" %></td>
                   </tr>
   <%
             }
@@ -267,13 +273,18 @@ try {
   <%
             while (rsExames.next()) {
                 temExames = true;
+                Timestamp dataExame = rsExames.getTimestamp("dataHora");
+                double peso = rsExames.getDouble("peso");
+                double temp = rsExames.getDouble("temperatura");
+                int freqCard = rsExames.getInt("freqCard");
+                int freqResp = rsExames.getInt("freqResp");
   %>
                   <tr>
-                    <td><%= sdf.format(rsExames.getTimestamp("dataHora")) %></td>
-                    <td><%= String.format("%.2f kg", rsExames.getDouble("peso")) %></td>
-                    <td><%= String.format("%.1f °C", rsExames.getDouble("temperatura")) %></td>
-                    <td><%= rsExames.getInt("freqCard") %> bpm</td>
-                    <td><%= rsExames.getInt("freqResp") %> rpm</td>
+                    <td><%= dataExame != null ? sdf.format(dataExame) : "-" %></td>
+                    <td><%= String.format("%.2f kg", peso) %></td>
+                    <td><%= String.format("%.1f °C", temp) %></td>
+                    <td><%= freqCard %> bpm</td>
+                    <td><%= freqResp %> rpm</td>
                   </tr>
   <%
             }
@@ -320,11 +331,12 @@ try {
   <%
             while (rsRes.next()) {
                 temRes = true;
+                Timestamp dataRes = rsRes.getTimestamp("dataHora");
   %>
                   <tr>
-                    <td><%= sdf.format(rsRes.getTimestamp("dataHora")) %></td>
-                    <td><%= rsRes.getString("tipoExame") %></td>
-                    <td><%= rsRes.getString("resultadosEx") %></td>
+                    <td><%= dataRes != null ? sdf.format(dataRes) : "-" %></td>
+                    <td><%= rsRes.getString("tipoExame") != null ? rsRes.getString("tipoExame") : "-" %></td>
+                    <td><%= rsRes.getString("resultadosEx") != null ? rsRes.getString("resultadosEx") : "-" %></td>
                   </tr>
   <%
             }
@@ -371,11 +383,11 @@ try {
   <%
             while (rsCir.next()) {
                 temCir = true;
-                Timestamp ts = rsCir.getTimestamp("dataCirurgia");
+                Timestamp dataCir = rsCir.getTimestamp("dataCirurgia");
   %>
                   <tr>
-                    <td><%= sdf.format(ts) %></td>
-                    <td><%= rsCir.getString("tipoCirurgia") %></td>
+                    <td><%= dataCir != null ? sdf.format(dataCir) : "-" %></td>
+                    <td><%= rsCir.getString("tipoCirurgia") != null ? rsCir.getString("tipoCirurgia") : "-" %></td>
                     <td><%= rsCir.getString("notasPosOp") != null ? rsCir.getString("notasPosOp") : "-" %></td>
                   </tr>
   <%
@@ -423,12 +435,12 @@ try {
   <%
             while (rsTrat.next()) {
                 temTrat = true;
-                Timestamp ts = rsTrat.getTimestamp("dataTrat");
+                Timestamp dataTrat = rsTrat.getTimestamp("dataTrat");
   %>
                   <tr>
-                    <td><%= sdf.format(ts) %></td>
-                    <td><%= rsTrat.getString("tipoTratamento") %></td>
-                    <td><%= rsTrat.getString("descricao") %></td>
+                    <td><%= dataTrat != null ? sdf.format(dataTrat) : "-" %></td>
+                    <td><%= rsTrat.getString("tipoTratamento") != null ? rsTrat.getString("tipoTratamento") : "-" %></td>
+                    <td><%= rsTrat.getString("descricao") != null ? rsTrat.getString("descricao") : "-" %></td>
                   </tr>
   <%
             }
@@ -459,6 +471,8 @@ try {
   <%
         }
     } else {
+        rsAnimal.close();
+        psAnimal.close();
 %>
 <section class="page-hero">
   <div class="page-hero-inner">
