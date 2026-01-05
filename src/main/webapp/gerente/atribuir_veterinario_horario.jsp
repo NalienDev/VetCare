@@ -9,6 +9,36 @@
   <link rel="stylesheet" href="../css/vetcare-ui.css">
   
   <style>
+  
+    /* Estilos para ícones inline */
+    .icon-inline {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin: -2px 4px 0 0;
+      display: inline-block;
+    }
+    
+    /* Ícones em botões */
+    .btn .icon-inline {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+    }
+    
+    /* Ícones em títulos */
+    h1 .icon-inline, h2 .icon-inline, h3 .icon-inline {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    /* Ícones em tabelas */
+    .tabela .icon-inline {
+      width: 16px;
+      height: 16px;
+    }
+  
     .info-box {
       background: #E8F4F8;
       border-left: 4px solid #4A90E2;
@@ -275,7 +305,7 @@ try {
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1>👨‍⚕️ Atribuir Veterinário a Horário</h1>
+    <h1>Atribuir Veterinário a Horário</h1>
     <p><%= localidade %> - <%= diaUtil %>-feira (<%= horaInicio.toString().substring(0, 5) %> às <%= horaFim.toString().substring(0, 5) %>)</p>
   </div>
 </section>
@@ -298,7 +328,7 @@ try {
 
   <!-- ✅ VETERINÁRIOS JÁ ATRIBUÍDOS -->
   <div class="veterinarios-atribuidos">
-    <h3 style="margin: 0 0 15px 0; color: #0B2A42;">👨‍⚕️ Veterinários Escalados</h3>
+    <h3 style="margin: 0 0 15px 0; color: #0B2A42;">Veterinários Escalados</h3>
     <%
     String sqlAtribuidos = 
         "SELECT e.nLicenca, v.nome, v.contacto " +
@@ -350,7 +380,9 @@ try {
   <form method="POST" class="formulario">
     <input type="hidden" name="acao" value="adicionar">
     
-    <h3 style="margin: 20px 0 10px 0; color: #0B2A42;">➕ Adicionar Veterinário</h3>
+    <h3 style="margin: 20px 0 10px 0; color: #0B2A42;">
+    <img src="../images/add-simbolo.png" class="icon-inline" alt="Agendar">
+    Adicionar Veterinário</h3>
     
     <div class="form-group">
       <label>Selecionar Veterinário *</label>
@@ -392,7 +424,9 @@ try {
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">➕ Adicionar ao Horário</button>
+      <button type="submit" class="btn btn-primary">
+      <img src="../images/icon-add.png" class="icon-inline" alt="Agendar">
+		Adicionar ao Horário</button>
       <a href="gestao_horarios.jsp" class="btn btn-secondary">❌ Cancelar</a>
     </div>
   </form>
