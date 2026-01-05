@@ -224,7 +224,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
                                     tipoMensagem = "sucesso";
                                     
                                     detalhesDistribuicao = 
-                                        "🤖 <strong>Distribuição Automática:</strong><br>" +
+                                        "<strong>Distribuição Automática:</strong><br>" +
                                         "👨‍⚕️ Veterinário atribuído: <strong>" + nomeVet + "</strong> (Licença: " + nLicencaVet + ")<br>" +
                                         "📊 Consultas já atribuídas hoje: " + numConsultasAtual + "<br>" +
                                         "📍 Clínica: " + localidade + "<br>" +
@@ -271,7 +271,7 @@ if ("POST".equalsIgnoreCase(request.getMethod())) {
   <% } %>
   
   <div class="alerta-info">
-    <strong>🤖 Sistema de Distribuição Automática:</strong><br>
+    <strong>Sistema de Distribuição Automática:</strong><br>
     O sistema atribui automaticamente a consulta ao veterinário com menos consultas naquele dia, 
     garantindo distribuição equilibrada da carga de trabalho.
   </div>
